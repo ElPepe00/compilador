@@ -1,0 +1,12 @@
+Ambit 0: Global
+  max [tipus=INT, cat=CONSTANT, valor=0, ocupacio=4, global]
+  sumar [tipus=INT, cat=FUNCIO, valor=0, ocupacio=0, global, params=[Parametre{nom='a', tipus=INT, posicio=0, mode=VALOR, offset=0}, Parametre{nom='b', tipus=INT, posicio=1, mode=VALOR, offset=0}], etq=f_sumar]
+Ambit 1:
+  b [tipus=INT, cat=PARAMETRE, valor=0, ocupacio=4]
+  a [tipus=INT, cat=PARAMETRE, valor=0, ocupacio=4]
+  res [tipus=INT, cat=VARIABLE, valor=0, ocupacio=4]
+Ambit 2:
+  j [tipus=INT, cat=VARIABLE, valor=0, ocupacio=4]
+  t [tipus=INT, cat=VARIABLE, valor=0, ocupacio=4]
+  c [tipus=INT, cat=VARIABLE, valor=0, ocupacio=4]
+Ambit 3:

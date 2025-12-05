@@ -1,0 +1,24 @@
+// Programa Funcional 1
+constant int max = 10;
+
+// Funcio de suma
+funcio int sumar(int a, int b):
+	int res;
+	res = a + b;
+	return res;
+funcio_fi
+
+// Programa principal
+programa:
+
+	int j = llegir();
+	int t = max;
+	int c;
+	
+	c = sumar(j, t);
+	
+	if (c > 50):
+		imprimir(c);
+	if_fi
+
+programa_fi

@@ -1,0 +1,27 @@
+
+CODI 3 ADRECES
+    - Corregir Node_Express:
+        Generar el codi de left i right → l.r, r.r.
+        Crear temporal t.
+        Crear dues etiquetes e1, e2.
+        Emetre la seqüència exacta de if_XX, copy, goto, skip i deixar com a resultat t.
+
+    - Node Bool_lit
+        Generar copy -1 t, copy 0 t per true i false
+        
+    - Indexacio
+        Ajustar les operacions d'INDEX_VAL i INDEX_ASS
+
+    - Crida a funcions:
+        A Node_Func.generaCodi:
+            Primera instrucció: pmb nomFuncio
+            Codi del cos
+            Instrucció final: rtn nomFuncio (o simplement rtn si així ho decideixes)
+        A Node_Crida_func / Node_Crida_proc:
+            Per cada argument:
+                Si és escalar: param_s operand
+                Si és accés a taula: param_c base index
+            Després: call nomFuncio
+        El retorn de funció:
+            Depèn de la convenció que decideixis: pot ser un temporal reservat per a la funció, 
+            o que la funció posi el resultat a un lloc conegut (per ex. el primer parametre, o una pseudo-variable retval_f).

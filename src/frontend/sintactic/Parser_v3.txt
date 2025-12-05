@@ -1,0 +1,409 @@
+﻿/*-------------------------------------------------------------*
+ * Parser.cup - Analitzador Sintactic i Semantic
+ *-------------------------------------------------------------*/
+ 
+ /*
+  * Autor: Josep Oliver Vallespir
+  * DNI: 78222663P
+  * Curs: 2025-2026
+  * Assignatura: Compiladors I
+  */
+  
+package frontend.sintactic;
+
+import java_cup.runtime.*;
+import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
+import java_cup.runtime.ComplexSymbolFactory.Location;
+import frontend.gestor_errors.*;
+import frontend.ast.*;
+
+
+/* --- CODI DEL PARSER --- */
+parser code {:
+
+	// Metode que es crida quan hiha un error sintactic
+    @Override
+    public void syntax_error(Symbol token_actual) {
+        String missatge;
+        if(token_actual.value == null) {
+            missatge = "Error de sintaxi: El token actual es null, falta algun token.";
+        }else{
+            missatge = "Error de sintaxi. El valor del token es: [" + token_actual.value + "] i no es correcte.";
+        }
+        this.report_error(missatge, token_actual);
+    }
+	
+	// Metode que registra els errors sintactics
+    @Override
+    public void report_error(String missatge, Object token) {
+        GestorError.afegirError(new MissatgeError(
+												TipusError.SINTACTIC, 		// error de tipus sintactic
+												((Symbol) token).left,		// linia del token
+												-1,							// columna del token, -1
+												missatge));					// missatge descriptiu
+    }
+
+	// Metode que gestiona els errors fatals de sintaxi
+    @Override
+    public void report_fatal_error(String missatge, Object info) {
+		System.err.println("Error fatal de sintaxi: " + missatge);
+        this.report_fatal_error(missatge, info);
+    }
+
+	// Metode que es crida quan es produeix un error no recuperable de sintaxi del parser
+    @Override
+    public void unrecovered_syntax_error(Symbol token_actual){
+		String missatge = "Error greu de sintaxi a la linia: " + token_actual.left + ".";
+		this.report_error(missatge, token_actual);
+    }
+:};
+
+/*---------------------------------------------*/
+/*    		    	TERMINALS 			       */
+/*---------------------------------------------*/
+/* Inici i fi de programa */
+terminal Object PROGRAMA;
+terminal Object PROGRAMA_FI;
+
+/* Subprograma */
+terminal Object FUNCIO;
+terminal Object FUNCIO_FI;
+terminal Object RETURN;
+
+/* Condicional i bucles */
+terminal Object IF;
+terminal Object IF_FI;
+terminal Object ELSE;
+terminal Object ELSE_FI;
+terminal Object WHILE;
+terminal Object WHILE_FI;
+terminal Object DO;
+terminal Object DOWHILE;
+
+/* Entrada i sortida */
+terminal Object LLEGIR;
+terminal Object IMPRIMIR;
+
+/* Tipus de dada*/
+terminal Object CONSTANT;
+terminal Object INT;
+terminal Object BOOL;
+terminal Object TAULA;
+
+/* Operadors relacionals */
+terminal Object IGUAL;
+terminal Object NOIGUAL;
+terminal Object MENOR;
+terminal Object MAJOR;
+
+/* Operadors logics */
+terminal Object OR;
+terminal Object AND;
+terminal Object NOT;
+
+/* Operadors aritmetics */
+terminal Object SUMA;
+terminal Object RESTA;
+terminal Object MULT;
+terminal Object DIV;
+
+/* Operador assignacio */
+terminal Object ASSIGN;
+
+/* Delimitadors */
+terminal Object COMA;
+terminal Object LPAREN;
+terminal Object RPAREN;
+terminal Object LBRACKET;
+terminal Object RBRACKET;
+
+/* Començament i Fi de linea */
+terminal Object BEGIN;
+terminal Object FILINEA;
+
+/* Booleans */
+terminal Object BTRUE;
+terminal Object BFALSE;
+
+/* Terminals diferents */
+terminal String ID;
+terminal String NUMERO;
+terminal Character CARACTER;
+terminal Object UMINUS;
+
+/*---------------------------------------------*/
+/*    		      NO TERMINALS 			       */
+/*---------------------------------------------*/
+non terminal Object
+  Peplang, Globs, Decl_glob, Decl_glob_taula,
+  Funcs, Func, Returnv, ParamsOpt, ParamList, Param, Returnfi,
+  Main, Elements, Element,
+  Decl_loc, DeclTailEscalar,
+  Decl_taula, DeclTailTaulaInt, DeclTailTaulaChar, DeclTailTaulaBool,
+  ArrayLitInt, IntElemsOpt, IntElems,
+  ArrayLitChar, CharElemsOpt, CharElems,
+  ArrayLitBool, BoolElemsOpt, BoolElems,
+  Instr, AssignacioRead, Assignacio2,
+  LValue, Ref,
+  If_prog, If_fin, While_prog, DoWhile_prog,
+  Crida_proc, Crida_func, CridaBase,
+  ArgsPrint, ArgsOpt, ArgList, ExpressOpt,
+  Cond, Express,
+  Num, CharLit, BoolLit,
+  Tipusv;
+
+/*---------------------------------------------*/
+/*    		      PRECEDENCIA			       */
+/*---------------------------------------------*/
+precedence right ASSIGN;
+precedence left OR;
+precedence left AND;
+precedence nonassoc IGUAL;
+precedence nonassoc NOIGUAL;
+precedence nonassoc MAJOR;
+precedence nonassoc MENOR;
+precedence left SUMA;
+precedence left RESTA;
+precedence left MULT;
+precedence left DIV;
+precedence right NOT, UMINUS;
+
+/*---------------------------------------------*/
+/*    		      PRODUCCIONS			       */
+/*---------------------------------------------*/
+// Punt d'entrada
+start with Peplang;
+
+// Produccio inicial que permet posar declaracions globals,
+// funcions(subprogrames) i el programa pricipal
+Peplang 			::= Globs Funcs Main																{: RESULT = new Node_Peplang((Node_Globs)$1, (Node_Funcs)$2, (Node_Main)$3); :}
+					;
+
+// Declaracions globals fora de programa principal
+// nomes poden ser constants (normes de peplang)
+Globs				::= Globs Decl_glob																	{: RESULT = new Node_Globs((Node_Globs)$1, (Node_Decl_glob)$2); :}
+					|																					{: RESULT = null; :}
+					;
+
+// constants escalares i TAULES tipades
+Decl_glob           ::= CONSTANT Tipusv:t ID:id ASSIGN Express:e FILINEA								{: RESULT = new Node_Decl_glob_escalar((Node_Tipusv)t, (String)id, (Node_Express)e); :}
+                    | Decl_glob_taula FILINEA															{: RESULT = (Node_Decl_glob_taula)$1; :}	  // --------------------------		
+					;
+
+Decl_glob_taula     ::= CONSTANT TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail			{: RESULT = new Node_Decl_glob_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
+                    | CONSTANT TAULA CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail		{: RESULT = new Node_Decl_glob_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
+                    | CONSTANT TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail			{: RESULT = new Node_Decl_glob_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
+					;
+
+// --- FUNCIONS
+Funcs               ::= Funcs Func																		{: RESULT = new Node_Funcs((Node_Funcs)$1, (Node_Func)$2); :}
+                    |																					{: RESULT = null; :}
+					;
+
+Func                ::= FUNCIO Returnv:rv ID:id LPAREN ParamsOpt:p RPAREN BEGIN Elements:e Returnfi:ret FUNCIO_FI		
+																										{: RESULT = new Node_Func((Node_Returnv)rv, (String)id, (Node_ParamsOpt)p, (Node_Elements)e, (Node_Returnfi)ret); :}
+					;
+
+Returnv            	::= Tipusv 																			{: RESULT = new Node_Returnv((Node_Tipusv)$1); :}
+					|																					{: RESULT = null; :}
+					;
+					
+ParamsOpt          	::= ParamList																		{: RESULT = new Node_ParamsOpt((Node_ParamList)$1); :}
+					|																					{: RESULT = null; :}
+					;
+					
+ParamList          	::= Param																			{: RESULT = new Node_ParamList(null, (Node_Param)$1); :}
+					| ParamList COMA Param																{: RESULT = new Node_ParamList((Node_ParamList)$1, (Node_Param)$3); :}
+					;
+					
+Param              	::= Tipusv ID																		{: RESULT = new Node_Param((Node_Tipusv)$1, (String)$2); :}
+					;
+					
+Returnfi           	::= RETURN ExpressOpt FILINEA 														{: RESULT = new Node_Returnfi((Node_Express)$2); :}
+					|																					{: RESULT = null; :}
+					;
+
+// --------------------------------------------------------
+// --- PROGRAMA
+Main               	::= PROGRAMA BEGIN Elements PROGRAMA_FI												{: RESULT = new Node_Main((Node_Elements)$3); :}
+					;
+
+// --- BLOCS (decl + instruccions barrejades) 
+Elements           	::= Elements Element																{: RESULT = new Node_Elements((Node_Elements)$1, (Node_Element)$2); :}
+					|																					{: RESULT = null; :}
+					;
+
+Element            	::= Decl_loc																		{: RESULT = new Node_Element("decl", (Node_Decl_loc)$1); :}
+					| Instr																				{: RESULT = new Node_Element("instr", (Node_Instr)$1); :}
+					;
+
+// --- DECLARACIONS LOCALS
+// Escalares
+Decl_loc           	::= Tipusv ID DeclTailEscalar FILINEA												{: RESULT = new Node_Decl_loc_escalar((Node_Tipusv)$1, (String)$2, (Node_DeclTailEscalar)$3); :}
+                    | Decl_taula FILINEA																{: RESULT = (Node_Decl_loc_taula)$1; :}  // --------------------------
+					;
+					
+DeclTailEscalar    	::= ASSIGN Express																	{: RESULT = new Node_DeclTailEscalar("assign", (Node_Express)$2); :}
+                    | ASSIGN LLEGIR LPAREN RPAREN														{: RESULT = new Node_DeclTailEscalar("llegir", null); :}
+                    |																					{: RESULT = null; :}
+					;
+
+// TAULES tipades locals 
+Decl_taula         	::= TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail					{: RESULT = new Node_Decl_loc_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
+                    | TAULA CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail				{: RESULT = new Node_Decl_loc_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
+                    | TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail					{: RESULT = new Node_Decl_loc_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
+					;
+
+DeclTailTaulaInt   	::= ASSIGN ArrayLitInt:a 															{: RESULT = new Node_DeclTailTaulaInt((Node_ArrayLitInt)a); :}
+					|																					{: RESULT = null; :}
+					;
+					
+DeclTailTaulaChar  	::= ASSIGN ArrayLitChar:a 															{: RESULT = new Node_DeclTailTaulaChar((Node_ArrayLitChar)a); :}
+					|																					{: RESULT = null; :}
+					;
+					
+DeclTailTaulaBool  	::= ASSIGN ArrayLitBool:a 															{: RESULT = new Node_DeclTailTaulaBool((Node_ArrayLitBool)a); :}
+					|																					{: RESULT = null; :}
+					;
+
+// Literals de taula per tipus (elements literals del mateix tipus)
+	// INT
+ArrayLitInt        	::= LBRACKET IntElemsOpt RBRACKET													{: RESULT = new Node_ArrayLitInt((Node_IntElemsOpt)$2); :}
+					;
+					
+IntElemsOpt        	::= IntElems																		{: RESULT = (Node_IntElemsOpt)$1; :}  // --------------------------
+					|																					{: RESULT = null; :}
+					;
+					
+IntElems           	::= Num																				{: RESULT = new Node_IntElems(null, (Node_Num)$1); :}
+					| IntElems COMA Num																	{: RESULT = new Node_IntElems((Node_IntElems)$1, (Node_Num)$3); :}
+					;
+
+	// CHAR
+ArrayLitChar       	::= LBRACKET CharElemsOpt RBRACKET													{: RESULT = new Node_ArrayLitChar((Node_CharElemsOpt)$2); :}											
+					;                                                                                   
+					                                                                                    
+CharElemsOpt       	::= CharElems                                                                       {: RESULT = (Node_CharElemsOpt)$1; :}  // --------------------------
+					|                                                                                   {: RESULT = null; :}
+					;                                                                                   
+                                                                                                        
+CharElems          	::= CharLit                                                                         {: RESULT = new Node_CharElems(null, (Node_CharLit)$1); :}
+					| CharElems COMA CharLit                                                            {: RESULT = new Node_CharElems((Node_CharElems)$1, (Node_CharLit)$3); :}
+					;
+
+	// BOOL
+ArrayLitBool       	::= LBRACKET BoolElemsOpt RBRACKET													{: RESULT = new Node_ArrayLitBool((Node_BoolElemsOpt)$2); :}
+					;                                                                                   
+					                                                                                    
+BoolElemsOpt       	::= BoolElems                                                                       {: RESULT = (Node_BoolElemsOpt)$1; :} // --------------------------
+					|                                                                                   {: RESULT = null; :}
+					;                                                                                   
+                                                                                                        
+BoolElems          	::= BoolLit                                                                         {: RESULT = new Node_BoolElems(null, (Node_BoolLit)$1); :}
+					| BoolElems COMA BoolLit                                                            {: RESULT = new Node_BoolElems((Node_BoolElems)$1, (Node_BoolLit)$3); :}
+					;
+
+/* --- INSTRUCCIONS --- */
+Instr              	::= If_prog																			{: RESULT = new Node_Instr((Node_If_prog)$1); :}
+                    | While_prog																		{: RESULT = new Node_Instr((Node_While_prog)$1); :}
+                    | DoWhile_prog																		{: RESULT = new Node_Instr((Node_DoWhile_prog)$1); :}
+                    | AssignacioRead FILINEA /* x = llegir();  o  a[i] = llegir(); */					{: RESULT = new Node_Instr((Node_AssignacioRead)$1); :}
+                    | Assignacio2 FILINEA /* x = expr;      o  a[i] = expr;     */						{: RESULT = new Node_Instr((Node_Assignacio2)$1); :}
+                    | Crida_proc FILINEA																{: RESULT = new Node_Instr((Node_Crida_proc)$1); :}
+                    /* | RETURN ExpressOpt FILINEA */
+					;
+
+AssignacioRead     	::= LValue ASSIGN LLEGIR LPAREN RPAREN												{: RESULT = new Node_AssignacioRead((Node_LValue)$1); :}
+					;
+Assignacio2        	::= LValue ASSIGN Express															{: RESULT = new Node_Assignacio2((Node_LValue)$1, (Node_Express)$3); :}
+					;
+
+/* LHS: variable o element de taula (admet multiples [expr]) */
+LValue             	::= Ref																				{: RESULT = new Node_LValue((Node_Ref)$1); :}
+					;
+					
+Ref                	::= ID:id																			{: RESULT = new Node_Ref((String)id); :}
+                    | Ref LBRACKET Express RBRACKET														{: RESULT = new Node_Ref((Node_Ref)$1, (Node_Express)$3); :}
+					;
+
+/* --- CONTROL DE FLUX --- */
+If_prog            	::= IF LPAREN Cond:c RPAREN BEGIN Elements:e If_fin:f								{: RESULT = new Node_If_prog((Node_Cond)c, (Node_Elements)e, (Node_If_fin)f); :}
+					;
+If_fin             	::= IF_FI																			{: RESULT = new Node_If_fin(null); :}
+					| ELSE BEGIN Elements:e ELSE_FI														{: RESULT = new Node_If_fin((Node_Elements)e); :}
+					;
+					
+While_prog         	::= WHILE LPAREN Cond:c RPAREN BEGIN Elements:e WHILE_FI							{: RESULT = new Node_While_prog((Node_Cond)c, (Node_Elements)e); :}
+					;
+					
+DoWhile_prog       	::= DO BEGIN Elements:e DOWHILE LPAREN Cond:c RPAREN FILINEA						{: RESULT = new Node_DoWhile_prog((Node_Elements)e, (Node_Cond)c); :}
+					;
+
+/* --- CRIDES --- */
+Crida_proc         	::= IMPRIMIR LPAREN ArgsPrint RPAREN												{: RESULT = new Node_Crida_proc((Node_ArgsPrint)$3, null); :}
+                    | CridaBase																			{: RESULT = new Node_Crida_proc(null, (Node_CridaBase)$1); :}
+					;
+
+Crida_func         	::= CridaBase																		{: RESULT = new Node_Crida_func((Node_CridaBase)$1); :}
+					;
+
+CridaBase          	::= ID:id LPAREN ArgsOpt:a RPAREN													{: RESULT = new Node_CridaBase((String)id, (Node_ArgsOpt)a); :}
+					;
+
+ArgsPrint          	::= ArgList																			{: RESULT = new Node_ArgsPrint((Node_ArgList)$1); :}
+					|																					{: RESULT = null; :}
+					;
+					
+ArgsOpt            	::= ArgList																			{: RESULT = new Node_ArgsOpt((Node_ArgList)$1); :}
+					|																					{: RESULT = null; :}
+					;
+					
+ArgList            	::= Express																			{: RESULT = new Node_ArgList(null, (Node_Express)$1); :}
+					| ArgList COMA Express																{: RESULT = new Node_ArgList((Node_ArgList)$1, (Node_Express)$3); :}
+					;
+					
+ExpressOpt         	::= Express:e 																		{: RESULT = (Node_Express)e; :}
+					|																					{: RESULT = null; :}
+					;
+
+/* --- EXPRESSIONS --- */
+Cond               	::= Express																			{: RESULT = new Node_Cond((Node_Express)$1); :}
+					;
+
+Express            	::= Express SUMA Express															{: RESULT = new Node_Express(Operador.SUMA, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express RESTA Express																{: RESULT = new Node_Express(Operador.RESTA, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express MULT Express																{: RESULT = new Node_Express(Operador.MULT, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express DIV Express																{: RESULT = new Node_Express(Operador.DIV, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express AND Express																{: RESULT = new Node_Express(Operador.AND, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express OR  Express																{: RESULT = new Node_Express(Operador.OR, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express IGUAL Express																{: RESULT = new Node_Express(Operador.IGUAL, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express NOIGUAL Express															{: RESULT = new Node_Express(Operador.NOIGUAL, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express MENOR Express																{: RESULT = new Node_Express(Operador.MENOR, (Node_Express)$1, (Node_Express)$3); :}
+                    | Express MAJOR Express																{: RESULT = new Node_Express(Operador.MAJOR, (Node_Express)$1, (Node_Express)$3); :}
+                    | NOT Express                          /* negacio logica     */						{: RESULT = new Node_Express(Operador.NOT, (Node_Express)$2); :}
+                    | RESTA Express %prec UMINUS           /* signe negatiu num. */						{: RESULT = new Node_Express(Operador.UMINUS, (Node_Express)$2); :}
+                    | LPAREN Express RPAREN																{: RESULT = new Node_Express(Operador.PAREN, (Node_Express)$2); :}
+                    | Ref                                   /* ID o a[i]         */						{: RESULT = new Node_Express(Operador.REF, (Node_Ref)$1); :}
+                    | Num																				{: RESULT = new Node_Express(Operador.NUM, (Node_Num)$1); :}
+					| CharLit																			{: RESULT = new Node_Express(Operador.CHAR, (Node_CharLit)$1); :}
+					| BoolLit																			{: RESULT = new Node_Express(Operador.BOOL, (Node_BoolLit)$1); :}
+                    | Crida_func                           /* (NO inclou llegir) */						{: RESULT = new Node_Express(Operador.CRIDA, (Node_Crida_func)$1); :}
+					;
+					
+/* --- LITERALS I TIPUS --- */
+Num                	::= NUMERO:n																		{: RESULT = new Node_Num((String)n); :}
+					;
+					
+CharLit            	::= CARACTER:c																		{: RESULT = new Node_CharLit((Character)c); :}
+					;
+					
+BoolLit            	::= BTRUE																			{: RESULT = new Node_BoolLit("true"); :}
+					| BFALSE																			{: RESULT = new Node_BoolLit("false"); :}
+					;
+
+Tipusv             	::= INT																				{: RESULT = new Node_Tipusv("INT"); :}
+					| CARACTER																			{: RESULT = new Node_Tipusv("CARACTER"); :}
+					| BOOL																				{: RESULT = new Node_Tipusv("BOOL"); :}
+					;
+
+
