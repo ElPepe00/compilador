@@ -33,33 +33,37 @@ public class Node_Func extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
-        // 1) Tipus de retorn
+        // 1. Tipus de retorn
         TipusSimbol tRetorn = (returnv != null ? returnv.getSymbolType() : TipusSimbol.VOID);
 
-        // 2) Categoria funció/procediment
+        // 2. Categoria funció/procediment
         CategoriaSimbol cat = (tRetorn == TipusSimbol.VOID ? CategoriaSimbol.PROCEDIMENT : CategoriaSimbol.FUNCIO);
 
-        // 3) Donar d'alta la funció al nivell global
-        Simbol funcSym = new Simbol(id, tRetorn, cat, 0, 0);
-        funcSym.setGlobal(true);
+        // 3. Crear simbol de la funcio global
+        Simbol funcSym = new Simbol(id, tRetorn, cat);
         funcSym.setEtiqueta("f_" + id);
 
-        TaulaSimbols.afegirSimbol(funcSym);
+        // afegim el simbol de funcio a la TS
+        ts.afegirSimbol(funcSym);
 
-        // 4) Entrar àmbit nou per al cos de la funció
-        TaulaSimbols.entrarBloc();
+        // 4. Entrar àmbit nou per al cos de la funció
+        ts.entrarFuncio();
 
-        // 5) Donar d'alta paràmetres (com a variables/params locals)
+        // 5. Registrar parametres
         if (paramsOpt != null) {
             paramsOpt.registrarParametres(ts, funcSym);
         }
 
-        // 6) Analitzar semàntica de declaracions i instruccions del cos
+        // 5. Comprovam si hiha elements
         if (elements != null) {
             elements.gestioSemantica(ts);
         }
 
-        // 7) Comprovar RETURN coherent
+        // 6. Guardam la mida del frame
+        int midaFrameTotal = ts.getOffsetActual();
+        funcSym.setMidaFrame(midaFrameTotal);
+        
+        // 7. Comprovam si te return
         if (returnfi != null) {
             returnfi.gestioSemantica(ts, tRetorn);
             
@@ -69,7 +73,7 @@ public class Node_Func extends Node {
         }
 
         // 8) Sortir de l'àmbit de la funció
-        TaulaSimbols.sortirBloc();
+        ts.sortirBloc();
     }
 
     @Override
