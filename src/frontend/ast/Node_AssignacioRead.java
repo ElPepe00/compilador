@@ -42,7 +42,7 @@ public class Node_AssignacioRead extends Node {
 
         // Marcam la variable com "assignada"
         String idBase = lvalue.getRef().getIdBase();
-        Simbol s = TaulaSimbols.cercaSimbol(idBase);
+        Simbol s = TaulaSimbols.cercarSimbol(idBase);
         if (s != null) {
             s.setAssignacio(Boolean.TRUE);
         }

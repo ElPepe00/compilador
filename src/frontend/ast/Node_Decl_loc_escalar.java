@@ -35,7 +35,7 @@ public class Node_Decl_loc_escalar extends Node_Decl_loc {
         Simbol s = new Simbol(id, tVar, CategoriaSimbol.VARIABLE, 0, mida);
         s.setGlobal(false);
         
-        TaulaSimbols.inserirSimbol(s);
+        TaulaSimbols.afegirSimbol(s);
         
         if (tail != null) {
             tail.gestioSemantica(ts);

@@ -43,7 +43,7 @@ public class Node_CridaBase extends Node {
      * @return tipus de retorn del subprograma (VOID per procediment)
      */
     public TipusSimbol comprovarCrida(TaulaSimbols ts, boolean comFuncio) {
-        Simbol s = TaulaSimbols.cercaSimbol(id);
+        Simbol s = TaulaSimbols.cercarSimbol(id);
         if (s == null) {
             throw new RuntimeException("Crida a subprograma no declarat: " + id);
         }

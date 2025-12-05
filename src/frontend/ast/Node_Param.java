@@ -42,7 +42,7 @@ public class Node_Param extends Node {
         // 1) Donar d'alta el símbol del paràmetre a la TS
         Simbol paramSym = new Simbol(id, t, CategoriaSimbol.PARAMETRE, 0, mida);
         paramSym.setGlobal(false);
-        TaulaSimbols.inserirSimbol(paramSym);
+        TaulaSimbols.afegirSimbol(paramSym);
 
         // 2) Afegir el tipus a la signatura de la funció
         funcSym.getArguments().add(t);

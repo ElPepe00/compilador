@@ -79,7 +79,7 @@ public class CompiladorMain {
             System.out.println("\n --- ANALISI SEMANTICA:");
             
             TaulaSimbols ts = new TaulaSimbols();
-            TaulaSimbols.entrarSubAmbit();
+            TaulaSimbols.entrarBloc();
             
             arrel.gestioSemantica(ts);
 

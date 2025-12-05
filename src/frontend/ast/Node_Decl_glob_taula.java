@@ -74,7 +74,7 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
         s.setArray(true);
         s.setMidaArray(nElems);
         
-        TaulaSimbols.inserirSimbol(s);
+        TaulaSimbols.afegirSimbol(s);
         
         if (tipusBase.equals("INT") && tailInt != null) {
             tailInt.gestioSemantica(ts, nElems);

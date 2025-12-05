@@ -16,26 +16,36 @@ import java.util.*;
  */
 public class Simbol {
     
-    private String nomSimbol;                   // nom del simbol
+    // Informacio basica
+    private String nom;                         // nom del simbol
     private TipusSimbol tipus;                  // INT, BOOL, CHAR, TAULA_INT...
     private CategoriaSimbol categoria;          // VARIABLE, CONSTANT, PARAMENTRE, FUNCIO...
+    
+    // Informacio per estructura 
     private int valor;                          // per constants o informacio extra
     private int ocupacio;                       // bytes: 4 int/bool, 1 char, N*4 int array...
 
-    // Paràmetres formals de les funcions o procediments
-    private ArrayList<Parametre> parametres;
-    // Tipus d'arguments (per comprovar crides)
-    private ArrayList<TipusSimbol> arguments;
-    // Indica si una variable s'ha emprat a una assignacio o no
-    private boolean assignacio;
-    
-    // Camps per le codi intermedi C3@
-    private int offset;                         // offset dins el frame
-    private boolean esGlobal;                   // true si declarat al nivell global
-    private boolean esArray;                    // true si és taula
+    // Per arrays
+    private boolean esArray;                    // boolea que determina si el simbol es una taula
     private int midaArray;                      // nombre d'elements (no bytes)
-    private String etiqueta;                    // label per a salt (ex: "f_main")
+    
+    // Per funcions o procediments
+    private ArrayList<Parametre> llistaParametres;  // llista detallada dels parametres
+    private ArrayList<TipusSimbol> arguments;       // domes per els tipus, per comprovar crides
+    
+    
+    // --- DADES PER C3@ ---
+    
+    // Per variables i parametres
+    private int offset;                         // direccio relativa dins la pila
+    private String ambit;                       // nom del procediment al que pertany
+    private boolean esGlobal;                   // Si es global
+    private int posicioParam;                   // la posicio del parametre que ocupa
 
+    // Per funcions i procediments
+    private int midaFrame;                      // tamany total de les variables locals
+    private String etiqueta;                    // nom de l'etiqueta
+    private int instrInici;                     // numero d'instruccio d'inici (optimitzacio, opcional)
     
     // --- CONSTRUCTOR ---
     /**
@@ -43,149 +53,163 @@ public class Simbol {
      * @param nomSimbol
      * @param tipus
      * @param categoria
-     * @param valor
-     * @param ocupacio 
      */
-    public Simbol(String nomSimbol, TipusSimbol tipus, CategoriaSimbol categoria, int valor, int ocupacio) {
-        this.nomSimbol = nomSimbol;
+    public Simbol(String nomSimbol, TipusSimbol tipus, CategoriaSimbol categoria) {
+        this.nom = nomSimbol;
         this.tipus = tipus;
         this.categoria = categoria;
-        this.valor = valor;
-        this.ocupacio = ocupacio;
-        this.parametres = new ArrayList<>();
+        this.llistaParametres = new ArrayList<>();
         this.arguments = new ArrayList<>();
-        this.assignacio = false;
-        
-        this.offset = 0;
-        this.esGlobal = false;
-        this.esArray = false;
-        this.midaArray = 0;
-        this.etiqueta = null;
+        this.ambit = "GLOBAL"; //per defecte
     }
 
     // --- METODES GETTER I SETTER ---
     public String getNom() {
-        return nomSimbol;
+        return nom;
     }
-    
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
     public TipusSimbol getTipus() {
         return tipus;
+    }
+
+    public void setTipus(TipusSimbol tipus) {
+        this.tipus = tipus;
     }
 
     public CategoriaSimbol getCategoria() {
         return categoria;
     }
 
-    public int getValor() {
-        return valor;
-    }
-    
-    public int getOcupacio() {
-        return ocupacio;
-    }
-    
-    public int getOffset() {
-        return offset;
-    }
-    
-    public boolean isGlobal() {
-        return esGlobal;
-    }
-
-    public boolean isArray() {
-        return esArray;
-    }
-    
-    public int getMidaArray() {
-        return midaArray;
-    }   
-    
-    public ArrayList<TipusSimbol> getArguments() {
-        return arguments;
-    }
-    
-    public ArrayList<Parametre> getParametres() {
-        return parametres;
-    }
-    
-    public boolean getAssigacio() {
-        return assignacio;
-    }
-    
-    public String getEtiqueta() {
-        return etiqueta;
-    }
-    
-    
-    //---
-    
-    public void setNom(String nomSimbol) {
-        this.nomSimbol = nomSimbol;
-    }
-        
-    public void setTipus(TipusSimbol tipus) {
-        this.tipus = tipus;
-    }
-    
     public void setCategoria(CategoriaSimbol categoria) {
         this.categoria = categoria;
+    }
+
+    public int getValor() {
+        return valor;
     }
 
     public void setValor(int valor) {
         this.valor = valor;
     }
 
+    public int getOcupacio() {
+        return ocupacio;
+    }
+
     public void setOcupacio(int ocupacio) {
         this.ocupacio = ocupacio;
+    }
+
+    public boolean isEsArray() {
+        return esArray;
+    }
+
+    public void setEsArray(boolean esArray) {
+        this.esArray = esArray;
+    }
+
+    public int getMidaArray() {
+        return midaArray;
+    }
+
+    public void setMidaArray(int midaArray) {
+        this.midaArray = midaArray;
+    }
+
+    public ArrayList<Parametre> getLlistaParametres() {
+        return llistaParametres;
+    }
+
+    public void setLlistaParametres(ArrayList<Parametre> llistaParametres) {
+        this.llistaParametres = llistaParametres;
+    }
+
+    public ArrayList<TipusSimbol> getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(ArrayList<TipusSimbol> arguments) {
+        this.arguments = arguments;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     public void setOffset(int offset) {
         this.offset = offset;
     }
 
-    public void setGlobal(boolean esGlobal) {
+    public String getAmbit() {
+        return ambit;
+    }
+
+    public void setAmbit(String ambit) {
+        this.ambit = ambit;
+    }
+
+    public boolean isEsGlobal() {
+        return esGlobal;
+    }
+
+    public void setEsGlobal(boolean esGlobal) {
         this.esGlobal = esGlobal;
     }
-    
-    public void setArray(boolean esArray) {
-        this.esArray = esArray;
+
+    public int getPosicioParam() {
+        return posicioParam;
     }
 
-    public void setMidaArray(int midaArray) {
-        this.midaArray = midaArray;
-    }
-    
-    public void setArguments(ArrayList<TipusSimbol> arguments) {
-        this.arguments = arguments;
+    public void setPosicioParam(int posicioParam) {
+        this.posicioParam = posicioParam;
     }
 
-    public void setParametres(ArrayList<Parametre> param) {
-        this.parametres = param;
+    public int getMidaFrame() {
+        return midaFrame;
     }
-    
-    public void setAssignacio(boolean b) {
-        this.assignacio = b;
+
+    public void setMidaFrame(int midaFrame) {
+        this.midaFrame = midaFrame;
+    }
+
+    public String getEtiqueta() {
+        return etiqueta;
     }
 
     public void setEtiqueta(String etiqueta) {
         this.etiqueta = etiqueta;
     }
 
-    // toString
+    public int getInstrInici() {
+        return instrInici;
+    }
+
+    public void setInstrInici(int instrInici) {
+        this.instrInici = instrInici;
+    }
+    
+    // Métodes per accedir a les llistes
+    public void addParametre(Parametre p) {
+        this.llistaParametres.add(p);
+    }
+    
+    public void addArgument(TipusSimbol t) {
+        this.arguments.add(t);
+    }
+
+    // --- MÈTODE toString() ---
     @Override
     public String toString() {
-        return String.format(
-        "%s [tipus=%s, cat=%s, valor=%s, ocupacio=%s%s%s%s%s]",
-        nomSimbol,
+        return String.format("%s [tipus=%s, cat=%s | offset=%s, ambit=%s]",
+        nom,
         tipus,
         categoria,
-        valor,
-        ocupacio,
-        esGlobal ? ", global" : "",
-        esArray  ? String.format(", array(mida=%d)", midaArray) : "",
-        offset != 0 ? String.format(", offset=%d", offset) : "",
-        !parametres.isEmpty() ? String.format(", params=%s", parametres) : "",
-        etiqueta != null ? String.format(", etq=%s", etiqueta) : ""
+        offset,
+        ambit
         );
     }
 }

@@ -26,13 +26,13 @@ public class Node_Main extends Node {
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
         // Àmbit propi per al main
-        TaulaSimbols.entrarSubAmbit();
+        TaulaSimbols.entrarBloc();
 
         if (elements != null) {
             elements.gestioSemantica(ts);
         }
 
-        TaulaSimbols.sortirSubAmbit();
+        TaulaSimbols.sortirBloc();
     }
 
     @Override

@@ -23,10 +23,15 @@ import java.util.*;
 public class TaulaSimbols {
     
     // Pila de taules per a cada ambit local (ambits actius)
-    private static Stack<Hashtable<String, Simbol>> vars;
+    private static Stack<HashMap<String, Simbol>> pilaAmbits;
     
-    // Pila de taules ampliada/completa (guarda tot l'historial dels Simbols)
-    private static Stack<Hashtable<String, Simbol>> taulaFinal;
+    // Pila per controlar l'offset actual de cada ambit
+    // (el top de la pila és l'offset disponible actual)
+    private static Stack<Integer> pilaOffsets;
+    
+    // Llista completa de tots els simbols introduits a la TS
+    // (guarda tot l'historial dels Simbols)
+    private static ArrayList<Simbol> taulaCompleta;
     
     
     // --- CONSTRUCTOR ---
@@ -34,8 +39,9 @@ public class TaulaSimbols {
      * Contructor de la taula de simbols
      */
     public TaulaSimbols() {
-        vars = new Stack<>();
-        taulaFinal = new Stack<>();
+        pilaAmbits = new Stack<>();
+        pilaOffsets = new Stack<>();
+        taulaCompleta = new ArrayList<>();
     }
     
     
@@ -44,29 +50,27 @@ public class TaulaSimbols {
     /**
      * Crea un subambit i afegeix una nova taula hash a la pila
      */
-    public static void entrarSubAmbit() {
-        vars.push(new Hashtable<>());
-        taulaFinal.push(new Hashtable<>());
+    public static void entrarBloc() {
+        pilaAmbits.push(new HashMap<>());
+        
+        // Si es un bloc anonim seguim amb l'offset anterior, si es una funció
+        // hem de resetear
+        int offsetActual = pilaOffsets.isEmpty() ? 0 : pilaOffsets.peek();
+        pilaOffsets.push(offsetActual);
     }
     
     /**
      * Elimina l'àmbit actual sortit del subambit
-     * La taulaFinal no es surt del subambit
      */
-    public static void sortirSubAmbit() {
-        if (!vars.isEmpty()) {
-            vars.pop();
+    public static void sortirBloc() {
+        if (!pilaAmbits.isEmpty()) {
+            pilaAmbits.pop();
         }
+        
+        // Quan sortim del bloc recuperam el tamany total empleat (opcional)
+        int midaFinalBloc = pilaOffsets.pop();
     }
-    
-    /**
-     * Retorna el nivell actual d'ambit (0 és el primer creat)
-     * @return 
-     */
-    public static int getNivellActual() {
-        return vars.size() - 1;
-    }
-    
+
     
     // --- METODES GESTIO SIMBOLS ---
     
@@ -74,38 +78,31 @@ public class TaulaSimbols {
      * Afegeix un simbol a l'ambit actual passant l'objecte Simbol
      * @param simbol objecte que es vol inserir a la taula
      */
-    public static void inserirSimbol(Simbol simbol) {
+    public static void afegirSimbol(Simbol simbol) {
         
-        if(simbolJaExisteixSubAmbitActual(simbol.getNom())) {
-            throw new RuntimeException("Error inserirSimbol(): El simbol " + simbol.getNom() + " ja existeix.");
+        if(pilaAmbits.peek().containsKey(simbol.getNom())) {
+            throw new RuntimeException("Error inserirSimbol(): El simbol " + simbol.getNom() + " ja existeix a n'aquest ambit.");
         }
         
-        // Posam el simbol a la pila d'ambits
-        vars.peek().put(simbol.getNom(), simbol);
-        // Posam el simbol a la taula
-        taulaFinal.peek().put(simbol.getNom(), simbol);
-    }
-    
-    /**
-     * Afegeix un simbol a l'ambit actual passant tots els parametres d'un simbol
-     * @param nomS Nom del simbol (id)
-     * @param tipusS Tipus del simbol (INT, BOOL, CARACTER, TAULA)
-     * @param catS Categoria del simbol (VARIABLE, CONSTANT, FUNCIO...)
-     * @param valor Valor associat per constants, altres 0
-     * @param ocup Bytes que ocupa el simbol
-     */
-    public static void inserirSimbol(String nomS, TipusSimbol tipusS, CategoriaSimbol catS, int valor, int ocup) {
-        
-        Simbol simbol = new Simbol(nomS, tipusS, catS, valor, ocup);
-        
-        if(simbolJaExisteixSubAmbitActual(simbol.getNom())) {
-            throw new RuntimeException("Error inserirSimbol(): El simbol " + simbol.getNom() + " ja existeix.");
+        if (simbol.getCategoria() == CategoriaSimbol.VARIABLE 
+            || simbol.getCategoria() == CategoriaSimbol.PARAMETRE) {
+            
+            // Obtenim l'offset actual i l'assignam
+            int actualOffset = pilaOffsets.pop();
+            simbol.setOffset(actualOffset);
+            
+            // Calculam el següent offset disponible i el guardam
+            int nouOffset = actualOffset + simbol.getOcupacio();
+            pilaOffsets.push(nouOffset);
+            
+            //Guardam informacio extra
+            simbol.setAmbit(getNivellActual() == 0 ? "GLOBAL" : "LOCAL");
+            simbol.setEsGlobal(getNivellActual() == 0);
         }
         
-        // Posam el simbol a la pila d'ambits
-        vars.peek().put(nomS, simbol);
-        // Posam el simbol a la taula
-        taulaFinal.peek().put(nomS, simbol);
+        // Guardam
+        pilaAmbits.peek().put(simbol.getNom(), simbol);
+        taulaCompleta.add(simbol);
     }
     
     /**
@@ -114,130 +111,168 @@ public class TaulaSimbols {
      * @param nomSimbol nom del simbol a cercar
      * @return retorna el simbol si s'ha trobat sino null
      */
-    public static Simbol cercaSimbol(String nomSimbol) {
+    public static Simbol cercarSimbol(String nom) {
         
         // Es recorre des del subàmbit més intern (top) fins al global (bottom)
-        for (int i = vars.size() - 1; i >= 0; i--) {
+        for (int i = pilaAmbits.size() - 1; i >= 0; i--) {
             
-            Hashtable<String, Simbol> ambit = vars.get(i);
-            
-            if (ambit.containsKey(nomSimbol)) {
-                return ambit.get(nomSimbol);
+            if (pilaAmbits.get(i).containsKey(nom)) {
+                return pilaAmbits.get(i).get(nom);
             }
         }
         return null;
     }
     
-    /**
-     * Obte un simbol únicament de l'àmbit actual
-     * @param nomSimbol Nom del simbol
-     * @return retorna el simbol si es trobat
-     */
-    public static Simbol obtenirSimbolSubAmbitActual(String nomSimbol) {
-        
-        if (vars.isEmpty()) {
-            return null;
-        }
-        
-        return vars.peek().get(nomSimbol);
+    
+    // Método especial para iniciar una función (resetea el offset)
+    public void entrarFuncio() {
+        pilaAmbits.push(new HashMap<>());
+        pilaOffsets.push(0); // El offset local empieza en 0 para cada función
     }
     
     /**
-     * Comprova si a l'ambit actual ja hiha un simbol amb aquest nom
-     * @param nomSimbol nom del simbol a comprovar
-     * @return retorna true si hiha un simbol amb el mateix nom
+     * Retorna el nivell actual d'ambit (0 és el primer creat)
+     * @return 
      */
-    public static boolean simbolJaExisteixSubAmbitActual(String nomSimbol) {
-        
-        if (vars.isEmpty()) {
-            return false;
-        }
-        
-        Hashtable<String, Simbol> ambitActual = vars.peek();
-        
-        return ambitActual.containsKey(nomSimbol);
+    public static int getNivellActual() {
+        return pilaAmbits.size() - 1;
     }
     
-    
-    // --- FUNCIONS DE SUPORT ---
-
     /**
-     * Retorna tots els símbols de tots els àmbits (històric complet),
-     * útil per construir la "taula de variables" o la "taula de procediments".
+     * Retorna el tamany d'offset actual
+     * @return 
      */
-    public static List<Simbol> obtenirTotsElsSimbols() {
-        List<Simbol> llista = new ArrayList<>();
-
-        for (Hashtable<String, Simbol> scope : taulaFinal) {
-            llista.addAll(scope.values());
-        }
-        return llista;
-    }
-
-    /**
-     * Retorna tots els símbols d'una categoria concreta
-     * (per exemple, totes les VARIABLES, tots els PROC/FUNCIO, etc.).
-     */
-    public static List<Simbol> obtenirSimbolsPerCategoria(CategoriaSimbol categoria) {
-        List<Simbol> llista = new ArrayList<>();
-
-        for (Hashtable<String, Simbol> scope : taulaFinal) {
-            for (Simbol s : scope.values()) {
-                if (s.getCategoria() == categoria) {
-                    llista.add(s);
-                }
-            }
-        }
-        return llista;
+    public int getOffsetActual() {
+        return pilaOffsets.peek();
     }
     
     // --- EXPORTACIÓ I VISUALITZACIÓ DE TAULA DE SIMBOLS ---
+    
+    public ArrayList<Simbol> getTotesLesVariables() {
+        ArrayList<Simbol> vars = new ArrayList<>();
+        for (Simbol s : taulaCompleta) {
+            if (s.getCategoria() == CategoriaSimbol.VARIABLE || s.getCategoria() == CategoriaSimbol.PARAMETRE) {
+                vars.add(s);
+            }
+        }
+        return vars;
+    }
+
+    public ArrayList<Simbol> getTotsElsProcediments() {
+        ArrayList<Simbol> procs = new ArrayList<>();
+        for (Simbol s : taulaCompleta) {
+            if (s.getCategoria() == CategoriaSimbol.FUNCIO || s.getCategoria() == CategoriaSimbol.PROCEDIMENT) {
+                procs.add(s);
+            }
+        }
+        return procs;
+    }
+    
     
     /**
      * Guarda el fitxer de la taula de simbols
      * @param nomFitxer nom del fitxer de sortida
      */
-    public static void guardarTaulaSimbols(String nomFitxer) {
+    public void guardarTaulaSimbols(String nomFitxer) {
         
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(nomFitxer));
-            
-            for (int i = 0; i < taulaFinal.size(); i++) {
-                
-                Hashtable<String, Simbol> ambitActual = taulaFinal.get(i);
-                
-                if (i == 0) {
-                    bw.write("Ambit " + i + ": Global\n");
-                } else {
-                    bw.write("Ambit " + i + ":\n");
-                }
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomFitxer))) {
+            bw.write(this.toString());
+            System.out.println("   > Taula de Símbols guardada a: " + nomFitxer);
+        } catch (IOException e) {
+            System.err.println("Error guardant Taula de Símbols: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Genera el fitxer específic de VARIABLES (per al Backend / C3@)
+     * Substitueix l'antiga 'TaulaVariables.guardar...'
+     */
+    public void exportarTaulaVariables(String rutaFitxer) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaFitxer))) {
+            bw.write("TAULA DE VARIABLES (Generada des de TS)\n");
+            bw.write("---------------------------------------\n");
+            bw.write(String.format("%-15s %-15s %-10s %-10s %-10s\n", "NOM", "AMBIT", "OFFSET", "MIDA", "TIPUS"));
 
-                for (Simbol s : ambitActual.values()) {
-                    bw.write("  " + s.toString() + "\n");
+            for (Simbol s : taulaCompleta) {
+                if (s.getCategoria() == CategoriaSimbol.VARIABLE || 
+                    s.getCategoria() == CategoriaSimbol.PARAMETRE) {
+                    
+                    bw.write(String.format("%-15s %-15s %-10d %-10d %-10s", 
+                        s.getNom(), 
+                        s.getAmbit(), 
+                        s.getOffset(), 
+                        s.getOcupacio(),
+                        s.getTipus()));
+                    bw.newLine();
                 }
             }
-            
-            System.out.println("   Taula de Simbols guardada correctament.");
-            bw.close();
-            
+            System.out.println("   > Taula de Variables guardada a: " + rutaFitxer);
         } catch (IOException e) {
-            System.err.println("Error al guardar el fitxer de la taula de simbols: " + e);
+            System.err.println("Error exportant Variables: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Genera el fitxer específic de PROCEDIMENTS (per al Backend)
+     * Substitueix l'antiga 'TaulaProcediments.guardar...'
+     */
+    public void exportarTaulaProcediments(String rutaFitxer) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaFitxer))) {
+            bw.write("TAULA DE PROCEDIMENTS (Generada des de TS)\n");
+            bw.write("------------------------------------------\n");
+            bw.write(String.format("%-15s %-15s %-10s %-15s\n", "ETIQUETA", "NOM", "FRAME(B)", "PARAMS"));
+
+            for (Simbol s : taulaCompleta) {
+                if (s.getCategoria() == CategoriaSimbol.FUNCIO || 
+                    s.getCategoria() == CategoriaSimbol.PROCEDIMENT) {
+                    
+                    String params = s.getLlistaParametres().toString(); // O formatar-ho millor si vols
+                    
+                    bw.write(String.format("%-15s %-15s %-10d %-15s", 
+                        s.getEtiqueta(), 
+                        s.getNom(), 
+                        s.getMidaFrame(), 
+                        params));
+                    bw.newLine();
+                }
+            }
+            System.out.println("   > Taula de Procediments guardada a: " + rutaFitxer);
+        } catch (IOException e) {
+            System.err.println("Error exportant Procediments: " + e.getMessage());
         }
     }
 
     // Mètode toString
     @Override
     public String toString() {
+        if (taulaCompleta.isEmpty()) return "Taula de Símbols buida.";
+
         StringBuilder sb = new StringBuilder();
-        int nivellAmbit = vars.size();
-        
-        for (int i = vars.size() - 1; i >= 0; i--) {
+        sb.append("=== TAULA DE SÍMBOLS ===\n");
+
+        // Usamos un Map para agrupar visualmente por ámbitos
+        // LinkedHashMap mantiene el orden de inserción (Global primero, luego funciones...)
+        Map<String, List<Simbol>> agrupats = new LinkedHashMap<>();
+
+        for (Simbol s : taulaCompleta) {
+            String ambit = s.getAmbit();
+            agrupats.putIfAbsent(ambit, new ArrayList<>());
+            agrupats.get(ambit).add(s);
+        }
+
+        // Generamos el string iterando los grupos
+        for (Map.Entry<String, List<Simbol>> entrada : agrupats.entrySet()) {
+            sb.append("\nÀMBIT: ").append(entrada.getKey()).append("\n");
+            sb.append("----------------------------------------------------\n");
+            // Cabecera de columnas opcional
+            sb.append(String.format("%-15s %-15s %-15s %-10s\n", "NOM", "CATEGORIA", "TIPUS", "OFFSET"));
             
-            Hashtable<String, Simbol> ambitActual = vars.get(i);
-            sb.append("Ambit ").append(nivellAmbit - i - 1).append(":\n");
-            
-            for (Simbol s : ambitActual.values()) {
-                sb.append("  ").append(s.toString()).append("\n");
+            for (Simbol s : entrada.getValue()) {
+                sb.append(String.format("%-15s %-15s %-15s %-10d\n", 
+                    s.getNom(), 
+                    s.getCategoria(), 
+                    s.getTipus(), 
+                    s.getOffset()));
             }
         }
         return sb.toString();

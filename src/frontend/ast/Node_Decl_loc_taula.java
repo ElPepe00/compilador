@@ -75,7 +75,7 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
         s.setArray(true);
         s.setMidaArray(nElems);
         
-        TaulaSimbols.inserirSimbol(s);
+        TaulaSimbols.afegirSimbol(s);
         
         if (tipusBase.equals("INT") && tailInt != null) {
             tailInt.gestioSemantica(ts, nElems);

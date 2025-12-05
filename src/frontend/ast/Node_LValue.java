@@ -38,7 +38,7 @@ public class Node_LValue extends Node {
     public TipusSimbol getTipusSimbolLValue(TaulaSimbols ts) {
         
         String idBase = ref.getIdBase();
-        Simbol s = TaulaSimbols.cercaSimbol(idBase);
+        Simbol s = TaulaSimbols.cercarSimbol(idBase);
         
         if (s == null) {
             throw new RuntimeException("Identificador no declarat a LValue: " + idBase);

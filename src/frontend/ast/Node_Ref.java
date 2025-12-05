@@ -85,7 +85,7 @@ public class Node_Ref extends Node {
     // Si hi ha error es controla amb el gestor d'errors
     public TipusSimbol getTipusSimbol(TaulaSimbols ts) {
         if (base == null) {
-            Simbol s = TaulaSimbols.cercaSimbol(idBase);
+            Simbol s = TaulaSimbols.cercarSimbol(idBase);
             if (s == null) {
                 throw new RuntimeException("Identificador no declarat: " + idBase);
             }

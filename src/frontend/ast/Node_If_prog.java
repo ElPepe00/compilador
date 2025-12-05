@@ -33,11 +33,11 @@ public class Node_If_prog extends Node {
         cond.gestioSemantica(ts);
 
         // Bloc THEN amb nou àmbit
-        TaulaSimbols.entrarSubAmbit();
+        TaulaSimbols.entrarBloc();
         if (cosThen != null) {
             cosThen.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirSubAmbit();
+        TaulaSimbols.sortirBloc();
 
         // PART FINAL (sense else o amb else)
         if (fi != null) {

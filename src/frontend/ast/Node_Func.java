@@ -44,10 +44,10 @@ public class Node_Func extends Node {
         funcSym.setGlobal(true);
         funcSym.setEtiqueta("f_" + id);
 
-        TaulaSimbols.inserirSimbol(funcSym);
+        TaulaSimbols.afegirSimbol(funcSym);
 
         // 4) Entrar àmbit nou per al cos de la funció
-        TaulaSimbols.entrarSubAmbit();
+        TaulaSimbols.entrarBloc();
 
         // 5) Donar d'alta paràmetres (com a variables/params locals)
         if (paramsOpt != null) {
@@ -69,7 +69,7 @@ public class Node_Func extends Node {
         }
 
         // 8) Sortir de l'àmbit de la funció
-        TaulaSimbols.sortirSubAmbit();
+        TaulaSimbols.sortirBloc();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Node_Decl_glob_escalar extends Node_Decl_glob {
         Simbol s = new Simbol(id, tConst, CategoriaSimbol.CONSTANT, 0, mida);
         s.setGlobal(true);
         
-        TaulaSimbols.inserirSimbol(s);
+        TaulaSimbols.afegirSimbol(s);
     }
     
     @Override

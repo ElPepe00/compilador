@@ -31,11 +31,11 @@ public class Node_While_prog extends Node {
         cond.gestioSemantica(ts);
 
         // Cos del while amb nou àmbit
-        TaulaSimbols.entrarSubAmbit();
+        TaulaSimbols.entrarBloc();
         if (cos != null) {
             cos.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirSubAmbit();
+        TaulaSimbols.sortirBloc();
     }
 
     @Override

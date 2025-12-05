@@ -28,11 +28,11 @@ public class Node_DoWhile_prog extends Node {
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
         // Cos amb àmbit propi
-        TaulaSimbols.entrarSubAmbit();
+        TaulaSimbols.entrarBloc();
         if (cos != null) {
             cos.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirSubAmbit();
+        TaulaSimbols.sortirBloc();
 
         // Condició BOOL
         cond.gestioSemantica(ts);
