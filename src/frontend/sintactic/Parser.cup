@@ -141,9 +141,9 @@ non terminal Object
   Main, Elements, Element,
   Decl_loc, DeclTailEscalar,
   Decl_taula, DeclTailTaulaInt, DeclTailTaulaChar, DeclTailTaulaBool,
-  ArrayLitInt, IntElemsOpt, IntElems,
-  ArrayLitChar, CharElemsOpt, CharElems,
-  ArrayLitBool, BoolElemsOpt, BoolElems,
+  ArrayLitInt, IntElems,
+  ArrayLitChar, CharElems,
+  ArrayLitBool, BoolElems,
   Instr, AssignacioRead, Assignacio2,
   LValue, Ref,
   If_prog, If_fin, While_prog, DoWhile_prog,
@@ -269,11 +269,7 @@ DeclTailTaulaBool  	::= ASSIGN ArrayLitBool:a 															{: RESULT = new Nod
 
 // Literals de taula per tipus (elements literals del mateix tipus)
 	// INT
-ArrayLitInt        	::= LBRACKET IntElemsOpt:ieo RBRACKET												{: RESULT = new Node_ArrayLitInt((Node_IntElemsOpt)ieo); :}
-					;
-					
-IntElemsOpt        	::= IntElems:ie																		{: RESULT = (Node_IntElemsOpt)ie; :}
-					|																					{: RESULT = null; :}
+ArrayLitInt        	::= LBRACKET IntElems:ie RBRACKET													{: RESULT = new Node_ArrayLitInt((Node_IntElems)ie); :}
 					;
 					
 IntElems           	::= Num:n																			{: RESULT = new Node_IntElems(null, (Node_Num)n); :}
@@ -281,24 +277,16 @@ IntElems           	::= Num:n																			{: RESULT = new Node_IntElems(nu
 					;
 
 	// CHAR
-ArrayLitChar       	::= LBRACKET CharElemsOpt:ceo RBRACKET												{: RESULT = new Node_ArrayLitChar((Node_CharElemsOpt)ceo); :}											
-					;                                                                                   
-					                                                                                    
-CharElemsOpt       	::= CharElems:c   																	{: RESULT = (Node_CharElemsOpt)c; :}
-					|                                                                                   {: RESULT = null; :}
-					;                                                                                   
+ArrayLitChar       	::= LBRACKET CharElems:ce RBRACKET													{: RESULT = new Node_ArrayLitChar((Node_CharElems)ce); :}											
+					;                                                                                                                                                                  
                                                                                                         
 CharElems          	::= CharLit:c																		{: RESULT = new Node_CharElems(null, (Node_CharLit)c); :}
 					| CharElems:ce COMA CharLit:cl 														{: RESULT = new Node_CharElems((Node_CharElems)ce, (Node_CharLit)cl); :}
 					;
 
 	// BOOL
-ArrayLitBool       	::= LBRACKET BoolElemsOpt:beo RBRACKET												{: RESULT = new Node_ArrayLitBool((Node_BoolElemsOpt)beo); :}
-					;                                                                                   
-					                                                                                    
-BoolElemsOpt       	::= BoolElems:be																	{: RESULT = (Node_BoolElemsOpt)be; :}
-					|                                                                                   {: RESULT = null; :}
-					;                                                                                   
+ArrayLitBool       	::= LBRACKET BoolElems:be RBRACKET													{: RESULT = new Node_ArrayLitBool((Node_BoolElems)be); :}
+					;                                                                                                                                                                   
                                                                                                         
 BoolElems          	::= BoolLit:b																		{: RESULT = new Node_BoolElems(null, (Node_BoolLit)b); :}
 					| BoolElems:be COMA BoolLit:b														{: RESULT = new Node_BoolElems((Node_BoolElems)be, (Node_BoolLit)b); :}

@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import frontend.taula_simbols.*;
+import backend.codi_intermedi.*;
 
 /**
  *
@@ -28,7 +29,22 @@ public class Node_DeclTailTaulaInt extends Node {
             throw new RuntimeException("Inicialització de taula INT amb " + nElems +
                     " elements, però s'esperaven " + midaEsperada);
         }
-        // El tipus dels elements ja és correcte (són Num -> INT)
+        
+        // Validam tambe els tipus interns
+        arrayLit.gestioSemantica(ts);
     }
+    
+    public void generaCodiInicialitzacio(C3a codi3a, String nomArrayBase) {
+        if (arrayLit != null) {
+            arrayLit.generaCodiInicialitzacio(codi3a, nomArrayBase);
+        }
+    }
+
+    @Override
+    public String generaCodi3a(C3a codi3a) {
+        return null;
+    }
+    
+    
     
 }

@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import frontend.taula_simbols.*;
+import backend.codi_intermedi.*;
 
 /**
  *
@@ -14,16 +15,28 @@ import frontend.taula_simbols.*;
  */
 public class Node_ArrayLitBool extends Node {
 
-   private Node_BoolElemsOpt elemsOpt;
+   private Node_BoolElems elems;
 
-    public Node_ArrayLitBool(Node_BoolElemsOpt elemsOpt) {
+    public Node_ArrayLitBool(Node_BoolElems elems) {
         super("ArrayLitBool");
-        this.elemsOpt = elemsOpt;
+        this.elems = elems;
     }
 
     public int comptarElements() {
-        if (elemsOpt == null) return 0;
-        return elemsOpt.comptarElements();
+        if (elems == null) return 0;
+        return elems.comptarElements();
+    }
+    
+    @Override
+    public void gestioSemantica(TaulaSimbols ts) {
+        if (elems != null) elems.gestioSemantica(ts);
+    }
+
+    public void generaCodiInicialitzacio(C3a codi3a, String nomArrayBase) {
+        if (elems != null) {
+            // Començam a l'índex 0
+            elems.generaCodiElements(codi3a, nomArrayBase, 0);
+        }
     }
     
 }

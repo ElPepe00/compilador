@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import frontend.taula_simbols.*;
+import backend.codi_intermedi.*;
 
 /**
  *
@@ -25,5 +26,26 @@ public class Node_CharElems extends Node {
 
     public int comptarElements() {
         return (anterior == null ? 1 : anterior.comptarElements() + 1);
+    }
+    
+    @Override
+    public void gestioSemantica(TaulaSimbols ts) {
+        if (anterior != null) anterior.gestioSemantica(ts);
+    }
+
+    // Generacio de codi dels elements
+    public int generaCodiElements(C3a codi3a, String nomArrayBase, int indexActual) {
+        
+        if (anterior != null) {
+            indexActual = anterior.generaCodiElements(codi3a, nomArrayBase, indexActual);
+        }
+        
+        // charLit.generaCodi3a normalment retorna el valor numèric ASCII o el caràcter entre cometes
+        String valor = lit.generaCodi3a(codi3a);
+        String index = String.valueOf(indexActual);
+        
+        codi3a.afegir(Codi.IND_ASS, valor, index, nomArrayBase);
+        
+        return indexActual + 1;
     }
 }

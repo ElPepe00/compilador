@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import frontend.taula_simbols.*;
+import backend.codi_intermedi.*;
 
 /**
  *
@@ -28,6 +29,19 @@ public class Node_DeclTailTaulaChar extends Node {
             throw new RuntimeException("Inicialització de taula CHAR amb " + nElems +
                     " elements, però s'esperaven " + midaEsperada);
         }
+        
+        arrayLit.gestioSemantica(ts);
+    }
+    
+    public void generaCodiInicialitzacio(C3a codi3a, String nomArrayBase) {
+        if (arrayLit != null) {
+            arrayLit.generaCodiInicialitzacio(codi3a, nomArrayBase);
+        }
+    }
+
+    @Override
+    public String generaCodi3a(C3a codi3a) {
+        return null; 
     }
     
 }

@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import frontend.taula_simbols.*;
+import backend.codi_intermedi.*;
 
 /**
  *
@@ -27,4 +28,30 @@ public class Node_IntElems extends Node {
         return (anterior == null ? 1 : anterior.comptarElements() + 1);
     }
     
+    @Override
+    public void gestioSemantica(TaulaSimbols ts) {
+        if (anterior != null) anterior.gestioSemantica(ts);
+        // Node_Num ja és INT per definició, no cal check extra
+    }
+
+    // Generacio de codi
+    // Retorna l'índex següent disponible
+    public int generaCodiElements(C3a codi3a, String nomArrayBase, int indexActual) {
+        
+        // 1. Primer processam els elements anteriors
+        if (anterior != null) {
+            // L'anterior actualitzarà l'índex fins on arribi
+            indexActual = anterior.generaCodiElements(codi3a, nomArrayBase, indexActual);
+        }
+        
+        // 2. Generam el codi per a AQUEST element
+        String valor = num.generaCodi3a(codi3a); // ex: "2"
+        String index = String.valueOf(indexActual);
+        
+        // Instrucció: array[index] = valor
+        codi3a.afegir(Codi.IND_ASS, valor, index, nomArrayBase);
+        
+        // 3. Retornam l'índex incrementat per al següent (si n'hi ha)
+        return indexActual + 1;
+    }
 }
