@@ -41,6 +41,7 @@ public class Simbol {
     private String ambit;                       // nom del procediment al que pertany
     private boolean esGlobal;                   // Si es global
     private int posicioParam;                   // la posicio del parametre que ocupa
+    private boolean esAssignat;                 // per si esta assignada
 
     // Per funcions i procediments
     private int midaFrame;                      // tamany total de les variables locals
@@ -191,6 +192,16 @@ public class Simbol {
     public void setInstrInici(int instrInici) {
         this.instrInici = instrInici;
     }
+
+    public boolean isEsAssignat() {
+        return esAssignat;
+    }
+
+    public void setAssignacio(boolean esAssignat) {
+        this.esAssignat = esAssignat;
+    }
+    
+    
     
     // Métodes per accedir a les llistes
     public void addParametre(Parametre p) {

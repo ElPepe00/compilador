@@ -11,7 +11,7 @@ import backend.codi_intermedi.Codi;
 import frontend.taula_simbols.*;
 
 /**
- *
+ * Estructura de control IF
  * @author josep
  */
 public class Node_If_prog extends Node {
@@ -29,17 +29,17 @@ public class Node_If_prog extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
-        // Condició ha de ser BOOL (Node_Cond ja ho comprova)
+        // 1. Validar la condicio, ha de se booleana
         cond.gestioSemantica(ts);
 
-        // Bloc THEN amb nou àmbit
-        TaulaSimbols.entrarBloc();
+        // 2. Ambit per el bloc THEN
+        ts.entrarBloc();
         if (cosThen != null) {
             cosThen.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirBloc();
+        ts.sortirBloc();
 
-        // PART FINAL (sense else o amb else)
+        // 3. Gestionar la part ELSE
         if (fi != null) {
             fi.gestioSemantica(ts);
         }
@@ -47,27 +47,35 @@ public class Node_If_prog extends Node {
 
     @Override
     public String generaCodi3a(C3a codi3a) {
+        
+        // Generar codi de la condicio
         String condTemp = cond.generaCodi3a(codi3a);
         
         String etElse = codi3a.novaEtiqueta();
         String etFi = codi3a.novaEtiqueta();
         
+        // Si condicio es 0(false), bota a ELSE(o al final si no hiha else)
         codi3a.afegir(Codi.IF_EQ, condTemp, "0", etElse); // if cont == 0 goto etElse
 
-        //THEN
+        // Bloc THEN
         if (cosThen != null) {
             cosThen.generaCodi3a(codi3a);
         }
         
-        //ELSE si existeix
-        if (fi != null) {
+        //Bloc ELSE (si existeix)
+        if (fi != null && fi.teElse()) {
+            // si hem fet el THEN, botam al final per no fer ELSE
             codi3a.afegir(Codi.GOTO, null, null, etFi);
+            
+            // etiqueta inici ELSE
             codi3a.afegirEtiqueta(etElse);
             
             fi.generaCodi3a(codi3a); //genera el bloc else
             
+            // etiqueta final
             codi3a.afegirEtiqueta(etFi);
         } else {
+            // Si no hiha else, aquesta sera la etiqueta de final
             codi3a.afegirEtiqueta(etElse);
         }
      

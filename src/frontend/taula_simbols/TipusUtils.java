@@ -9,27 +9,24 @@ package frontend.taula_simbols;
  * @author josep
  */
 public class TipusUtils {
-    
-    public static int midaBytesTipusBase(TipusSimbol t) {
+
+    public static TipusSimbol getTipusBaseDesdeNomBase(String base) {
         
-        switch (t) {
-            case INT:
-            case BOOL:
-                return 4;
-            case CARACTER:
-                return 1;
-                
+        switch (base) {
+            case "INT":  return TipusSimbol.INT;
+            case "CARACTER": return TipusSimbol.CARACTER;
+            case "BOOL": return TipusSimbol.BOOL;
             default:
-                throw new IllegalArgumentException("Tipus base no valid per mida: " + t);
+                throw new IllegalArgumentException("Tipus base desconegut: " + base);
         }
     }
     
-    public static TipusSimbol tipusArrayDesdeNomBase(String base) {
+    public static TipusSimbol getTipusArrayDesdeNomBase(String base) {
         
         switch (base) {
-            case "int":  return TipusSimbol.TAULA_INT;
-            case "char": return TipusSimbol.TAULA_CARACTER;
-            case "bool": return TipusSimbol.TAULA_BOOL;
+            case "INT":  return TipusSimbol.TAULA_INT;
+            case "CARACTER": return TipusSimbol.TAULA_CARACTER;
+            case "BOOL": return TipusSimbol.TAULA_BOOL;
             default:
                 throw new IllegalArgumentException("Tipus base d'array desconegut: " + base);
         }

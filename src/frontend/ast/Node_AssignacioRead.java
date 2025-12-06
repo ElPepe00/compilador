@@ -29,10 +29,10 @@ public class Node_AssignacioRead extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
-        // Tipus del lloc on escriurem
+        // 1. Comprovam que el desti sigui valid i l'obtenim
         TipusSimbol tDest = lvalue.getTipusSimbolLValue(ts);
 
-        // Només té sentit llegir en un tipus bàsic
+        // 2. Només té sentit llegir en un tipus bàsic
         if (tDest != TipusSimbol.INT &&
             tDest != TipusSimbol.BOOL &&
             tDest != TipusSimbol.CARACTER) {
@@ -40,29 +40,37 @@ public class Node_AssignacioRead extends Node {
             throw new RuntimeException("No es pot fer llegir() sobre tipus " + tDest);
         }
 
-        // Marcam la variable com "assignada"
-        String idBase = lvalue.getRef().getIdBase();
-        Simbol s = TaulaSimbols.cercarSimbol(idBase);
+        // 3. Marcam la variable com "assignada"
+        Simbol s = lvalue.getRef().getSimbolAssoc();
+        
         if (s != null) {
-            s.setAssignacio(Boolean.TRUE);
+            s.setAssignacio(true);
         }
     }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
         
-        String t = codi3a.novaTemp();
-        codi3a.afegir(Codi.CALL, "llegir", null, t);
+        // 1. Genera la crida a llegir(), retorna el valor llegit
+        String tLlegit = codi3a.novaTemp();
+        codi3a.afegir(Codi.CALL, "llegir", null, tLlegit);
         
+        // 2. Recuperam informacio del desti
         Node_Ref ref = lvalue.getRef();
+        Simbol s = ref.getSimbolAssoc();
+        
+        if (s == null) {
+            throw new RuntimeException("Error intern: Símbol no trobat (Read)");
+        }
 
+        String nomDesti = s.getNom();
+        
         if (!ref.teIndex()) {
-            codi3a.afegir(Codi.COPY, t, null, ref.getIdBase());
+            codi3a.afegir(Codi.COPY, tLlegit, null, nomDesti); // a = llegir()
             
         } else {
-            String base = ref.getRefAnterior().getIdBase();
             String idx = ref.getIndex().generaCodi3a(codi3a);
-            codi3a.afegir(Codi.IND_ASS, t, idx, base);
+            codi3a.afegir(Codi.IND_ASS, tLlegit, idx, nomDesti); // a[idx] = llegir()
         }
         
         return null;

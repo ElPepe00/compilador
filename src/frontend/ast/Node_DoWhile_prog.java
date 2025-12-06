@@ -27,29 +27,34 @@ public class Node_DoWhile_prog extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
-        // Cos amb àmbit propi
-        TaulaSimbols.entrarBloc();
+        // 1. Ambit del cos
+        ts.entrarBloc();
         if (cos != null) {
             cos.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirBloc();
+        ts.sortirBloc();
 
-        // Condició BOOL
+        // 2. Validam la condicio
         cond.gestioSemantica(ts);
     }
     
         @Override
     public String generaCodi3a(C3a codi3a) {
-        String etCos = codi3a.novaEtiqueta();
+        String etInici = codi3a.novaEtiqueta();
         
-        codi3a.afegirEtiqueta(etCos);
+        // Etiqueta inici
+        codi3a.afegirEtiqueta(etInici);
         
+        // Cos del bucle
         if (cos != null) {
             cos.generaCodi3a(codi3a);
         }
         
+        // Condicio
         String condTemp = cond.generaCodi3a(codi3a);
-        codi3a.afegir(Codi.IF_NE, condTemp, "0", etCos); // si true -> repeat
+        
+        // Si true (-1) torna a l'inici, sino (0) surt
+        codi3a.afegir(Codi.IF_NE, condTemp, "0", etInici);
         
         return null;
     }

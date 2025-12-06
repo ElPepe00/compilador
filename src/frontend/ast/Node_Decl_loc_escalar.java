@@ -19,6 +19,8 @@ public class Node_Decl_loc_escalar extends Node_Decl_loc {
     private String id;
     private Node_DeclTailEscalar tail;
     
+    private Simbol simbolAssoc;
+    
     public Node_Decl_loc_escalar(Node_Tipusv tipus, String id, Node_DeclTailEscalar tail) {
         super();
         this.tipus = tipus;
@@ -30,28 +32,27 @@ public class Node_Decl_loc_escalar extends Node_Decl_loc {
     public void gestioSemantica(TaulaSimbols ts) {
         
         TipusSimbol tVar = tipus.getTipusSimbol();
-        int mida = TipusUtils.midaBytesTipusBase(tVar);
+        int mida = tVar.getMidaBytes();
         
-        Simbol s = new Simbol(id, tVar, CategoriaSimbol.VARIABLE, 0, mida);
-        s.setGlobal(false);
+        // 1. Crear el simbol
+        this.simbolAssoc = new Simbol(id, tVar, CategoriaSimbol.CONSTANT);
+        this.simbolAssoc.setOcupacio(mida);
         
-        TaulaSimbols.afegirSimbol(s);
+        // 2. Afegir el simbol a la TS
+        ts.afegirSimbol(simbolAssoc);
         
+        // 3. Gestionar inicialitzacio
         if (tail != null) {
-            tail.gestioSemantica(ts);
-            s.setAssignacio(true);
+            tail.gestioSemantica(ts, tVar); //comprova tipus
+            this.simbolAssoc.setAssignacio(true);
         }
     }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
-        
-        TipusSimbol t = tipus.getTipusSimbol();
-        int mida = tipus.getMidaBytes();
-        codi3a.registrarLocal(id, t, false, 0, mida);
-        
+
         if (tail != null) {
-            tail.generaCodiInicialitzacio(codi3a, id);
+            tail.generaCodiInicialitzacio(codi3a, this.simbolAssoc.getNom());
         }
         
         return null;

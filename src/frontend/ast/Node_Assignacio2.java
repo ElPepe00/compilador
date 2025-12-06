@@ -28,16 +28,17 @@ public class Node_Assignacio2 extends Node {
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
         
+        // 1. Obtenir tipus
         TipusSimbol t_left = lvalue.getTipusSimbolLValue(ts);
         TipusSimbol t_right = expr.getTipusSimbol(ts);
         
+        // 2. Comprovacio de tipus
         if (t_left != t_right) {
             throw new RuntimeException("Tipus incompatibles a l'assignacio: " + t_left + " = " + t_right);
         }
         
-        // Marcar la variable base com assignada
-        String idBase = lvalue.getRef().getIdBase();
-        Simbol s = TaulaSimbols.cercarSimbol(idBase);
+        // 3. Marcar la variable base com assignada
+        Simbol s = lvalue.getRef().getSimbolAssoc();
         
         if (s != null) {
             s.setAssignacio(true);
@@ -47,19 +48,25 @@ public class Node_Assignacio2 extends Node {
     @Override
     public String generaCodi3a(C3a codi3a) {
         
-        String s = expr.generaCodi3a(codi3a);
+        // 1. Genera el codi de l'expressio (part dreta)
+        String resExpr = expr.generaCodi3a(codi3a);
+        
+        // 2. Recuperam la informacio del destinatari (part esquerra)
         Node_Ref ref = lvalue.getRef();
+        Simbol s = ref.getSimbolAssoc();
+        
+        if (s == null) {
+            throw new RuntimeException("Error intern: Símbol no trobat a generació de codi (Assignació)");
+        }
+        
+        String nomDesti = s.getNom();
         
         if (!ref.teIndex()) {
-            String desti = ref.getIdBase();
-            codi3a.afegir(Codi.COPY, s, null, desti); // a = s
+            codi3a.afegir(Codi.COPY, resExpr, null, nomDesti); // a = expr
             
         } else {
-            Node_Ref baseRef = ref.getRefAnterior();
-            String base = baseRef.getIdBase();
             String idx = ref.getIndex().generaCodi3a(codi3a);
-            
-            codi3a.afegir(Codi.IND_ASS, s, idx, base); //base[idx] = s
+            codi3a.afegir(Codi.IND_ASS, resExpr, idx, nomDesti); //a[idx] = expr
         }
         
         return null;

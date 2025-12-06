@@ -19,8 +19,11 @@ public class Node_Decl_glob_escalar extends Node_Decl_glob {
     private Node_Tipusv tipus;
     private String id;
     private Node_Express exprInit;
+    
+    private Simbol simbolGlobal;
 
     public Node_Decl_glob_escalar(Node_Tipusv tipus, String id, Node_Express expr) {
+        super();
         this.tipus = tipus;
         this.id = id;
         this.exprInit = expr;
@@ -37,12 +40,20 @@ public class Node_Decl_glob_escalar extends Node_Decl_glob {
             + id + "': esperant " + tConst + " però s'ha trobat: " + tExpr);
         }
         
-        int mida = TipusUtils.midaBytesTipusBase(tConst);
+        int mida = tConst.getMidaBytes();
         
-        Simbol s = new Simbol(id, tConst, CategoriaSimbol.CONSTANT, 0, mida);
-        s.setGlobal(true);
+        // Crear simbol CONSTANT o variable global
+        this.simbolGlobal = new Simbol(id, tConst, CategoriaSimbol.CONSTANT);
+        this.simbolGlobal.setOcupacio(mida);
+        this.simbolGlobal.setEsGlobal(true);
         
-        TaulaSimbols.afegirSimbol(s);
+        // Afegim a la taula de simbols
+        ts.afegirSimbol(this.simbolGlobal);
+        
+        // Guardam el valor si es numeric per optimitzacions (opcional)
+        if (exprInit.getNum() != null) {
+            this.simbolGlobal.setValor(exprInit.getNum().getValorEnter());
+        }
     }
     
     @Override

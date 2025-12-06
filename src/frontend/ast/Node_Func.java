@@ -21,6 +21,8 @@ public class Node_Func extends Node {
     private Node_ParamsOpt paramsOpt;
     private Node_Elements elements;
     private Node_Returnfi returnfi;
+    
+    private Simbol simbolFuncio; //permet guardar el simbol que de la funcio
 
     public Node_Func(Node_Returnv returnv, String id, Node_ParamsOpt paramsOpt, Node_Elements elements, Node_Returnfi returnfi) {
         super("Func");
@@ -40,18 +42,18 @@ public class Node_Func extends Node {
         CategoriaSimbol cat = (tRetorn == TipusSimbol.VOID ? CategoriaSimbol.PROCEDIMENT : CategoriaSimbol.FUNCIO);
 
         // 3. Crear simbol de la funcio global
-        Simbol funcSym = new Simbol(id, tRetorn, cat);
-        funcSym.setEtiqueta("f_" + id);
+        this.simbolFuncio = new Simbol(id, tRetorn, cat);
+        this.simbolFuncio.setEtiqueta("f_" + id);
 
         // afegim el simbol de funcio a la TS
-        ts.afegirSimbol(funcSym);
+        ts.afegirSimbol(this.simbolFuncio);
 
         // 4. Entrar àmbit nou per al cos de la funció
         ts.entrarFuncio();
 
         // 5. Registrar parametres
         if (paramsOpt != null) {
-            paramsOpt.registrarParametres(ts, funcSym);
+            paramsOpt.registrarParametres(ts, this.simbolFuncio);
         }
 
         // 5. Comprovam si hiha elements
@@ -60,8 +62,8 @@ public class Node_Func extends Node {
         }
 
         // 6. Guardam la mida del frame
-        int midaFrameTotal = ts.getOffsetActual();
-        funcSym.setMidaFrame(midaFrameTotal);
+        int midaTotal = ts.getOffsetActual();
+        this.simbolFuncio.setMidaFrame(midaTotal);
         
         // 7. Comprovam si te return
         if (returnfi != null) {
@@ -79,21 +81,24 @@ public class Node_Func extends Node {
     @Override
     public String generaCodi3a(C3a codi3a) {
 
-        codi3a.afegirEtiqueta(id);
-        codi3a.afegir(Codi.PMB, id, null, null);
+        String etiqueta = this.simbolFuncio.getEtiqueta();
+        String midaFrame = String.valueOf(this.simbolFuncio.getMidaFrame());
+        
+        codi3a.afegirEtiqueta(etiqueta);
+        codi3a.afegir(Codi.PMB, etiqueta, midaFrame, null);
         
         // Cos de la funcio
         if (elements != null) {
             elements.generaCodi3a(codi3a);
         }
         
-        // Retorn explicit (si hi es)
+        // Retorn implicit
         if (returnfi != null) {
             returnfi.generaCodi3a(codi3a);
             
         }
         
-        codi3a.afegir(Codi.RET, id, null, null);
+        codi3a.afegir(Codi.RET, null, null, null);
         return null;
     }
     

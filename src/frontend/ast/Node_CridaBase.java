@@ -19,6 +19,8 @@ public class Node_CridaBase extends Node {
 
     private String id;
     private Node_ArgsOpt argsOpt; // pot ser null
+    
+    private Simbol simbolFuncio;
 
     public Node_CridaBase(String id, Node_ArgsOpt argsOpt) {
         super("CridaBase");
@@ -43,27 +45,32 @@ public class Node_CridaBase extends Node {
      * @return tipus de retorn del subprograma (VOID per procediment)
      */
     public TipusSimbol comprovarCrida(TaulaSimbols ts, boolean comFuncio) {
-        Simbol s = TaulaSimbols.cercarSimbol(id);
+        
+        // 1. Cercar la funcio (com que sempre son globals, sempre estan visibles)
+        Simbol s = ts.cercarSimbol(id);
+        
         if (s == null) {
             throw new RuntimeException("Crida a subprograma no declarat: " + id);
         }
 
+        // 2. Guardam el simbol
+        this.simbolFuncio = s;
         CategoriaSimbol cat = s.getCategoria();
 
         if (comFuncio) {
             // Crida com a funció: ha de ser FUNCIO
             if (cat != CategoriaSimbol.FUNCIO) {
-                throw new RuntimeException("El subprograma '" + id +
-                        "' no és una funció i no es pot usar en una expressió");
+                throw new RuntimeException("El subprograma '" + id + "' no és una funcio.");
             }
         } else {
             // Crida com a procediment: millor només PROCEDIMENT
             if (cat != CategoriaSimbol.PROCEDIMENT) {
                 throw new RuntimeException("El subprograma '" + id +
-                        "' no és un procediment (retorna valor) i no es pot usar com a instrucció");
+                        "' no és un procediment (retorna valor).");
             }
         }
 
+        // 3. Comprovar arguments
         // Tipus dels paràmetres formals
         List<TipusSimbol> formals = s.getArguments();
 
@@ -76,11 +83,10 @@ public class Node_CridaBase extends Node {
         }
 
         for (int i = 0; i < formals.size(); i++) {
-            TipusSimbol tf = formals.get(i);
-            TipusSimbol tr = reals.get(i);
-            if (tf != tr) {
+            if (formals.get(i) != reals.get(i)) {
                 throw new RuntimeException("Tipus de paràmetre incompatible a '" + id +
-                        "' posició " + (i + 1) + ": esperat " + tf + ", trobat " + tr);
+                        "' posició " + (i + 1) + ": esperat " + formals.get(i) 
+                        + ", trobat " + reals.get(i));
             }
         }
 
@@ -91,23 +97,34 @@ public class Node_CridaBase extends Node {
     
     public String generaCodiCridaFunc(C3a codi3a) {
         
-        // PARAM per als arguments
-        if (argsOpt != null) {
-            argsOpt.generaCodiParams(codi3a);
-        }
+        generarParams(codi3a);
         
-        // Crida de funcio: el resultat va a un temporal
-        String t = codi3a.novaTemp();
-        codi3a.afegir(Codi.CALL, id, null, t);
-        return t;
+        String tResultat = codi3a.novaTemp();
+        
+        // Usam l'etiqueta real del símbol (ex: f_suma)
+        String etiquetaFuncio = (simbolFuncio != null && simbolFuncio.getEtiqueta() != null) 
+                                ? simbolFuncio.getEtiqueta() : id;
+                                
+        codi3a.afegir(Codi.CALL, etiquetaFuncio, null, tResultat);
+        return tResultat;
     }
 
     public void generaCodiCridaProc(C3a codi3a) {
+        
+        generarParams(codi3a);
+        
+        String etiquetaFuncio = (simbolFuncio != null && simbolFuncio.getEtiqueta() != null) 
+                                ? simbolFuncio.getEtiqueta() : id;
+
+        codi3a.afegir(Codi.CALL, etiquetaFuncio, null, null);
+    }
+    
+    private void generarParams(C3a codi3a) {
         if (argsOpt != null) {
             argsOpt.generaCodiParams(codi3a);
         }
-        codi3a.afegir(Codi.CALL, id, null, null);
     }
+    
     @Override
     public String toString() {
         return "CridaBase(" + id + "(" + argsOpt + "))";

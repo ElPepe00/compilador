@@ -6,6 +6,7 @@
  */
 package frontend.ast;
 
+import backend.codi_intermedi.C3a;
 import frontend.taula_simbols.*;
 
 /**
@@ -14,16 +15,18 @@ import frontend.taula_simbols.*;
  */
 public class Node_Decl_glob_taula extends Node_Decl_glob {
 
-    private String tipusBase;
+    private String tipusBaseStr;
     private String id;
     private Node_Num mida;
     private Node_DeclTailTaulaInt tailInt;
     private Node_DeclTailTaulaChar tailChar;
     private Node_DeclTailTaulaBool tailBool;
     
+    private Simbol simbolArray;
+    
     public Node_Decl_glob_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaInt tail) {
         super();
-        this.tipusBase = tipusBase;
+        this.tipusBaseStr = tipusBase;
         this.id = id;
         this.mida = mida;
         this.tailInt = tail;
@@ -31,7 +34,7 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
     
     public Node_Decl_glob_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaChar tail) {
         super();
-        this.tipusBase = tipusBase;
+        this.tipusBaseStr = tipusBase;
         this.id = id;
         this.mida = mida;
         this.tailChar = tail;
@@ -39,7 +42,7 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
     
     public Node_Decl_glob_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaBool tail) {
         super();
-        this.tipusBase = tipusBase;
+        this.tipusBaseStr = tipusBase;
         this.id = id;
         this.mida = mida;
         this.tailBool = tail;
@@ -54,40 +57,37 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
             throw new RuntimeException("Mida de taula no vàlida per '" + id + "': " + nElems);
         }
         
-        TipusSimbol tArray = TipusUtils.tipusArrayDesdeNomBase(tipusBase);
+        TipusSimbol tArray = TipusUtils.getTipusArrayDesdeNomBase(tipusBaseStr);
+        TipusSimbol tBase = TipusUtils.getTipusBaseDesdeNomBase(tipusBaseStr);
         
-        TipusSimbol tBase;
-        
-        switch (tipusBase) {
-            case "INT": tBase = TipusSimbol.INT; break;
-            case "CARACTER": tBase = TipusSimbol.CARACTER; break;
-            case "BOOL": tBase = TipusSimbol.BOOL; break;
-            default:
-                throw new RuntimeException("Tipus base desconegut a taula global: " + tipusBase);
-        }
-        
-        int midaElem = TipusUtils.midaBytesTipusBase(tBase);
+        int midaElem = tBase.getMidaBytes();
         int midaTotal = nElems * midaElem;
         
-        Simbol s = new Simbol(id, tArray, CategoriaSimbol.CONSTANT, 0, midaTotal);
-        s.setGlobal(true);
-        s.setArray(true);
-        s.setMidaArray(nElems);
+        this.simbolArray = new Simbol(id, tArray, CategoriaSimbol.CONSTANT);
+        this.simbolArray.setEsGlobal(true);
+        this.simbolArray.setEsArray(true);
+        this.simbolArray.setMidaArray(nElems);
+        this.simbolArray.setOcupacio(midaTotal);
         
-        TaulaSimbols.afegirSimbol(s);
+        ts.afegirSimbol(this.simbolArray);
         
-        if (tipusBase.equals("INT") && tailInt != null) {
+        if (tipusBaseStr.equals("INT") && tailInt != null) {
             tailInt.gestioSemantica(ts, nElems);
-        } else if (tipusBase.equals("CARACTER") && tailChar != null) {
+        } else if (tipusBaseStr.equals("CARACTER") && tailChar != null) {
             tailChar.gestioSemantica(ts, nElems);
-        } else if (tipusBase.equals("BOOL") && tailBool != null) {
+        } else if (tipusBaseStr.equals("BOOL") && tailBool != null) {
             tailBool.gestioSemantica(ts, nElems);
         }
     }
 
     @Override
+    public String generaCodi3a(C3a codi3a) {
+        return super.generaCodi3a(codi3a); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
     public String toString() {
-        return "Node_Decl_glob_taula(" + tipusBase + " " + id + "[" + mida + "]...)";
+        return "Node_Decl_glob_taula(" + tipusBaseStr + " " + id + "[" + mida + "]...)";
     }
     
     

@@ -17,6 +17,8 @@ public class Node_Param extends Node {
     private Node_Tipusv tipus;
     private String id;
 
+    private Simbol simbolParam;
+    
     public Node_Param(Node_Tipusv tipus, String id) {
         super("Param");
         this.tipus = tipus;
@@ -37,20 +39,25 @@ public class Node_Param extends Node {
      */
     public void registrarComParametre(TaulaSimbols ts, Simbol funcSym) {
         TipusSimbol t = getTipusSimbol();
-        int mida = TipusUtils.midaBytesTipusBase(t);
+        int mida = t.getMidaBytes();
 
-        // 1) Donar d'alta el símbol del paràmetre a la TS
-        Simbol paramSym = new Simbol(id, t, CategoriaSimbol.PARAMETRE, 0, mida);
-        paramSym.setGlobal(false);
-        TaulaSimbols.afegirSimbol(paramSym);
+        // 1. Crear el simbol del parametre
+        this.simbolParam = new Simbol(id, t, CategoriaSimbol.PARAMETRE);
+        this.simbolParam.setOcupacio(mida);
+        
+        // guardam la posicio del parametre, per codi 3@
+        int pos = funcSym.getLlistaParametres().size();
+        this.simbolParam.setPosicioParam(pos);
+        
+        // 2. Afegir a la taula de simbols
+        ts.afegirSimbol(this.simbolParam);
 
-        // 2) Afegir el tipus a la signatura de la funció
-        funcSym.getArguments().add(t);
-
-        // 3) Crear l'objecte Parameter i afegir-lo a la funció
-        int posicio = funcSym.getParametres().size(); // 0,1,2,...
-        Parametre p = new Parametre(id, t, posicio);
-        funcSym.getParametres().add(p);
+        // 3. Actualitzam les dades de la funcio de la funcio
+        Parametre p = new Parametre(id, t, pos);
+        p.setOffset(this.simbolParam.getOffset());
+        
+        funcSym.addParametre(p);
+        funcSym.addArgument(t);
     }
 
     @Override

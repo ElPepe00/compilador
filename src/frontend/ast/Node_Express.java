@@ -115,6 +115,11 @@ public class Node_Express extends Node {
         return crida;
     }
     
+    @Override
+    public void gestioSemantica(TaulaSimbols ts) {
+        getTipusSimbol(ts);
+    }
+    
     public TipusSimbol getTipusSimbol(TaulaSimbols ts) {
         
         switch (op) {
@@ -219,144 +224,82 @@ public class Node_Express extends Node {
 
     @Override
     public String generaCodi3a(C3a codi3a) {
+        
         switch (op) {
-
-        // ------ Binàries aritmètiques ------
-        case SUMA: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.ADD, t1, t2, tRes);
-            return tRes;
-        }
-        case RESTA: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.SUB, t1, t2, tRes);
-            return tRes;
-        }
-        case MULT: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.PROD, t1, t2, tRes);
-            return tRes;
-        }
-        case DIV: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.DIV, t1, t2, tRes);
-            return tRes;
-        }
-
-        // ------ Binàries lògiques ------
-        case AND: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.AND, t1, t2, tRes);
-            return tRes;
-        }
-        case OR: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.OR, t1, t2, tRes);
-            return tRes;
-        }
-
-        // ------ Comparacions ------
-        case IGUAL: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            String lTrue = codi3a.novaEtiqueta();
-            String lEnd = codi3a.novaEtiqueta();
+            // Aritmètica
+            case SUMA: return generarBinaria(codi3a, Codi.ADD);
+            case RESTA: return generarBinaria(codi3a, Codi.SUB);
+            case MULT: return generarBinaria(codi3a, Codi.PROD);
+            case DIV: return generarBinaria(codi3a, Codi.DIV);
             
-            codi3a.afegir(Codi.IF_EQ, t1, t2, lTrue);
-            codi3a.afegir(Codi.COPY, "0", null, tRes);
-            codi3a.afegir(Codi.GOTO, null, null, lEnd);
-            codi3a.afegirEtiqueta(lTrue);
-            codi3a.afegir(Codi.COPY, "-1", null, tRes);
-            codi3a.afegirEtiqueta(lEnd);
-            return tRes;
-        }
-        case NOIGUAL: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            String lTrue = codi3a.novaEtiqueta();
-            String lEnd = codi3a.novaEtiqueta();
+            // Lògica
+            case AND: return generarBinaria(codi3a, Codi.AND);
+            case OR:  return generarBinaria(codi3a, Codi.OR);
             
-            codi3a.afegir(Codi.IF_NE, t1, t2, lTrue);
-            codi3a.afegir(Codi.COPY, "0", null, tRes);
-            codi3a.afegir(Codi.GOTO, null, null, lEnd);
-            codi3a.afegirEtiqueta(lTrue);
-            codi3a.afegir(Codi.COPY, "-1", null, tRes);
-            codi3a.afegirEtiqueta(lEnd);
-            return tRes;
-        }
-        case MENOR: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            String lTrue = codi3a.novaEtiqueta();
-            String lEnd = codi3a.novaEtiqueta();
+            // Comparacions (Generen salts condicionals per tornar 1 o 0)
+            case IGUAL: return generarComparacio(codi3a, Codi.IF_EQ);
+            case NOIGUAL: return generarComparacio(codi3a, Codi.IF_NE);
+            case MENOR: return generarComparacio(codi3a, Codi.IF_LT);
+            case MAJOR: return generarComparacio(codi3a, Codi.IF_GT);
             
-            codi3a.afegir(Codi.IF_LT, t1, t2, lTrue);
-            codi3a.afegir(Codi.COPY, "0", null, tRes);
-            codi3a.afegir(Codi.GOTO, null, null, lEnd);
-            codi3a.afegirEtiqueta(lTrue);
-            codi3a.afegir(Codi.COPY, "-1", null, tRes);
-            codi3a.afegirEtiqueta(lEnd);
-            return tRes;
-        }
-        case MAJOR: {
-            String t1 = e1.generaCodi3a(codi3a);
-            String t2 = e2.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            String lTrue = codi3a.novaEtiqueta();
-            String lEnd = codi3a.novaEtiqueta();
-            
-            codi3a.afegir(Codi.IF_GT, t1, t2, lTrue);
-            codi3a.afegir(Codi.COPY, "0", null, tRes);
-            codi3a.afegir(Codi.GOTO, null, null, lEnd);
-            codi3a.afegirEtiqueta(lTrue);
-            codi3a.afegir(Codi.COPY, "-1", null, tRes);
-            codi3a.afegirEtiqueta(lEnd);
-            return tRes;
-        }
+            // Unaris
+            case NOT: {
+                String t = unari.generaCodi3a(codi3a);
+                String tRes = codi3a.novaTemp();
+                codi3a.afegir(Codi.NOT, t, null, tRes);
+                return tRes;
+            }
+            case UMINUS: {
+                String t = unari.generaCodi3a(codi3a);
+                String tRes = codi3a.novaTemp();
+                codi3a.afegir(Codi.NEG, t, null, tRes);
+                return tRes;
+            }
+            case PAREN: return unari.generaCodi3a(codi3a);
 
-        // ------ Unaris ------
-        case NOT: {
-            String t = unari.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.NOT, t, null, tRes);
-            return tRes;
-        }
-        case UMINUS: {
-            String t = unari.generaCodi3a(codi3a);
-            String tRes = codi3a.novaTemp();
-            codi3a.afegir(Codi.NEG, t, null, tRes);
-            return tRes;
-        }
-        case PAREN:
-            return unari.generaCodi3a(codi3a);
+            // Fulles (deleguen la generació)
+            case REF: return ref.generaCodi3a(codi3a);
+            case NUM: return num.generaCodi3a(codi3a);
+            case CHAR: return charLit.generaCodi3a(codi3a);
+            case BOOL: return boolLit.generaCodi3a(codi3a);
+            case CRIDA: return crida.generaCodi3a(codi3a);
 
-        // ------ Fulles ------
-        case REF: return ref.generaCodi3a(codi3a);
-        case NUM: return num.generaCodi3a(codi3a);
-        case CHAR: return charLit.generaCodi3a(codi3a);
-        case BOOL: return boolLit.generaCodi3a(codi3a);
-        case CRIDA: return crida.generaCodi3a(codi3a);
-
-        default:
-            throw new IllegalStateException("Operador no gestionat a generaCodi: " + op);
-    }
+            default: throw new IllegalStateException("No s'ha implementat C3A per: " + op);
+        }
     }
     
+    // Auxiliar per no repetir codi 
+    private String generarBinaria(C3a codi3a, Codi c) {
+        String t1 = e1.generaCodi3a(codi3a);
+        String t2 = e2.generaCodi3a(codi3a);
+        String tRes = codi3a.novaTemp();
+        codi3a.afegir(c, t1, t2, tRes);
+        return tRes;
+    }
+
+    // Auxiliar per comparacions (true=1, false=0)
+    private String generarComparacio(C3a codi3a, Codi c) {
+        String t1 = e1.generaCodi3a(codi3a);
+        String t2 = e2.generaCodi3a(codi3a);
+        String tRes = codi3a.novaTemp();
+        
+        String etCert = codi3a.novaEtiqueta();
+        String etFi = codi3a.novaEtiqueta();
+        
+        // if t1 OP t2 goto etCert
+        codi3a.afegir(c, t1, t2, etCert);
+        
+        // Cas Fals
+        codi3a.afegir(Codi.COPY, "0", null, tRes);
+        codi3a.afegir(Codi.GOTO, null, null, etFi);
+        
+        // Cas Cert
+        codi3a.afegirEtiqueta(etCert);
+        codi3a.afegir(Codi.COPY, "-1", null, tRes); // -1 sol ser true en c3a simple
+        
+        codi3a.afegirEtiqueta(etFi);
+        return tRes;
+    }
 
     @Override
     public String toString() {

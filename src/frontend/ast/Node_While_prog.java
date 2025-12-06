@@ -11,7 +11,7 @@ import backend.codi_intermedi.Codi;
 import frontend.taula_simbols.*;
 
 /**
- *
+ * Estructura de control WHILE
  * @author josep
  */
 public class Node_While_prog extends Node {
@@ -27,32 +27,38 @@ public class Node_While_prog extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
-        // Condició BOOL
+        // 1. Validar la condicio
         cond.gestioSemantica(ts);
 
-        // Cos del while amb nou àmbit
-        TaulaSimbols.entrarBloc();
+        // 2. Cos del while amb nou àmbit
+        ts.entrarBloc();
         if (cos != null) {
             cos.gestioSemantica(ts);
         }
-        TaulaSimbols.sortirBloc();
+        ts.sortirBloc();
     }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
+        
         String etCond = codi3a.novaEtiqueta();
         String etEnd = codi3a.novaEtiqueta();
         
+        // Etiqueta de retorn
         codi3a.afegirEtiqueta(etCond);
         
+        // Si fals, surt del bucle
         String condTemp = cond.generaCodi3a(codi3a);
-        codi3a.afegir(Codi.IF_EQ, condTemp, "0", etEnd); //si false -> surt del bucle
+        codi3a.afegir(Codi.IF_EQ, condTemp, "0", etEnd);
         
+        // Cos del bucle
         if (cos != null) {
             cos.generaCodi3a(codi3a);
         }
         
+        // torna a avaluar
         codi3a.afegir(Codi.GOTO, null, null, etCond);
+        // Etiqueta de sortida
         codi3a.afegirEtiqueta(etEnd);
         
         return null;

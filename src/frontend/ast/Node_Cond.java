@@ -10,7 +10,7 @@ import backend.codi_intermedi.C3a;
 import frontend.taula_simbols.*;
 
 /**
- *
+ * Node per a condicions (a if, while i do-while)
  * @author josep
  */
 public class Node_Cond extends Node {
@@ -22,10 +22,6 @@ public class Node_Cond extends Node {
         this.expr = e;
     }
     
-    public Node_Express getExpressio() {
-        return expr;
-    }
-    
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
         
@@ -35,23 +31,11 @@ public class Node_Cond extends Node {
             throw new RuntimeException("La condicio no és booleana, s'ha trobat: " + t);
         }
     }
-    
-    public TipusSimbol getTipusSimbol(TaulaSimbols ts) {
-        
-        TipusSimbol t = expr.getTipusSimbol(ts);
-        
-        if (t != TipusSimbol.BOOL) {
-            throw new RuntimeException("La condició ha de ser de tipus BOOL, s'ha trobat " + t);
-        }
-        return TipusSimbol.BOOL;
-    }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
         return expr.generaCodi3a(codi3a);
     }
-    
-    
 
     @Override
     public String toString() {

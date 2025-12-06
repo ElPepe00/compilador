@@ -26,6 +26,8 @@ public class Node_Ref extends Node {
     private Node_Ref base;      // referencia base (a de a[i])
     private Node_Express index; //expressio de l'index (i de a[i])
     
+    private Simbol simbolAssoc;
+    
     public Node_Ref(String id) {
         super("Ref");
         this.idBase = id;
@@ -76,8 +78,17 @@ public class Node_Ref extends Node {
         return base.getBase();
     }
     
+    public Simbol getSimbolAssoc() {
+        if (base != null) {
+            return base.getSimbolAssoc();
+        }
+        
+        return simbolAssoc;
+    }
+    
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
+        // cridam al mètode intern que resol i guarda el simbol
         getTipusSimbol(ts);
     }
     
@@ -85,22 +96,32 @@ public class Node_Ref extends Node {
     // Si hi ha error es controla amb el gestor d'errors
     public TipusSimbol getTipusSimbol(TaulaSimbols ts) {
         if (base == null) {
+            // 1. Cas base: id simple
             Simbol s = TaulaSimbols.cercarSimbol(idBase);
             if (s == null) {
                 throw new RuntimeException("Identificador no declarat: " + idBase);
             }
             
+            this.simbolAssoc = s; // guardam el simbol
             return s.getTipus();
             
         } else {
+            // 2. Cas recursiu
+            // primer gestionam la base
             TipusSimbol tBase = base.getTipusSimbol(ts);    //potser INT, CHAR, BOOL
-            TipusSimbol tIndex = index.getTipusSimbol(ts); // ha de ser INT
+            
+            // l'array "a[i]" es refereix al mateix simbol de memoria que "a"
+            // per tant, copiam la referencia del simbol de fill a pare
+            this.simbolAssoc = base.getSimbolAssoc();
+            
+            // segon gestionam index
+            TipusSimbol tIndex = index.getTipusSimbol(ts);
             
             if (tIndex != TipusSimbol.INT) {
                 throw new RuntimeException("L'index de la taula ha de ser INT");
             }
             
-            // Comprovam que tBse es una taula i retornam el tipus de taula
+            // Si tBase es taula, retornam el tipus de taula
             switch (tBase) {
                 case TAULA_INT: return TipusSimbol.TAULA_INT;
                 case TAULA_CARACTER: return TipusSimbol.TAULA_CARACTER;
@@ -114,20 +135,30 @@ public class Node_Ref extends Node {
     @Override
     public String generaCodi3a(C3a codi3a) {
         
+        if (this.simbolAssoc == null) {
+            throw new RuntimeException("ERROR INTERN: Node_Ref sense simbol associat");
+        }
+
+        String nomVar = this.simbolAssoc.getNom();
+        
+        //int offset = this.simbolAssoc.getOffset();
+        
         if (!teIndex()) {
+            // Cas simple: x
+            // Si volem carregar el valor a un temporal
             String t = codi3a.novaTemp();
-            codi3a.afegir(Codi.COPY, getIdBase(), null, t);
+            codi3a.afegir(Codi.COPY, nomVar, null, t);
+            return t;
+        } else {
+            // Cas array: a[i]
+            // Aquí necessitam l'índex. Com que 'index' és un Node_Express, ell generarà el seu propi codi.
+            String idxTemp = this.index.generaCodi3a(codi3a);
+            
+            String t = codi3a.novaTemp();
+            // ind_val a i t  ->  t = a[i]
+            codi3a.afegir(Codi.IND_VAL, nomVar, idxTemp, t);
             return t;
         }
-        
-        // Suposam una sola dimensio a[i]; per mes dimensions cal un desplaçament
-        Node_Ref baseRef = this.base;
-        String baseName = baseRef.getIdBase();
-        String idxTemp = this.index.generaCodi3a(codi3a);
-        
-        String t = codi3a.novaTemp();
-        codi3a.afegir(Codi.IND_VAL, baseName, idxTemp, t); // t = base[idx]
-        return t;
         
     }
 

@@ -37,29 +37,32 @@ public class Node_LValue extends Node {
     //  - no es pot assignar a una funcio amb retorn o sense
     public TipusSimbol getTipusSimbolLValue(TaulaSimbols ts) {
         
-        String idBase = ref.getIdBase();
-        Simbol s = TaulaSimbols.cercarSimbol(idBase);
+        // Obtenim el tipus de simbol del node
+        TipusSimbol t = ref.getTipusSimbol(ts);
+        
+        // Recuperam el simbol
+        Simbol s = ref.getSimbolAssoc();
         
         if (s == null) {
-            throw new RuntimeException("Identificador no declarat a LValue: " + idBase);
+            throw new RuntimeException("Identificador no declarat a LValue");
         }
         
         CategoriaSimbol cat = s.getCategoria();
+        String nom = s.getNom();
         
         if (cat == CategoriaSimbol.CONSTANT 
             || cat == CategoriaSimbol.FUNCIO 
             || cat == CategoriaSimbol.PROCEDIMENT) {
             
-            throw new RuntimeException("No es pot assignar a: " + cat + " '" + idBase + "'");
+            throw new RuntimeException("No es pot assignar a: '" + nom + "' perque es " + nom + "");
         }
         
-        // Node_Ref comprova indexs i ens dona el tipus final
-        return ref.getTipusSimbol(ts);
+        return t;
     }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
-        return null;
+        return null; //LValue no genera codi per si mateix
     }
 
     
