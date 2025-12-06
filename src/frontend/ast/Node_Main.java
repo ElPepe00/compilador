@@ -17,6 +17,8 @@ import frontend.taula_simbols.*;
 public class Node_Main extends Node {
 
     private Node_Elements elements;
+    
+    private Simbol simbolMain;
 
     public Node_Main(Node_Elements elements) {
         super("Main");
@@ -25,14 +27,22 @@ public class Node_Main extends Node {
 
     @Override
     public void gestioSemantica(TaulaSimbols ts) {
+        
+        // Cream un simbol per main "un poc especial", per guardar la mida
+        this.simbolMain = new Simbol("main", TipusSimbol.VOID, CategoriaSimbol.FUNCIO);
+        this.simbolMain.setEtiqueta("main");
+        
         // Àmbit propi per al main
-        TaulaSimbols.entrarBloc();
+        ts.entrarFuncio();
 
         if (elements != null) {
             elements.gestioSemantica(ts);
         }
 
-        TaulaSimbols.sortirBloc();
+        // Actualitzam la mida del frame
+        this.simbolMain.setMidaFrame(ts.getOffsetActual());
+        
+        ts.sortirBloc();
     }
 
     @Override
@@ -40,6 +50,9 @@ public class Node_Main extends Node {
         
         //etiqueta d'entrada al programa
         codi3a.afegirEtiqueta("main");
+        
+        String aux = String.valueOf(this.simbolMain.getMidaFrame());
+        codi3a.afegir(Codi.PMB, "main", aux, null);
         
         if (elements != null) {
             elements.generaCodi3a(codi3a);
@@ -49,8 +62,6 @@ public class Node_Main extends Node {
         return null;
     }
     
-    
-
     @Override
     public String toString() {
         return "Main(" + elements + ")";

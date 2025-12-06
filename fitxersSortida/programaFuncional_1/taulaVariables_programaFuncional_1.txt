@@ -1,0 +1,9 @@
+TAULA DE VARIABLES (Generada des de TS)
+---------------------------------------
+NOM             AMBIT           OFFSET     MIDA       TIPUS     
+a               LOCAL           0          4          INT       
+b               LOCAL           4          4          INT       
+res             LOCAL           8          4          INT       
+j               LOCAL           0          4          INT       
+t               LOCAL           4          4          INT       
+c               LOCAL           8          4          INT       

@@ -35,7 +35,7 @@ public class Node_Decl_loc_escalar extends Node_Decl_loc {
         int mida = tVar.getMidaBytes();
         
         // 1. Crear el simbol
-        this.simbolAssoc = new Simbol(id, tVar, CategoriaSimbol.CONSTANT);
+        this.simbolAssoc = new Simbol(id, tVar, CategoriaSimbol.VARIABLE);
         this.simbolAssoc.setOcupacio(mida);
         
         // 2. Afegir el simbol a la TS

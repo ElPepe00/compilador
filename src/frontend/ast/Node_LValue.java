@@ -54,7 +54,7 @@ public class Node_LValue extends Node {
             || cat == CategoriaSimbol.FUNCIO 
             || cat == CategoriaSimbol.PROCEDIMENT) {
             
-            throw new RuntimeException("No es pot assignar a: '" + nom + "' perque es " + nom + "");
+            throw new RuntimeException("No es pot assignar a: '" + nom + "' perque es " + cat + "");
         }
         
         return t;

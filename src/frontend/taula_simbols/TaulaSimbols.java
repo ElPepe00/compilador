@@ -50,7 +50,7 @@ public class TaulaSimbols {
     /**
      * Crea un subambit i afegeix una nova taula hash a la pila
      */
-    public static void entrarBloc() {
+    public void entrarBloc() {
         pilaAmbits.push(new HashMap<>());
         
         // Si es un bloc anonim seguim amb l'offset anterior, si es una funció
@@ -62,7 +62,7 @@ public class TaulaSimbols {
     /**
      * Elimina l'àmbit actual sortit del subambit
      */
-    public static void sortirBloc() {
+    public void sortirBloc() {
         if (!pilaAmbits.isEmpty()) {
             pilaAmbits.pop();
         }
@@ -78,7 +78,7 @@ public class TaulaSimbols {
      * Afegeix un simbol a l'ambit actual passant l'objecte Simbol
      * @param simbol objecte que es vol inserir a la taula
      */
-    public static void afegirSimbol(Simbol simbol) {
+    public void afegirSimbol(Simbol simbol) {
         
         if(pilaAmbits.peek().containsKey(simbol.getNom())) {
             throw new RuntimeException("Error inserirSimbol(): El simbol " + simbol.getNom() + " ja existeix a n'aquest ambit.");
@@ -111,7 +111,7 @@ public class TaulaSimbols {
      * @param nomSimbol nom del simbol a cercar
      * @return retorna el simbol si s'ha trobat sino null
      */
-    public static Simbol cercarSimbol(String nom) {
+    public Simbol cercarSimbol(String nom) {
         
         // Es recorre des del subàmbit més intern (top) fins al global (bottom)
         for (int i = pilaAmbits.size() - 1; i >= 0; i--) {
@@ -134,7 +134,7 @@ public class TaulaSimbols {
      * Retorna el nivell actual d'ambit (0 és el primer creat)
      * @return 
      */
-    public static int getNivellActual() {
+    public int getNivellActual() {
         return pilaAmbits.size() - 1;
     }
     

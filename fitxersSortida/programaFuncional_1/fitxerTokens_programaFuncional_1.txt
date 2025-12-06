@@ -1,70 +1,70 @@
-Token: CONSTANT -- Linia: 2, Columna: 0
-Token: INT -- Linia: 2, Columna: 9
-Token: ID -- Linia: 2, Columna: 13
-Token: ASSIGN -- Linia: 2, Columna: 17
-Token: NUMERO -- Linia: 2, Columna: 19
-Token: FILINEA -- Linia: 2, Columna: 21
-Token: FUNCIO -- Linia: 5, Columna: 0
-Token: INT -- Linia: 5, Columna: 7
-Token: ID -- Linia: 5, Columna: 11
-Token: LPAREN -- Linia: 5, Columna: 16
-Token: INT -- Linia: 5, Columna: 17
-Token: ID -- Linia: 5, Columna: 21
-Token: COMA -- Linia: 5, Columna: 22
-Token: INT -- Linia: 5, Columna: 24
-Token: ID -- Linia: 5, Columna: 28
-Token: RPAREN -- Linia: 5, Columna: 29
-Token: BEGIN -- Linia: 5, Columna: 30
-Token: INT -- Linia: 6, Columna: 1
-Token: ID -- Linia: 6, Columna: 5
-Token: FILINEA -- Linia: 6, Columna: 8
-Token: ID -- Linia: 7, Columna: 1
-Token: ASSIGN -- Linia: 7, Columna: 5
-Token: ID -- Linia: 7, Columna: 7
-Token: SUMA -- Linia: 7, Columna: 9
-Token: ID -- Linia: 7, Columna: 11
-Token: FILINEA -- Linia: 7, Columna: 12
-Token: RETURN -- Linia: 8, Columna: 1
-Token: ID -- Linia: 8, Columna: 8
-Token: FILINEA -- Linia: 8, Columna: 11
-Token: FUNCIO_FI -- Linia: 9, Columna: 0
-Token: PROGRAMA -- Linia: 12, Columna: 0
-Token: BEGIN -- Linia: 12, Columna: 8
-Token: INT -- Linia: 14, Columna: 1
-Token: ID -- Linia: 14, Columna: 5
-Token: ASSIGN -- Linia: 14, Columna: 7
-Token: LLEGIR -- Linia: 14, Columna: 9
-Token: LPAREN -- Linia: 14, Columna: 15
-Token: RPAREN -- Linia: 14, Columna: 16
-Token: FILINEA -- Linia: 14, Columna: 17
-Token: INT -- Linia: 15, Columna: 1
-Token: ID -- Linia: 15, Columna: 5
-Token: ASSIGN -- Linia: 15, Columna: 7
-Token: ID -- Linia: 15, Columna: 9
-Token: FILINEA -- Linia: 15, Columna: 12
-Token: INT -- Linia: 16, Columna: 1
-Token: ID -- Linia: 16, Columna: 5
-Token: FILINEA -- Linia: 16, Columna: 6
-Token: ID -- Linia: 18, Columna: 1
-Token: ASSIGN -- Linia: 18, Columna: 3
-Token: ID -- Linia: 18, Columna: 5
-Token: LPAREN -- Linia: 18, Columna: 10
-Token: ID -- Linia: 18, Columna: 11
-Token: COMA -- Linia: 18, Columna: 12
-Token: ID -- Linia: 18, Columna: 14
-Token: RPAREN -- Linia: 18, Columna: 15
-Token: FILINEA -- Linia: 18, Columna: 16
-Token: IF -- Linia: 20, Columna: 1
-Token: LPAREN -- Linia: 20, Columna: 4
-Token: ID -- Linia: 20, Columna: 5
-Token: MAJOR -- Linia: 20, Columna: 7
-Token: NUMERO -- Linia: 20, Columna: 9
-Token: RPAREN -- Linia: 20, Columna: 11
-Token: BEGIN -- Linia: 20, Columna: 12
-Token: IMPRIMIR -- Linia: 21, Columna: 2
-Token: LPAREN -- Linia: 21, Columna: 10
-Token: ID -- Linia: 21, Columna: 11
-Token: RPAREN -- Linia: 21, Columna: 12
-Token: FILINEA -- Linia: 21, Columna: 13
-Token: IF_FI -- Linia: 22, Columna: 1
-Token: PROGRAMA_FI -- Linia: 24, Columna: 0
+Token: CONSTANT        | Valor:            | Linia: 2, Col: 0
+Token: INT             | Valor:            | Linia: 2, Col: 9
+Token: ID              | Valor: max        | Linia: 2, Col: 13
+Token: ASSIGN          | Valor:            | Linia: 2, Col: 17
+Token: NUMERO          | Valor: 10         | Linia: 2, Col: 19
+Token: FILINEA         | Valor:            | Linia: 2, Col: 21
+Token: FUNCIO          | Valor:            | Linia: 5, Col: 0
+Token: INT             | Valor:            | Linia: 5, Col: 7
+Token: ID              | Valor: sumar      | Linia: 5, Col: 11
+Token: LPAREN          | Valor:            | Linia: 5, Col: 16
+Token: INT             | Valor:            | Linia: 5, Col: 17
+Token: ID              | Valor: a          | Linia: 5, Col: 21
+Token: COMA            | Valor:            | Linia: 5, Col: 22
+Token: INT             | Valor:            | Linia: 5, Col: 24
+Token: ID              | Valor: b          | Linia: 5, Col: 28
+Token: RPAREN          | Valor:            | Linia: 5, Col: 29
+Token: BEGIN           | Valor:            | Linia: 5, Col: 30
+Token: INT             | Valor:            | Linia: 6, Col: 1
+Token: ID              | Valor: res        | Linia: 6, Col: 5
+Token: FILINEA         | Valor:            | Linia: 6, Col: 8
+Token: ID              | Valor: res        | Linia: 7, Col: 1
+Token: ASSIGN          | Valor:            | Linia: 7, Col: 5
+Token: ID              | Valor: a          | Linia: 7, Col: 7
+Token: SUMA            | Valor:            | Linia: 7, Col: 9
+Token: ID              | Valor: b          | Linia: 7, Col: 11
+Token: FILINEA         | Valor:            | Linia: 7, Col: 12
+Token: RETURN          | Valor:            | Linia: 8, Col: 1
+Token: ID              | Valor: res        | Linia: 8, Col: 8
+Token: FILINEA         | Valor:            | Linia: 8, Col: 11
+Token: FUNCIO_FI       | Valor:            | Linia: 9, Col: 0
+Token: PROGRAMA        | Valor:            | Linia: 12, Col: 0
+Token: BEGIN           | Valor:            | Linia: 12, Col: 8
+Token: INT             | Valor:            | Linia: 14, Col: 1
+Token: ID              | Valor: j          | Linia: 14, Col: 5
+Token: ASSIGN          | Valor:            | Linia: 14, Col: 7
+Token: LLEGIR          | Valor:            | Linia: 14, Col: 9
+Token: LPAREN          | Valor:            | Linia: 14, Col: 15
+Token: RPAREN          | Valor:            | Linia: 14, Col: 16
+Token: FILINEA         | Valor:            | Linia: 14, Col: 17
+Token: INT             | Valor:            | Linia: 15, Col: 1
+Token: ID              | Valor: t          | Linia: 15, Col: 5
+Token: ASSIGN          | Valor:            | Linia: 15, Col: 7
+Token: ID              | Valor: max        | Linia: 15, Col: 9
+Token: FILINEA         | Valor:            | Linia: 15, Col: 12
+Token: INT             | Valor:            | Linia: 16, Col: 1
+Token: ID              | Valor: c          | Linia: 16, Col: 5
+Token: FILINEA         | Valor:            | Linia: 16, Col: 6
+Token: ID              | Valor: c          | Linia: 18, Col: 1
+Token: ASSIGN          | Valor:            | Linia: 18, Col: 3
+Token: ID              | Valor: sumar      | Linia: 18, Col: 5
+Token: LPAREN          | Valor:            | Linia: 18, Col: 10
+Token: ID              | Valor: j          | Linia: 18, Col: 11
+Token: COMA            | Valor:            | Linia: 18, Col: 12
+Token: ID              | Valor: t          | Linia: 18, Col: 14
+Token: RPAREN          | Valor:            | Linia: 18, Col: 15
+Token: FILINEA         | Valor:            | Linia: 18, Col: 16
+Token: IF              | Valor:            | Linia: 20, Col: 1
+Token: LPAREN          | Valor:            | Linia: 20, Col: 4
+Token: ID              | Valor: c          | Linia: 20, Col: 5
+Token: MAJOR           | Valor:            | Linia: 20, Col: 7
+Token: NUMERO          | Valor: 50         | Linia: 20, Col: 9
+Token: RPAREN          | Valor:            | Linia: 20, Col: 11
+Token: BEGIN           | Valor:            | Linia: 20, Col: 12
+Token: IMPRIMIR        | Valor:            | Linia: 21, Col: 2
+Token: LPAREN          | Valor:            | Linia: 21, Col: 10
+Token: ID              | Valor: c          | Linia: 21, Col: 11
+Token: RPAREN          | Valor:            | Linia: 21, Col: 12
+Token: FILINEA         | Valor:            | Linia: 21, Col: 13
+Token: IF_FI           | Valor:            | Linia: 22, Col: 1
+Token: PROGRAMA_FI     | Valor:            | Linia: 24, Col: 0

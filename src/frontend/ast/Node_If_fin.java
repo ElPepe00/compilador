@@ -34,9 +34,9 @@ public class Node_If_fin extends Node {
     public void gestioSemantica(TaulaSimbols ts) {
         if (cosElse != null) {
             // Àmbit per al bloc ELSE
-            TaulaSimbols.entrarBloc();
+            ts.entrarBloc();
             cosElse.gestioSemantica(ts);
-            TaulaSimbols.sortirBloc();
+            ts.sortirBloc();
         }
     }
 

@@ -47,63 +47,90 @@ public class CompiladorMain {
             // Inicialitzam el gestor d'errors
             GestorError gestorError = new GestorError();
             
-            // *************
-            // ANALISI LEXIC
-            // *************
-            System.out.println("\n --- ANALISI LEXIC:");
+            // ***************
+            //  ANALISI LEXIC
+            // ***************
+            System.out.println("\n [1] --- ANALISI LEXIC:");
             Scanner scannerTokens = new Scanner(new FileReader(rutaPrograma));
-            
+            String rutaTokens = rutaSortida + "fitxerTokens_" + nomFitxer;
             // generar fitxer de tokens
-            guardarFitxerTokens(scannerTokens, (rutaSortida + "fitxerTokens_" + nomFitxer));
+            guardarFitxerTokens(scannerTokens, rutaTokens);
             scannerTokens.yyclose();
             
-            // ***********************
-            // ANALISI SINTACTIC + AST
-            // ***********************
-            System.out.println("\n --- ANALISI SINTACTIC + AST:");
+            if (GestorError.hihaError()) {
+                System.err.println("   [ERROR] S'han trobat errors lèxics. Aturant compilacio.");
+                gestorError.exportarErrors(rutaSortida + "errors_" + nomFitxer);
+                return;
+            }
+            
+            // *************************
+            //  ANALISI SINTACTIC + AST
+            // *************************
+            System.out.println("\n [2] --- ANALISI SINTACTIC + AST:");
             Scanner scannerParser = new Scanner(new FileReader(rutaPrograma));
             SymbolFactory sf = new ComplexSymbolFactory();
             Parser parser = new Parser(scannerParser, sf);
             
-            // --------------------------------------------------- Revisar
             // Cream l'arrel de l'arbre sintactic
             Symbol resultat = parser.parse();
-            
             Node_Peplang arrel = (Node_Peplang) resultat.value;
-
-            System.out.println("   Arbre sintactic creat correctament.");
             
-            // *************************
-            // TAULA SIMBOLS + SEMATINCA
-            // *************************
-            System.out.println("\n --- ANALISI SEMANTICA:");
+            if (GestorError.hihaError() || arrel == null) {
+                System.err.println("   [ERROR] S'han trobat errors sintactics. Aturant compilacio.");
+                gestorError.exportarErrors(rutaSortida + "errors_" + nomFitxer);
+                return;
+            }
+
+            System.out.println("   > Arbre sintactic explicit construit correctament.");
+            
+            // ***************************
+            //  TAULA SIMBOLS + SEMATINCA
+            // ***************************
+            System.out.println("\n [3] --- ANALISI SEMANTICA:");
             
             TaulaSimbols ts = new TaulaSimbols();
-            TaulaSimbols.entrarBloc();
+            ts.entrarBloc(); // cream ambit 0, GLOBAL
             
+            // Aquesta crida comprova tota la semantica de l'arbre/programa
             arrel.gestioSemantica(ts);
-
-            System.out.println("   Nombre de simbols a la TS: " + TaulaSimbols.obtenirTotsElsSimbols().size());
-            TaulaSimbols.guardarTaulaSimbols(rutaSortida + "taulaSimbols_" + nomFitxer);
             
-            // **************
-            // CODI INTERMEDI
-            // **************
-            System.out.println("\n --- CODI INTERMEDI (C3@):");
+            if (GestorError.hihaError()) {
+                System.err.println("   [ERROR] S'han trobat errors semantics. Aturant compilacio.");
+                gestorError.exportarErrors(rutaSortida + "errors_" + nomFitxer);
+                // guardar la TS parcial per depurar
+                ts.guardarTaulaSimbols(rutaSortida + "taulaSimbols_PARCIAL_" + nomFitxer);
+                return;
+            }
+
+            // Guardam taula de simbol
+            ts.guardarTaulaSimbols(rutaSortida + "taulaSimbols_" + nomFitxer);
+            // Guardam taula de variables i procediments
+            ts.exportarTaulaVariables(rutaSortida + "taulaVariables_" + nomFitxer);
+            ts.exportarTaulaProcediments(rutaSortida + "taulaProcediments_" + nomFitxer);
+            
+            // ****************
+            //  CODI INTERMEDI
+            // ****************
+            System.out.println("\n [4] --- CODI INTERMEDI (C3@):");
             
             C3a c3a = new C3a();
+            // Ja tenim l'arbre construit, nomes generam el codi, recorrentlo
             arrel.generaCodi3a(c3a);
             
-            c3a.guadarCodi3a(rutaSortida + "codi3a_" + nomFitxer);
-            System.out.println("   Nombre d'instruccions de C3@: " + c3a.getNumBlocs());
-            
-            c3a.getTaulaVariables().guardarTaulaVariables(rutaSortida + "taulaVariables_" + nomFitxer);
-            c3a.getTaulaProcediments().guardarTaulaProcediments(rutaSortida + "taulaProcediments_" +nomFitxer);
+            // Guardam el fitxer d'instruccions de 3 adreces
+            String rutaC3a = rutaSortida + "codi3a_" + nomFitxer;
+            c3a.guadarCodi3a(rutaC3a);
+            System.out.println("   > Nombre d'instruccions de C3@: " + c3a.getNumInstr());
+           
 
+            // ******************
+            //  CODI ASSEMBLADOR
+            // ******************
             
             
         } catch(Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("\n [EXCEPTION] Error fatal durant la compilació:");
+            e.printStackTrace();
         }
     }
     
@@ -119,21 +146,25 @@ public class CompiladorMain {
             
             while ((token = scanner.next_token()).sym != sym.EOF) {
                 ComplexSymbol cs = (ComplexSymbol) token;
-                String cadena = "Token: " + sym.terminalNames[cs.sym]
-                                + " -- Linia: " + cs.left
-                                + ", Columna: " + cs.right;
+                String nomToken = sym.terminalNames[cs.sym];
+                String valor = (cs.value != null) ? cs.value.toString() : "";
                 
-                bw.write(cadena);
+                String linia = String.format("Token: %-15s | Valor: %-10s | Linia: %d, Col: %d", 
+                                             nomToken, valor, cs.left, cs.right);
+                
+                bw.write(linia);
                 bw.newLine();
                 contTokens++;
             }
             
-            System.out.println("   Fitxer de tokens generat correctament.");
-            System.out.println("   Numero de tokens generats: " + contTokens);
+            System.out.println("   > Fitxer de tokens generat correctament.");
+            System.out.println("   > Numero de tokens generats: " + contTokens);
             bw.close();
             
         } catch (IOException e) {
-            System.err.println("Error al guardar el fitxer de tokens: " + e);
+            System.err.println("Error al guardar el fitxer de tokens: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error durant l'escaneig: " + e.getMessage());
         }
     }
 }
