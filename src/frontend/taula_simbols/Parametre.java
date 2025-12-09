@@ -24,22 +24,19 @@ public class Parametre {
     private String nom;
     private TipusSimbol tipus;
     private int posicio;      // 0-based (primer paràmetre = 0)
-    private ParamMode mode;
     private int offset;       // per al codi de 3 adreces / frame
 
     public Parametre(String nom, TipusSimbol tipus, int posicio) {
-        this(nom, tipus, posicio, ParamMode.VALOR, 0);
+        this(nom, tipus, posicio, 0);
     }
 
     public Parametre(String nom,
                      TipusSimbol tipus,
                      int posicio,
-                     ParamMode mode,
                      int offset) {
         this.nom = nom;
         this.tipus = tipus;
         this.posicio = posicio;
-        this.mode = mode;
         this.offset = offset;
     }
 
@@ -57,10 +54,6 @@ public class Parametre {
         return posicio;
     }
 
-    public ParamMode getMode() {
-        return mode;
-    }
-
     public int getOffset() {
         return offset;
     }
@@ -69,10 +62,6 @@ public class Parametre {
 
     public void setTipus(TipusSimbol tipus) {
         this.tipus = tipus;
-    }
-
-    public void setMode(ParamMode mode) {
-        this.mode = mode;
     }
 
     public void setOffset(int offset) {
@@ -85,7 +74,6 @@ public class Parametre {
                 "nom='" + nom + '\'' +
                 ", tipus=" + tipus +
                 ", posicio=" + posicio +
-                ", mode=" + mode +
                 ", offset=" + offset +
                 '}';
     }

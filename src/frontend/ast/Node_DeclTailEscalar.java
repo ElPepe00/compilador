@@ -59,10 +59,12 @@ public class Node_DeclTailEscalar extends Node {
     
     public String generaCodiInicialitzacio(C3a codi3a, String nomVar) {
         
+        // Cas expressio
         if (mode.equals("assign")) {
             String s = expr.generaCodi3a(codi3a);
             codi3a.afegir(Codi.COPY, s, null, nomVar);
-            
+        
+        // Cas llegir()
         } else if (mode.equals("llegir")) {
             String s = codi3a.novaTemp();
             codi3a.afegir(Codi.CALL, "llegir", null, s);
