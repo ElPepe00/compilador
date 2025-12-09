@@ -177,7 +177,7 @@ public class TaulaSimbols {
         
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomFitxer))) {
             bw.write(this.toString());
-            System.out.println("   > Taula de Símbols guardada a: " + nomFitxer);
+            System.out.println("   > Taula de Simbols guardada a: " + nomFitxer);
         } catch (IOException e) {
             System.err.println("Error guardant Taula de Símbols: " + e.getMessage());
         }

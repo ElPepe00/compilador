@@ -123,13 +123,7 @@ public class Node_Ref extends Node {
             }
             
             // Si tBase es taula, retornam el tipus de taula
-            switch (tBase) {
-                case TAULA_INT: return TipusSimbol.TAULA_INT;
-                case TAULA_CARACTER: return TipusSimbol.TAULA_CARACTER;
-                case TAULA_BOOL: return TipusSimbol.TAULA_BOOL;
-                default:
-                    throw new RuntimeException("Intent d'indexar un objecte que no es una taula");
-            }
+            return TipusUtils.getTipusBaseDeTipusArray(tBase);
         }
     }
     

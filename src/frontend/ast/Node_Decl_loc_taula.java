@@ -91,12 +91,14 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
     @Override
     public String generaCodi3a(C3a codi3a) {
         
-        /*
-        TODO
-        */
-        
+        if (tailInt != null) {
+            tailInt.generaCodiInicialitzacio(codi3a, id);
+        } else if (tailChar != null) {
+            tailChar.generaCodiInicialitzacio(codi3a, id);
+        } else if (tailBool != null) {
+            tailBool.generaCodiInicialitzacio(codi3a, id);
+        }
         return null;
-        
     }
 
     @Override

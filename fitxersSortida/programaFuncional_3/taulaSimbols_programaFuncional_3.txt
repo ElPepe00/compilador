@@ -1,0 +1,7 @@
+=== TAULA DE SÍMBOLS ===
+
+ÀMBIT: LOCAL
+----------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET    
+vector          VARIABLE        TAULA_INT       0         
+val             VARIABLE        INT             12        

@@ -32,4 +32,12 @@ public class TipusUtils {
         }
     }
     
+    public static TipusSimbol getTipusBaseDeTipusArray(TipusSimbol tArray) {
+        if (tArray == TipusSimbol.TAULA_INT) return TipusSimbol.INT;
+        if (tArray == TipusSimbol.TAULA_BOOL) return TipusSimbol.BOOL;
+        if (tArray == TipusSimbol.TAULA_CARACTER) return TipusSimbol.CARACTER;
+        
+        return tArray; 
+    }
+    
 }

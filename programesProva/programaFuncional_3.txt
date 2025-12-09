@@ -1,9 +1,16 @@
 // Programa Funcional 3
-constant taula int array_simple[3] = [1,2,3];
-constant taula int array_mult[2][2] = [1,2][1,2];
 
 // Programa principal
 programa:
 
-
+	taula int vector[3] = [10, 20, 30];
+	int val = vector[0];
+	
+	imprimir(val);
+	imprimir(vector[1]);
+	imprimir(vector[2]);
+	
+	vector[2] = 99;
+	imprimir(vector[2]);
+	
 programa_fi

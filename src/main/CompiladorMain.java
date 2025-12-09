@@ -30,12 +30,18 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 1;
+        int numPrograma = 4;
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
         String rutaPrograma = rutaProgramesProva + nomFitxer;
         String rutaSortida = "fitxersSortida/" + "programaFuncional_" + numPrograma + "/";
+        
+        File f = new File(rutaSortida);
+        
+        if (!f.exists()) {
+            f.mkdirs();
+        }
  
         try {
             
