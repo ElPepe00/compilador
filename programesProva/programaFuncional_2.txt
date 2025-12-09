@@ -1,0 +1,11 @@
+// Programa Funcional 2
+constant bool b = true;
+constant carácter c = 'a';
+
+// Programa principal
+programa:
+
+	int x = 42;
+	bool val = false;
+
+programa_fi

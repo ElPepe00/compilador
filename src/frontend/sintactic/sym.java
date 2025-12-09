@@ -8,51 +8,52 @@ package frontend.sintactic;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int NUMERO = 43;
-  public static final int LBRACKET = 36;
-  public static final int MULT = 30;
+  public static final int TKN_CARACTER = 19;
+  public static final int NUMERO = 44;
+  public static final int LBRACKET = 37;
+  public static final int LIT_CARACTER = 45;
+  public static final int MULT = 31;
   public static final int FUNCIO_FI = 5;
   public static final int PROGRAMA = 2;
-  public static final int UMINUS = 45;
+  public static final int UMINUS = 46;
   public static final int IMPRIMIR = 16;
   public static final int IF_FI = 8;
-  public static final int RESTA = 29;
-  public static final int LPAREN = 34;
+  public static final int RESTA = 30;
+  public static final int LPAREN = 35;
   public static final int INT = 18;
-  public static final int RPAREN = 35;
-  public static final int NOIGUAL = 22;
-  public static final int NOT = 27;
-  public static final int AND = 26;
-  public static final int IGUAL = 21;
-  public static final int CARACTER = 44;
-  public static final int OR = 25;
-  public static final int BOOL = 19;
-  public static final int TAULA = 20;
+  public static final int RPAREN = 36;
+  public static final int NOIGUAL = 23;
+  public static final int NOT = 28;
+  public static final int AND = 27;
+  public static final int IGUAL = 22;
+  public static final int OR = 26;
+  public static final int BOOL = 20;
+  public static final int TAULA = 21;
   public static final int ELSE_FI = 10;
-  public static final int BEGIN = 38;
-  public static final int DIV = 31;
-  public static final int MAJOR = 24;
-  public static final int SUMA = 28;
-  public static final int ASSIGN = 32;
+  public static final int BEGIN = 39;
+  public static final int DIV = 32;
+  public static final int MAJOR = 25;
+  public static final int SUMA = 29;
+  public static final int ASSIGN = 33;
   public static final int IF = 7;
   public static final int FUNCIO = 4;
-  public static final int ID = 42;
-  public static final int BTRUE = 40;
+  public static final int ID = 43;
+  public static final int BTRUE = 41;
   public static final int EOF = 0;
   public static final int RETURN = 6;
-  public static final int RBRACKET = 37;
+  public static final int RBRACKET = 38;
   public static final int error = 1;
-  public static final int COMA = 33;
+  public static final int COMA = 34;
   public static final int WHILE_FI = 12;
-  public static final int MENOR = 23;
+  public static final int MENOR = 24;
   public static final int CONSTANT = 17;
   public static final int DOWHILE = 14;
   public static final int ELSE = 9;
-  public static final int FILINEA = 39;
+  public static final int FILINEA = 40;
   public static final int WHILE = 11;
   public static final int LLEGIR = 15;
   public static final int PROGRAMA_FI = 3;
-  public static final int BFALSE = 41;
+  public static final int BFALSE = 42;
   public static final int DO = 13;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -74,6 +75,7 @@ public class sym {
   "IMPRIMIR",
   "CONSTANT",
   "INT",
+  "TKN_CARACTER",
   "BOOL",
   "TAULA",
   "IGUAL",
@@ -99,7 +101,7 @@ public class sym {
   "BFALSE",
   "ID",
   "NUMERO",
-  "CARACTER",
+  "LIT_CARACTER",
   "UMINUS"
   };
 }

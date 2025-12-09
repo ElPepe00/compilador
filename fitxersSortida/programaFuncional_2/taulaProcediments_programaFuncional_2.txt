@@ -1,0 +1,3 @@
+TAULA DE PROCEDIMENTS (Generada des de TS)
+------------------------------------------
+ETIQUETA        NOM             FRAME(B)   PARAMS         

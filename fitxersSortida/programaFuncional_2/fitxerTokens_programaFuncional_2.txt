@@ -1,0 +1,26 @@
+Token: CONSTANT        | Valor:            | Linia: 2, Col: 0
+Token: BOOL            | Valor:            | Linia: 2, Col: 9
+Token: ID              | Valor: b          | Linia: 2, Col: 14
+Token: ASSIGN          | Valor:            | Linia: 2, Col: 16
+Token: BTRUE           | Valor: true       | Linia: 2, Col: 18
+Token: FILINEA         | Valor:            | Linia: 2, Col: 22
+Token: CONSTANT        | Valor:            | Linia: 3, Col: 0
+Token: ID              | Valor: car        | Linia: 3, Col: 9
+Token: ID              | Valor: cter       | Linia: 3, Col: 13
+Token: ID              | Valor: c          | Linia: 3, Col: 18
+Token: ASSIGN          | Valor:            | Linia: 3, Col: 20
+Token: LIT_CARACTER    | Valor: a          | Linia: 3, Col: 22
+Token: FILINEA         | Valor:            | Linia: 3, Col: 25
+Token: PROGRAMA        | Valor:            | Linia: 6, Col: 0
+Token: BEGIN           | Valor:            | Linia: 6, Col: 8
+Token: INT             | Valor:            | Linia: 8, Col: 1
+Token: ID              | Valor: x          | Linia: 8, Col: 5
+Token: ASSIGN          | Valor:            | Linia: 8, Col: 7
+Token: NUMERO          | Valor: 42         | Linia: 8, Col: 9
+Token: FILINEA         | Valor:            | Linia: 8, Col: 11
+Token: BOOL            | Valor:            | Linia: 9, Col: 1
+Token: ID              | Valor: val        | Linia: 9, Col: 6
+Token: ASSIGN          | Valor:            | Linia: 9, Col: 10
+Token: BFALSE          | Valor: false      | Linia: 9, Col: 12
+Token: FILINEA         | Valor:            | Linia: 9, Col: 17
+Token: PROGRAMA_FI     | Valor:            | Linia: 11, Col: 0

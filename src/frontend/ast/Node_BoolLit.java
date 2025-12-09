@@ -21,10 +21,10 @@ public class Node_BoolLit extends Node {
     public Node_BoolLit(String val) {
         super("BoolLit");
         switch (val) {
-            case "true": this.valor = true;
-            case "false": this.valor = false;
+            case "true": this.valor = true; break;
+            case "false": this.valor = false; break;
             default:
-                throw new AssertionError();
+                throw new RuntimeException("Valor boolea invalid al parser: " + val);
         }
     }
     

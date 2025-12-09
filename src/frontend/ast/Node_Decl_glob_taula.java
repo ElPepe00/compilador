@@ -64,25 +64,39 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
         int midaTotal = nElems * midaElem;
         
         this.simbolArray = new Simbol(id, tArray, CategoriaSimbol.CONSTANT);
-        this.simbolArray.setEsGlobal(true);
+        this.simbolArray.setOcupacio(midaTotal);
         this.simbolArray.setEsArray(true);
         this.simbolArray.setMidaArray(nElems);
-        this.simbolArray.setOcupacio(midaTotal);
+        
+        this.simbolArray.setEsGlobal(true);
+        this.simbolArray.setAmbit("GLOBAL");
         
         ts.afegirSimbol(this.simbolArray);
-        
-        if (tipusBaseStr.equals("INT") && tailInt != null) {
+
+        if (tailInt != null) {
+            if (tBase != TipusSimbol.INT) throw new RuntimeException("Inicialitzador INT en taula " + tipusBaseStr);
             tailInt.gestioSemantica(ts, nElems);
-        } else if (tipusBaseStr.equals("CARACTER") && tailChar != null) {
+        } else if (tailChar != null) {
+            if (tBase != TipusSimbol.CARACTER) throw new RuntimeException("Inicialitzador CHAR en taula " + tipusBaseStr);
             tailChar.gestioSemantica(ts, nElems);
-        } else if (tipusBaseStr.equals("BOOL") && tailBool != null) {
+        } else if (tailBool != null) {
+            if (tBase != TipusSimbol.BOOL) throw new RuntimeException("Inicialitzador BOOL en taula " + tipusBaseStr);
             tailBool.gestioSemantica(ts, nElems);
         }
     }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
-        return super.generaCodi3a(codi3a); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        
+        if (tailInt != null) {
+            tailInt.generaCodiInicialitzacio(codi3a, id);
+        } else if (tailChar != null) {
+            tailChar.generaCodiInicialitzacio(codi3a, id);
+        } else if (tailBool != null) {
+            tailBool.generaCodiInicialitzacio(codi3a, id);
+        }
+        
+        return null;
     }
 
     @Override

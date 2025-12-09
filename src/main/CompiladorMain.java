@@ -30,7 +30,7 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 1;
+        int numPrograma = 2;
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
@@ -129,7 +129,7 @@ public class CompiladorMain {
             
             
         } catch(Exception e) {
-            System.err.println("\n [EXCEPTION] Error fatal durant la compilació:");
+            System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");
             e.printStackTrace();
         }
     }

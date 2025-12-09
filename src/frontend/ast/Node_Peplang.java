@@ -33,6 +33,7 @@ public class Node_Peplang extends Node {
         // per crear l'àmbit global.
         if (globs != null) {
             globs.gestioSemantica(ts);
+            
         }
         if (funcs != null) {
             funcs.gestioSemantica(ts);

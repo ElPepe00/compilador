@@ -87,6 +87,7 @@ terminal Object IMPRIMIR;
 /* Tipus de dada*/
 terminal Object CONSTANT;
 terminal Object INT;
+terminal Object TKN_CARACTER;
 terminal Object BOOL;
 terminal Object TAULA;
 
@@ -128,7 +129,7 @@ terminal Object BFALSE;
 /* Terminals diferents */
 terminal String ID;
 terminal String NUMERO;
-terminal Character CARACTER;
+terminal Character LIT_CARACTER;
 
 terminal Object UMINUS; //------------------------------------------------------------------------------------- terminal UMINUS
 
@@ -192,7 +193,7 @@ Decl_glob           ::= CONSTANT Tipusv:t ID:id ASSIGN Express:e FILINEA								
 					;
 
 Decl_glob_taula     ::= CONSTANT TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail			{: RESULT = new Node_Decl_glob_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
-                    | CONSTANT TAULA CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail		{: RESULT = new Node_Decl_glob_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
+                    | CONSTANT TAULA TKN_CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail	{: RESULT = new Node_Decl_glob_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
                     | CONSTANT TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail			{: RESULT = new Node_Decl_glob_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
 					;
 
@@ -251,7 +252,7 @@ DeclTailEscalar    	::= ASSIGN Express:e																{: RESULT = new Node_Dec
 
 // TAULES tipades locals 
 Decl_taula         	::= TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail					{: RESULT = new Node_Decl_loc_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
-                    | TAULA CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail				{: RESULT = new Node_Decl_loc_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
+                    | TAULA TKN_CARACTER ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail			{: RESULT = new Node_Decl_loc_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
                     | TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail					{: RESULT = new Node_Decl_loc_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
 					;
 
@@ -383,7 +384,7 @@ Express            	::= Express:e1 SUMA Express:e2														{: RESULT = new 
 Num                	::= NUMERO:n																		{: RESULT = new Node_Num((String)n); :}
 					;
 					
-CharLit            	::= CARACTER:c																		{: RESULT = new Node_CharLit((Character)c); :}
+CharLit            	::= LIT_CARACTER:c																	{: RESULT = new Node_CharLit((Character)c); :}
 					;
 					
 BoolLit            	::= BTRUE																			{: RESULT = new Node_BoolLit("true"); :}
@@ -391,7 +392,7 @@ BoolLit            	::= BTRUE																			{: RESULT = new Node_BoolLit("tr
 					;
 
 Tipusv             	::= INT																				{: RESULT = new Node_Tipusv("INT"); :}
-					| CARACTER																			{: RESULT = new Node_Tipusv("CARACTER"); :}
+					| TKN_CARACTER																		{: RESULT = new Node_Tipusv("CARACTER"); :}
 					| BOOL																				{: RESULT = new Node_Tipusv("BOOL"); :}
 					;
 

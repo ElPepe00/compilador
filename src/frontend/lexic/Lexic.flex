@@ -120,6 +120,7 @@ COMENT_LINIA    = "//" [^\r\n]*
 /* Tipus de dada*/
 "constant"		{ return symbol(sym.CONSTANT); }
 "int"          	{ return symbol(sym.INT); }
+"caracter"		{ return symbol(sym.TKN_CARACTER); }
 "bool"         	{ return symbol(sym.BOOL); }
 "taula"			{ return symbol(sym.TAULA); }
 
@@ -184,7 +185,7 @@ COMENT_LINIA    = "//" [^\r\n]*
 						} else { 
 							c = s.charAt(1); //si no hiha barra, és un caràcter normal
 						}
-						return symbol(sym.CARACTER, Character.valueOf(c));
+						return symbol(sym.LIT_CARACTER, Character.valueOf(c));
 					}
 
 /* Error Lèxic */

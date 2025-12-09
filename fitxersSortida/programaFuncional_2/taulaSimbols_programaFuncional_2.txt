@@ -1,0 +1,12 @@
+=== TAULA DE SÍMBOLS ===
+
+ÀMBIT: GLOBAL
+----------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET    
+b               CONSTANT        BOOL            0         
+
+ÀMBIT: LOCAL
+----------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET    
+x               VARIABLE        INT             0         
+val             VARIABLE        BOOL            4         

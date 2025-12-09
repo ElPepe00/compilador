@@ -36,8 +36,8 @@ public class Node_Tipusv extends Node {
     public int getMidaBytes() {
         switch (nomTipus) {
             case "INT": return 4;
-            case "CARACTER": return 1;
-            case "BOOL": return 1;
+            case "CARACTER": return 4;
+            case "BOOL": return 4;
             default:
                 throw new IllegalStateException("Tipus desconegut a Node_Tipusv: " + nomTipus);
         }
