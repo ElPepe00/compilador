@@ -12,6 +12,7 @@
 package frontend.sintactic;
 
 import java_cup.runtime.*;
+import java.util.ArrayList;
 import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import frontend.gestor_errors.*;
@@ -145,7 +146,7 @@ non terminal Object
   ArrayLitInt, IntElems,
   ArrayLitChar, CharElems,
   ArrayLitBool, BoolElems,
-  Instr, AssignacioRead, Assignacio2,
+  Instr, AssignacioRead, Assignacio,
   LValue, Ref,
   If_prog, If_fin, While_prog, DoWhile_prog,
   Crida_proc, Crida_func, CridaBase,
@@ -153,6 +154,8 @@ non terminal Object
   Cond, Express,
   Num, CharLit, BoolLit,
   Tipusv;
+  
+  non terminal ArrayList<Integer> Dims;
 
 /*---------------------------------------------*/
 /*    		      PRECEDENCIA			       */
@@ -192,11 +195,23 @@ Decl_glob           ::= CONSTANT Tipusv:t ID:id ASSIGN Express:e FILINEA								
                     | Decl_glob_taula:d FILINEA															{: RESULT = (Node_Decl_glob_taula)d; :}	
 					;
 
-Decl_glob_taula     ::= CONSTANT TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail			{: RESULT = new Node_Decl_glob_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
-                    | CONSTANT TAULA CHAR ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail			{: RESULT = new Node_Decl_glob_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
-                    | CONSTANT TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail			{: RESULT = new Node_Decl_glob_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
+Decl_glob_taula     ::= CONSTANT TAULA INT ID:id Dims:d DeclTailTaulaInt:tail							{: RESULT = new Node_Decl_glob_taula("INT", (String)id, d, (Node_DeclTailTaulaInt)tail); :}
+                    | CONSTANT TAULA CHAR ID:id Dims:d DeclTailTaulaChar:tail							{: RESULT = new Node_Decl_glob_taula("CARACTER", (String)id, d, (Node_DeclTailTaulaChar)tail); :}
+                    | CONSTANT TAULA BOOL ID:id Dims:d DeclTailTaulaBool:tail							{: RESULT = new Node_Decl_glob_taula("BOOL", (String)id, d, (Node_DeclTailTaulaBool)tail); :}
 					;
 
+// Per multidimensionalitat dels arrays
+Dims 				::= LBRACKET Num:n RBRACKET															{: 
+																											ArrayList<Integer> l = new ArrayList<>(); 
+																											l.add(((Node_Num)n).getValorEnter());
+																											RESULT = l; 
+																										:}
+					| Dims:l LBRACKET Num:n RBRACKET
+																										{: 
+																											l.add(((Node_Num)n).getValorEnter()); 
+																											RESULT = l; 
+																										:}
+					;
 // --- FUNCIONS
 Funcs               ::= Funcs:fs Func:f																	{: RESULT = new Node_Funcs((Node_Funcs)fs, (Node_Func)f); :}
                     |																					{: RESULT = null; :}
@@ -218,7 +233,10 @@ ParamList          	::= Param:p																			{: RESULT = new Node_ParamList
 					| ParamList:pl COMA Param:p															{: RESULT = new Node_ParamList((Node_ParamList)pl, (Node_Param)p); :}
 					;
 					
-Param              	::= Tipusv:t ID:id																	{: RESULT = new Node_Param((Node_Tipusv)t, (String)id); :}
+Param              	::= Tipusv:t ID:id																	{: RESULT = new Node_Param((Node_Tipusv)t, (String)id, false); :}
+					| TAULA INT ID:id LBRACKET RBRACKET													{: RESULT = new Node_Param(new Node_Tipusv("INT"), (String)id, true); :}
+					| TAULA CHAR ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv("CARACTER"), (String)id, true); :}
+					| TAULA BOOL ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv("BOOL"), (String)id, true); :}
 					;
 					
 Returnfi           	::= RETURN ExpressOpt:e FILINEA 													{: RESULT = new Node_Returnfi((Node_Express)e); :}
@@ -251,9 +269,9 @@ DeclTailEscalar    	::= ASSIGN Express:e																{: RESULT = new Node_Dec
 					;
 
 // TAULES tipades locals 
-Decl_taula         	::= TAULA INT ID:id LBRACKET Num:n RBRACKET DeclTailTaulaInt:tail					{: RESULT = new Node_Decl_loc_taula("INT", (String)id, (Node_Num)n, (Node_DeclTailTaulaInt)tail); :}
-                    | TAULA CHAR ID:id LBRACKET Num:n RBRACKET DeclTailTaulaChar:tail					{: RESULT = new Node_Decl_loc_taula("CARACTER", (String)id, (Node_Num)n, (Node_DeclTailTaulaChar)tail); :}
-                    | TAULA BOOL ID:id LBRACKET Num:n RBRACKET DeclTailTaulaBool:tail					{: RESULT = new Node_Decl_loc_taula("BOOL", (String)id, (Node_Num)n, (Node_DeclTailTaulaBool)tail); :}
+Decl_taula         	::= TAULA INT ID:id Dims:d DeclTailTaulaInt:tail									{: RESULT = new Node_Decl_loc_taula("INT", (String)id, d, (Node_DeclTailTaulaInt)tail); :}
+                    | TAULA CHAR ID:id Dims:d DeclTailTaulaChar:tail									{: RESULT = new Node_Decl_loc_taula("CARACTER", (String)id, d, (Node_DeclTailTaulaChar)tail); :}
+                    | TAULA BOOL ID:id Dims:d DeclTailTaulaBool:tail									{: RESULT = new Node_Decl_loc_taula("BOOL", (String)id, d, (Node_DeclTailTaulaBool)tail); :}
 					;
 
 DeclTailTaulaInt   	::= ASSIGN ArrayLitInt:a 															{: RESULT = new Node_DeclTailTaulaInt((Node_ArrayLitInt)a); :}
@@ -298,13 +316,13 @@ Instr              	::= If_prog:ifp																		{: RESULT = new Node_Instr(
                     | While_prog:wh																		{: RESULT = new Node_Instr((Node_While_prog)wh); :}
                     | DoWhile_prog:dw																	{: RESULT = new Node_Instr((Node_DoWhile_prog)dw); :}
                     | AssignacioRead FILINEA:ar 														{: RESULT = new Node_Instr((Node_AssignacioRead)ar); :}
-                    | Assignacio2:a2 FILINEA 															{: RESULT = new Node_Instr((Node_Assignacio2)a2); :}
+                    | Assignacio:a FILINEA 																{: RESULT = new Node_Instr((Node_Assignacio)a); :}
                     | Crida_proc:c FILINEA																{: RESULT = new Node_Instr((Node_Crida_proc)c); :}
 					;
 
 AssignacioRead     	::= LValue:lv ASSIGN LLEGIR LPAREN RPAREN											{: RESULT = new Node_AssignacioRead((Node_LValue)lv); :}
 					;
-Assignacio2        	::= LValue:lv ASSIGN Express:e														{: RESULT = new Node_Assignacio2((Node_LValue)lv, (Node_Express)e); :}
+Assignacio        	::= LValue:lv ASSIGN Express:e														{: RESULT = new Node_Assignacio((Node_LValue)lv, (Node_Express)e); :}
 					;
 
 /* LHS: variable o element de taula (admet multiples [expr]) */

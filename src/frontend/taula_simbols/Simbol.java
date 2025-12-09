@@ -24,6 +24,8 @@ public class Simbol {
     // Informacio per estructura 
     private int valor;                          // per constants o informacio extra
     private int ocupacio;                       // bytes: 4 int/bool, 1 char, N*4 int array...
+    
+    private ArrayList<Integer> dimensions;      // llista per guardar les dimensions de les taules
 
     // Per arrays
     private boolean esArray;                    // boolea que determina si el simbol es una taula
@@ -62,6 +64,7 @@ public class Simbol {
         this.llistaParametres = new ArrayList<>();
         this.arguments = new ArrayList<>();
         this.ambit = "GLOBAL"; //per defecte
+        this.dimensions = new ArrayList<>();
     }
 
     // --- METODES GETTER I SETTER ---
@@ -103,6 +106,14 @@ public class Simbol {
 
     public void setOcupacio(int ocupacio) {
         this.ocupacio = ocupacio;
+    }
+
+    public ArrayList<Integer> getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(ArrayList<Integer> dimensions) {
+        this.dimensions = dimensions;
     }
 
     public boolean isEsArray() {
@@ -202,8 +213,15 @@ public class Simbol {
     }
     
     
+    // Métodes auxiliars per les llistes
+    public void addDimensio(int d) {
+        this.dimensions.add(d);
+    }
     
-    // Métodes per accedir a les llistes
+    public boolean esMultidimensional() {
+        return dimensions != null && dimensions.size() > 1;
+    }
+    
     public void addParametre(Parametre p) {
         this.llistaParametres.add(p);
     }
@@ -212,6 +230,7 @@ public class Simbol {
         this.arguments.add(t);
     }
 
+    
     // --- MÈTODE toString() ---
     @Override
     public String toString() {

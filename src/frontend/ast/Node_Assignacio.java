@@ -14,12 +14,12 @@ import frontend.taula_simbols.*;
  *
  * @author josep
  */
-public class Node_Assignacio2 extends Node {
+public class Node_Assignacio extends Node {
 
     private Node_LValue lvalue;
     private Node_Express expr;
     
-    public Node_Assignacio2(Node_LValue lvalue, Node_Express expr) {
+    public Node_Assignacio(Node_LValue lvalue, Node_Express expr) {
         super("Assignacio2");
         this.lvalue = lvalue;
         this.expr = expr;
@@ -65,8 +65,8 @@ public class Node_Assignacio2 extends Node {
             codi3a.afegir(Codi.COPY, resExpr, null, nomDesti); // a = expr
             
         } else {
-            String idx = ref.getIndex().generaCodi3a(codi3a);
-            codi3a.afegir(Codi.IND_ASS, resExpr, idx, nomDesti); //a[idx] = expr
+            String idx = ref.generaCodiIndexAplanat(codi3a);
+            codi3a.afegir(Codi.IND_ASS, resExpr, idx, nomDesti); //a[i][j] = expr
         }
         
         return null;

@@ -8,6 +8,7 @@ package frontend.ast;
 
 import backend.codi_intermedi.C3a;
 import frontend.taula_simbols.*;
+import java.util.ArrayList;
 
 /**
  * Declaracio local d'un array (taula)
@@ -17,7 +18,7 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
 
     private String tipusBaseStr;
     private String id;
-    private Node_Num midaNode;
+    private ArrayList<Integer> dimensions;
     
     private Node_DeclTailTaulaInt tailInt;
     private Node_DeclTailTaulaChar tailChar;
@@ -26,27 +27,27 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
     private Simbol simbolArray;
     
     // --- CONSTRUCTORS ---
-    public Node_Decl_loc_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaInt tail) {
+    public Node_Decl_loc_taula(String tipusBase, String id, ArrayList<Integer> dims, Node_DeclTailTaulaInt tail) {
         super();
         this.tipusBaseStr = tipusBase;
         this.id = id;
-        this.midaNode = mida;
+        this.dimensions = dims;
         this.tailInt = tail;
     }
     
-    public Node_Decl_loc_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaChar tail) {
+    public Node_Decl_loc_taula(String tipusBase, String id, ArrayList<Integer> dims, Node_DeclTailTaulaChar tail) {
         super();
         this.tipusBaseStr = tipusBase;
         this.id = id;
-        this.midaNode = mida;
+        this.dimensions = dims;
         this.tailChar = tail;
     }
     
-    public Node_Decl_loc_taula(String tipusBase, String id, Node_Num mida, Node_DeclTailTaulaBool tail) {
+    public Node_Decl_loc_taula(String tipusBase, String id, ArrayList<Integer> dims, Node_DeclTailTaulaBool tail) {
         super();
         this.tipusBaseStr = tipusBase;
         this.id = id;
-        this.midaNode = mida;
+        this.dimensions = dims;
         this.tailBool = tail;
     }
 
@@ -54,10 +55,11 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
     public void gestioSemantica(TaulaSimbols ts) {
         
         // 1. Calcular la mida total en bytes
-        int nElems = midaNode.getValorEnter();
+        int nElems = 1;
         
-        if (nElems <= 0) {
-            throw new RuntimeException("Mida de taula no vàlida per '" + id + "': " + nElems);
+        for(int d : dimensions) {
+            if (d <= 0) throw new RuntimeException("Dimensio invalida: " + d);
+            nElems *= d;
         }
         
         TipusSimbol tArray = TipusUtils.getTipusArrayDesdeNomBase(tipusBaseStr);
@@ -65,13 +67,14 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
         
         // 1. Calcul de la mida total
         int midaElem = tBase.getMidaBytes();
-        int midaTotal = nElems * midaElem;
+        int midaTotalBytes = nElems * midaElem;
         
         // 2. Cream el simbol
-        this.simbolArray = new Simbol(id, tArray, CategoriaSimbol.CONSTANT);
-        this.simbolArray.setOcupacio(midaTotal);
+        this.simbolArray = new Simbol(id, tArray, CategoriaSimbol.VARIABLE);
+        this.simbolArray.setOcupacio(midaTotalBytes);
         this.simbolArray.setEsArray(true);
         this.simbolArray.setMidaArray(nElems);
+        this.simbolArray.setDimensions(this.dimensions);
         
         // 3. Afegim el simbol a la TS
         ts.afegirSimbol(this.simbolArray);
@@ -98,7 +101,7 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
 
     @Override
     public String toString() {
-        return "Node_Decl_loc_taula(" + tipusBaseStr + " " + id + "[" + midaNode + "]...)";
+        return "Node_Decl_loc_taula(" + tipusBaseStr + " " + id + "[" + dimensions.size() + "]...)";
     }
     
     

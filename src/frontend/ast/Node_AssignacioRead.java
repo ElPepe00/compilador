@@ -69,8 +69,8 @@ public class Node_AssignacioRead extends Node {
             codi3a.afegir(Codi.COPY, tLlegit, null, nomDesti); // a = llegir()
             
         } else {
-            String idx = ref.getIndex().generaCodi3a(codi3a);
-            codi3a.afegir(Codi.IND_ASS, tLlegit, idx, nomDesti); // a[idx] = llegir()
+            String idx = ref.generaCodiIndexAplanat(codi3a);
+            codi3a.afegir(Codi.IND_ASS, tLlegit, idx, nomDesti); // a[i][j] = llegir()
         }
         
         return null;

@@ -11,6 +11,7 @@ import backend.codi_intermedi.Codi;
 import frontend.taula_simbols.*;
 import frontend.taula_simbols.TipusSimbol;
 import frontend.gestor_errors.*;
+import java.util.ArrayList;
 
 
 /**
@@ -131,6 +132,54 @@ public class Node_Ref extends Node {
             }
         }
     }
+    
+    // Mètode auxiliar per recollir tots els índexs de la cadena recursiva
+    // a[i][j] -> Retorna [i, j]
+    public void recollirIndexos(ArrayList<Node_Express> llista) {
+        if (base != null && base.teIndex()) {
+            base.recollirIndexos(llista);
+        }
+        if (index != null) {
+            llista.add(index);
+        }
+    }
+
+    // Calcula l'índex pla final (offset) i retorna el temporal on està guardat
+    public String generaCodiIndexAplanat(C3a codi3a) {
+        Simbol s = getSimbolAssoc();
+        ArrayList<Integer> dims = s.getDimensions();
+        
+        // Recollim les expressions dels índexs
+        ArrayList<Node_Express> indexExprs = new ArrayList<>();
+        recollirIndexos(indexExprs);
+        
+        if (indexExprs.size() != dims.size()) {
+            throw new RuntimeException("Error semàntic: L'array '" + getSimbolAssoc().getNom() + 
+            "' té " + dims.size() + " dimensions, però s'han proporcionat " + indexExprs.size() + " índexs.");
+        }
+
+        // FÓRMULA D'APLANAMENT (Row-Major Order)
+        // Per a [D1][D2]:  flat = i*D2 + j
+        // Per a [D1][D2][D3]: flat = (i*D2 + j)*D3 + k
+        
+        String tAcumulat = indexExprs.get(0).generaCodi3a(codi3a); // i
+        
+        for (int k = 1; k < indexExprs.size(); k++) {
+            // 1. Multiplicar l'acumulat per la dimensió següent
+            int dimSize = dims.get(k); 
+            String tMult = codi3a.novaTemp();
+            codi3a.afegir(Codi.PROD, tAcumulat, String.valueOf(dimSize), tMult);
+            
+            // 2. Sumar l'índex actual
+            String tIdx = indexExprs.get(k).generaCodi3a(codi3a);
+            String tSuma = codi3a.novaTemp();
+            codi3a.afegir(Codi.ADD, tMult, tIdx, tSuma);
+            
+            tAcumulat = tSuma;
+        }
+        
+        return tAcumulat;
+    }
 
     @Override
     public String generaCodi3a(C3a codi3a) {
@@ -139,9 +188,8 @@ public class Node_Ref extends Node {
             throw new RuntimeException("ERROR INTERN: Node_Ref sense simbol associat");
         }
 
-        String nomVar = this.simbolAssoc.getNom();
+        String nomVar = getSimbolAssoc().getNom();
         
-        //int offset = this.simbolAssoc.getOffset();
         
         if (!teIndex()) {
             // Cas simple: x
@@ -149,14 +197,14 @@ public class Node_Ref extends Node {
             String t = codi3a.novaTemp();
             codi3a.afegir(Codi.COPY, nomVar, null, t);
             return t;
+            
         } else {
-            // Cas array: a[i]
-            // Aquí necessitam l'índex. Com que 'index' és un Node_Express, ell generarà el seu propi codi.
-            String idxTemp = this.index.generaCodi3a(codi3a);
+            // Cas array: a[i] o a[i][j]
+            String tIndexFinal = generaCodiIndexAplanat(codi3a);
             
             String t = codi3a.novaTemp();
             // ind_val a i t  ->  t = a[i]
-            codi3a.afegir(Codi.IND_VAL, nomVar, idxTemp, t);
+            codi3a.afegir(Codi.IND_VAL, nomVar, tIndexFinal, t);
             return t;
         }
         

@@ -1,0 +1,9 @@
+// Programa Funcional 3
+constant taula int array_simple[3] = [1,2,3];
+constant taula int array_mult[2][2] = [1,2][1,2];
+
+// Programa principal
+programa:
+
+
+programa_fi
