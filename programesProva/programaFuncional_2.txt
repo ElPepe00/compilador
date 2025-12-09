@@ -1,11 +1,17 @@
 // Programa Funcional 2
+constant int a = 3;
 constant bool b = true;
-constant carácter c = 'a';
+constant char c = 'm';
 
 // Programa principal
 programa:
 
 	int x = 42;
-	bool val = false;
+	bool y = false;
+	char z = '\n';
+	
+	imprimir(x);
+	imprimir(y);
+	imprimir(z);
 
 programa_fi

@@ -8,12 +8,11 @@ package frontend.sintactic;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int TKN_CARACTER = 19;
   public static final int NUMERO = 44;
   public static final int LBRACKET = 37;
-  public static final int LIT_CARACTER = 45;
   public static final int MULT = 31;
   public static final int FUNCIO_FI = 5;
+  public static final int CHAR = 19;
   public static final int PROGRAMA = 2;
   public static final int UMINUS = 46;
   public static final int IMPRIMIR = 16;
@@ -26,6 +25,7 @@ public class sym {
   public static final int NOT = 28;
   public static final int AND = 27;
   public static final int IGUAL = 22;
+  public static final int CARACTER = 45;
   public static final int OR = 26;
   public static final int BOOL = 20;
   public static final int TAULA = 21;
@@ -75,7 +75,7 @@ public class sym {
   "IMPRIMIR",
   "CONSTANT",
   "INT",
-  "TKN_CARACTER",
+  "CHAR",
   "BOOL",
   "TAULA",
   "IGUAL",
@@ -101,7 +101,7 @@ public class sym {
   "BFALSE",
   "ID",
   "NUMERO",
-  "LIT_CARACTER",
+  "CARACTER",
   "UMINUS"
   };
 }

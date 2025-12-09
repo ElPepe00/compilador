@@ -3,10 +3,13 @@
 ÀMBIT: GLOBAL
 ----------------------------------------------------
 NOM             CATEGORIA       TIPUS           OFFSET    
+a               CONSTANT        INT             0         
 b               CONSTANT        BOOL            0         
+c               CONSTANT        CARACTER        0         
 
 ÀMBIT: LOCAL
 ----------------------------------------------------
 NOM             CATEGORIA       TIPUS           OFFSET    
 x               VARIABLE        INT             0         
-val             VARIABLE        BOOL            4         
+y               VARIABLE        BOOL            4         
+z               VARIABLE        CARACTER        8         
