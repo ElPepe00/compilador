@@ -34,7 +34,8 @@ public class Node_Assignacio extends Node {
         
         // 2. Comprovacio de tipus
         if (t_left != t_right) {
-            throw new RuntimeException("Tipus incompatibles a l'assignacio: " + t_left + " = " + t_right);
+            errorSemantic("Tipus incompatibles a l'assignacio: " + t_left + " = " + t_right);
+            return;
         }
         
         // 3. Marcar la variable base com assignada
@@ -56,7 +57,7 @@ public class Node_Assignacio extends Node {
         Simbol s = ref.getSimbolAssoc();
         
         if (s == null) {
-            throw new RuntimeException("Error intern: Símbol no trobat a generació de codi (Assignació)");
+            throw new RuntimeException("ERROR INTERN: Símbol no trobat a generació de codi (Assignació)");
         }
         
         String nomDesti = s.getNom();

@@ -43,8 +43,9 @@ public class Node_DeclTailEscalar extends Node {
             TipusSimbol tExpr = expr.getTipusSimbol(ts);
             
             if (tExpr != tipusEsperat) {
-                throw new RuntimeException("Error de tipus a inicialitzacio local. Esperat: "
+                errorSemantic("Error de tipus a inicialitzacio local. Esperat: "
                 + tipusEsperat + ", s'ha trobat: " + tExpr);
+                return;
             }
             
         } else if (mode.equals("llegir")) {
@@ -52,7 +53,8 @@ public class Node_DeclTailEscalar extends Node {
                 tipusEsperat != TipusSimbol.CARACTER &&
                 tipusEsperat != TipusSimbol.BOOL) {
                 
-                throw new RuntimeException("No es pot llegir() a tipus " + tipusEsperat);
+                errorSemantic("No es pot llegir() a tipus " + tipusEsperat);
+                return;
             }
         }
     }

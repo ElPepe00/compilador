@@ -71,7 +71,7 @@ public class Node_Func extends Node {
             
         } else if (tRetorn != TipusSimbol.VOID) {
             // funció amb tipus ha de tenir RETURN
-            throw new RuntimeException("La funció '" + id + "' ha de tenir una instrucció RETURN");
+            errorSemantic("La funció '" + id + "' ha de tenir una instrucció RETURN");
         }
 
         // 8) Sortir de l'àmbit de la funció

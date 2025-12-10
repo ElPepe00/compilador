@@ -15,7 +15,8 @@ public enum TipusSimbol {
     INT, BOOL, CARACTER, 
     TAULA_INT, TAULA_BOOL, TAULA_CARACTER,
     VOID, //per funcions sense return
-    NULL;
+    NULL,
+    ERROR;
 
 
     public int getMidaBytes() {

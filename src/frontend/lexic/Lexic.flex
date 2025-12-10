@@ -72,7 +72,7 @@ import frontend.sintactic.sym;
 
 	// Mètode que emmagatzema els errors lèxics
 	// Tipus: Lexic, Linia = yyline+1, Columna = yycolumn, Error: "text"
-	private void error(){
+	private void errorLexic(){
 		GestorError.afegirError(new MissatgeError(TipusError.LEXIC, 
 													yyline + 1,
 													yycolumn,
@@ -189,7 +189,7 @@ COMENT_LINIA    = "//" [^\r\n]*
 					}
 
 /* Error Lèxic */
-[^]                	{ error(); }
+[^]                	{ errorLexic(); }
 
 
 

@@ -36,8 +36,9 @@ public class Node_Decl_glob_escalar extends Node_Decl_glob {
         TipusSimbol tExpr = exprInit.getTipusSimbol(ts);
         
         if (tConst != tExpr) {
-            throw new RuntimeException("Error de tipus a la constant global '"
+            errorSemantic("Error de tipus a la constant global '"
             + id + "': esperant " + tConst + " però s'ha trobat: " + tExpr);
+            return;
         }
         
         int mida = tConst.getMidaBytes();

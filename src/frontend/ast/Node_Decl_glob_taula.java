@@ -55,7 +55,10 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
         int nElems = 1;
         
         for(int d : dimensions) {
-            if (d <= 0) throw new RuntimeException("Dimensió invàlida a '" + id + "': " + d);
+            if (d <= 0) {
+                errorSemantic("Dimensió invàlida a '" + id + "': " + d);
+                return;
+            }
             nElems *= d;
         }
         
@@ -77,13 +80,24 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
         ts.afegirSimbol(this.simbolArray);
 
         if (tailInt != null) {
-            if (tBase != TipusSimbol.INT) throw new RuntimeException("Inicialitzador INT en taula " + tipusBaseStr);
+            if (tBase != TipusSimbol.INT) {
+                errorSemantic("Inicialitzador INT en taula " + tipusBaseStr);
+                return;
+            }
             tailInt.gestioSemantica(ts, nElems);
+            
         } else if (tailChar != null) {
-            if (tBase != TipusSimbol.CARACTER) throw new RuntimeException("Inicialitzador CHAR en taula " + tipusBaseStr);
+            if (tBase != TipusSimbol.CARACTER) {
+                errorSemantic("Inicialitzador CHAR en taula " + tipusBaseStr);
+                return;
+            }
             tailChar.gestioSemantica(ts, nElems);
+            
         } else if (tailBool != null) {
-            if (tBase != TipusSimbol.BOOL) throw new RuntimeException("Inicialitzador BOOL en taula " + tipusBaseStr);
+            if (tBase != TipusSimbol.BOOL) {
+                errorSemantic("Inicialitzador BOOL en taula " + tipusBaseStr);
+                return;
+            }
             tailBool.gestioSemantica(ts, nElems);
         }
     }

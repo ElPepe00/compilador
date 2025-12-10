@@ -7,6 +7,7 @@
 package frontend.ast;
 
 import backend.codi_intermedi.C3a;
+import frontend.gestor_errors.*;
 import frontend.taula_simbols.*;
 
 
@@ -74,6 +75,19 @@ public abstract class Node {
      */
     public String generaCodi3a(C3a codi3a) {
         return null;
+    }
+    
+    /**
+     * Mètode que reporta els errors semantics del compilador
+     * @param missatge 
+     */
+    protected void errorSemantic(String missatge) {
+        GestorError.afegirError(new MissatgeError(
+            TipusError.SEMANTIC, 
+            0, // linia
+            0, // columna
+            missatge
+        ));
     }
 
     @Override

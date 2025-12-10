@@ -24,7 +24,7 @@ public class Node_BoolLit extends Node {
             case "true": this.valor = true; break;
             case "false": this.valor = false; break;
             default:
-                throw new RuntimeException("Valor boolea invalid al parser: " + val);
+                errorSemantic("Valor boolea invalid al parser: " + val);
         }
     }
     

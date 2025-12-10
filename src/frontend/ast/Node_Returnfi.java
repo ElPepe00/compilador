@@ -38,16 +38,16 @@ public class Node_Returnfi extends Node {
         if (tipusEsperat == TipusSimbol.VOID) {
             // procediment
             if (expr != null) {
-                throw new RuntimeException("No es pot retornar un valor en un procediment (retorn void)");
+                errorSemantic("No es pot retornar un valor en un procediment (retorn void)");
             }
         } else {
             // funció amb tipus
             if (expr == null) {
-                throw new RuntimeException("La funció ha de retornar un valor de tipus " + tipusEsperat);
+                errorSemantic("La funció ha de retornar un valor de tipus " + tipusEsperat);
             }
             TipusSimbol tExpr = expr.getTipusSimbol(ts);
             if (tExpr != tipusEsperat) {
-                throw new RuntimeException("El tipus del RETURN (" + tExpr +
+                errorSemantic("El tipus del RETURN (" + tExpr +
                         ") no coincideix amb el tipus de retorn (" + tipusEsperat + ")");
             }
         }

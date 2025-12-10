@@ -132,8 +132,9 @@ public class Node_Express extends Node {
                     TipusSimbol t2 = e2.getTipusSimbol(ts);
                     
                     if (t1 != TipusSimbol.INT || t2 != TipusSimbol.INT) {
-                        throw new RuntimeException("Operador aritmetic " + op 
+                        errorSemantic("Operador aritmetic " + op 
                         + "nomes admet INT, s'ha tronat " + t1 + " i " + t2);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.INT;
@@ -146,8 +147,9 @@ public class Node_Express extends Node {
                     TipusSimbol t2 = e2.getTipusSimbol(ts);
                     
                     if (t1 != TipusSimbol.BOOL || t2 != TipusSimbol.BOOL) {
-                        throw new RuntimeException("Operador aritmetic " + op 
+                        errorSemantic("Operador aritmetic " + op 
                         + "nomes admet BOOL, s'ha tronat " + t1 + " i " + t2);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.BOOL;
@@ -160,8 +162,9 @@ public class Node_Express extends Node {
                     TipusSimbol t2 = e2.getTipusSimbol(ts);
                     
                     if (t1 != t2) {
-                        throw new RuntimeException("Comparacio " + op 
+                        errorSemantic("Comparacio " + op 
                         + " amb tipus diferents: " + t1 + " i " + t2);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.BOOL;
@@ -175,14 +178,16 @@ public class Node_Express extends Node {
                     
                     // comprova que siguin el mateix tipus
                     if (t1 != t2) {
-                        throw new RuntimeException("Comparacio " + op 
+                        errorSemantic("Comparacio " + op 
                         + " amb tipus diferents: " + t1 + " i " + t2);
+                        return TipusSimbol.ERROR;
                     }
                     
                     // només admet INT i CARACTER
                     if (t1 != TipusSimbol.INT && t1 != TipusSimbol.CARACTER) {
-                        throw new RuntimeException("Comparacio " + op 
+                        errorSemantic("Comparacio " + op 
                         + " només admet INT o CARACTER: " + t1 + " i " + t2);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.BOOL;
@@ -193,7 +198,8 @@ public class Node_Express extends Node {
                     TipusSimbol t = unari.getTipusSimbol(ts);
                     
                     if (t != TipusSimbol.BOOL) {
-                        throw new RuntimeException("NOT nomes admet BOOl, s'ha trobat: " + t);
+                        errorSemantic("NOT nomes admet BOOL, s'ha trobat: " + t);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.BOOL;
@@ -204,7 +210,8 @@ public class Node_Express extends Node {
                     TipusSimbol t = unari.getTipusSimbol(ts);
                     
                     if (t != TipusSimbol.INT) {
-                        throw new RuntimeException("Signe negatiu nomes admet INT, s'ha trobat: " + t);
+                        errorSemantic("Signe negatiu nomes admet INT, s'ha trobat: " + t);
+                        return TipusSimbol.ERROR;
                     }
                     
                     return TipusSimbol.INT;
@@ -218,7 +225,8 @@ public class Node_Express extends Node {
             case CRIDA: return crida.getTipusSimbol(ts);
                 
             default:
-                throw new IllegalStateException("Operador d'expressio no gestionat: " + op);
+                errorSemantic("Operador d'expressio no gestionat: " + op);
+                return TipusSimbol.ERROR;
         }
     }
 
@@ -264,7 +272,7 @@ public class Node_Express extends Node {
             case BOOL: return boolLit.generaCodi3a(codi3a);
             case CRIDA: return crida.generaCodi3a(codi3a);
 
-            default: throw new IllegalStateException("No s'ha implementat C3A per: " + op);
+            default: throw new IllegalStateException("ERROR INTERN: No s'ha implementat C3A per: " + op);
         }
     }
     

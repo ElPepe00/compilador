@@ -26,8 +26,9 @@ public class Node_DeclTailTaulaBool extends Node {
         if (arrayLit == null) return;
         int nElems = arrayLit.comptarElements();
         if (nElems != midaEsperada) {
-            throw new RuntimeException("Inicialització de taula BOOL amb " + nElems +
+            errorSemantic("Inicialització de taula BOOL amb " + nElems +
                     " elements, però s'esperaven " + midaEsperada);
+            return;
         }
         
         arrayLit.gestioSemantica(ts);

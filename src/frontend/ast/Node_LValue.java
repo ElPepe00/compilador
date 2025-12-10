@@ -44,7 +44,8 @@ public class Node_LValue extends Node {
         Simbol s = ref.getSimbolAssoc();
         
         if (s == null) {
-            throw new RuntimeException("Identificador no declarat a LValue");
+            errorSemantic("Identificador no declarat a LValue");
+            return TipusSimbol.ERROR;
         }
         
         CategoriaSimbol cat = s.getCategoria();
@@ -54,7 +55,8 @@ public class Node_LValue extends Node {
             || cat == CategoriaSimbol.FUNCIO 
             || cat == CategoriaSimbol.PROCEDIMENT) {
             
-            throw new RuntimeException("No es pot assignar a: '" + nom + "' perque es " + cat + "");
+            errorSemantic("No es pot assignar a: '" + nom + "' perque es " + cat + "");
+            return TipusSimbol.ERROR;
         }
         
         return t;

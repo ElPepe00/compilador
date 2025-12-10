@@ -37,7 +37,8 @@ public class Node_AssignacioRead extends Node {
             tDest != TipusSimbol.BOOL &&
             tDest != TipusSimbol.CARACTER) {
 
-            throw new RuntimeException("No es pot fer llegir() sobre tipus " + tDest);
+            errorSemantic("No es pot fer llegir() sobre tipus " + tDest);
+            return;
         }
 
         // 3. Marcam la variable com "assignada"
@@ -60,7 +61,7 @@ public class Node_AssignacioRead extends Node {
         Simbol s = ref.getSimbolAssoc();
         
         if (s == null) {
-            throw new RuntimeException("Error intern: Símbol no trobat (Read)");
+            throw new RuntimeException("ERROR INTERN: Símbol no trobat (Read)");
         }
 
         String nomDesti = s.getNom();

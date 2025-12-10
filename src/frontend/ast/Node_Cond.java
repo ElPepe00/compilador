@@ -28,7 +28,8 @@ public class Node_Cond extends Node {
         TipusSimbol t = expr.getTipusSimbol(ts);
         
         if (t != TipusSimbol.BOOL) {
-            throw new RuntimeException("La condicio no és booleana, s'ha trobat: " + t);
+            errorSemantic("La condicio no és booleana, s'ha trobat: " + t);
+            return;
         }
     }
 

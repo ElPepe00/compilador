@@ -29,7 +29,8 @@ public class Node_Tipusv extends Node {
             case "CARACTER": return TipusSimbol.CARACTER;
             case "BOOL": return TipusSimbol.BOOL;
             default:
-                throw new IllegalStateException("Tipus desconegut a Node_Tipusv: " + nomTipus);
+                errorSemantic("Tipus desconegut a Node_Tipusv: " + nomTipus);
+                return TipusSimbol.ERROR;
         }
     }
     
@@ -39,7 +40,8 @@ public class Node_Tipusv extends Node {
             case "CARACTER": return 4;
             case "BOOL": return 4;
             default:
-                throw new IllegalStateException("Tipus desconegut a Node_Tipusv: " + nomTipus);
+                errorSemantic("Tipus desconegut a Node_Tipusv: " + nomTipus);
+                return 0;
         }
     }
 

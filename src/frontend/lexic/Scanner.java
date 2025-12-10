@@ -452,7 +452,7 @@ public class Scanner implements java_cup.runtime.Scanner {
 
 	// Mètode que emmagatzema els errors lèxics
 	// Tipus: Lexic, Linia = yyline+1, Columna = yycolumn, Error: "text"
-	private void error(){
+	private void errorLexic(){
 		GestorError.afegirError(new MissatgeError(TipusError.LEXIC, 
 													yyline + 1,
 													yycolumn,
@@ -885,7 +885,7 @@ public class Scanner implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { error();
+            { errorLexic();
             }
           // fall through
           case 47: break;

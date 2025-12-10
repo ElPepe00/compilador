@@ -100,7 +100,8 @@ public class Node_Ref extends Node {
             // 1. Cas base: id simple
             Simbol s = ts.cercarSimbol(idBase);
             if (s == null) {
-                throw new RuntimeException("Identificador no declarat: " + idBase);
+                errorSemantic("Identificador no declarat: '" + idBase + "'");
+                return TipusSimbol.ERROR;
             }
             
             this.simbolAssoc = s; // guardam el simbol
@@ -119,7 +120,8 @@ public class Node_Ref extends Node {
             TipusSimbol tIndex = index.getTipusSimbol(ts);
             
             if (tIndex != TipusSimbol.INT) {
-                throw new RuntimeException("L'index de la taula ha de ser INT");
+                errorSemantic("L'index de la taula ha de ser de tipus INT");
+                return TipusSimbol.ERROR;
             }
             
             // Si tBase es taula, retornam el tipus de taula
@@ -148,8 +150,9 @@ public class Node_Ref extends Node {
         recollirIndexos(indexExprs);
         
         if (indexExprs.size() != dims.size()) {
-            throw new RuntimeException("Error semàntic: L'array '" + getSimbolAssoc().getNom() + 
-            "' té " + dims.size() + " dimensions, però s'han proporcionat " + indexExprs.size() + " índexs.");
+            errorSemantic("L'array '" + s.getNom() + "' té " + dims.size() + 
+                       " dimensions, però s'han usat " + indexExprs.size() + " índexs.");
+            return codi3a.novaTemp();
         }
 
         // FÓRMULA D'APLANAMENT (Row-Major Order)

@@ -58,7 +58,10 @@ public class Node_Decl_loc_taula extends Node_Decl_loc {
         int nElems = 1;
         
         for(int d : dimensions) {
-            if (d <= 0) throw new RuntimeException("Dimensio invalida: " + d);
+            if (d <= 0) {
+                errorSemantic("Dimensio d'array invalida: " + d + ". Ha de ser > 0");
+                return;
+            }
             nElems *= d;
         }
         
