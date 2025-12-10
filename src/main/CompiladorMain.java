@@ -31,7 +31,7 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 2;
+        int numPrograma = 4;
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
