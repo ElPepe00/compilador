@@ -6,6 +6,7 @@
  */
 package main;
 
+import backend.assemblador.GeneradorAssemblador;
 import java.io.*;
 import java_cup.runtime.Symbol;
 import java_cup.runtime.SymbolFactory;
@@ -30,7 +31,7 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 4;
+        int numPrograma = 2;
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
@@ -132,7 +133,10 @@ public class CompiladorMain {
             // ******************
             //  CODI ASSEMBLADOR
             // ******************
-            
+            System.out.println("\n [5] --- GENERACIO ASSEMBLADOR (Easy68k):");
+            GeneradorAssemblador genAsm = new GeneradorAssemblador(c3a, ts);
+            String rutaAsm = rutaSortida + "programa_" + nomFitxer.replace(".txt", ".X68");
+            genAsm.generarCodiAssemblador(rutaAsm);
             
         } catch(Exception e) {
             System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");

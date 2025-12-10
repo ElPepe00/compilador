@@ -22,11 +22,6 @@ public enum Codi {
     AND,
     OR,
     NOT,
-
-    //EQ,
-    //NEQ,
-    //LT,
-    //GT,
     
     IND_VAL,    // ind_val base index dest -> dest = base[index]
     IND_ASS,    // ind_ass value index base -> base[index] = value
@@ -44,9 +39,6 @@ public enum Codi {
     
     PARAM_S,    // param_s -> a
     PARAM_C,    // param_c -> idx base
-
-    //READ,
-    //WRITE,
     
     HALT        // aturada de programa
 }

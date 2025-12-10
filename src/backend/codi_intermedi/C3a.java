@@ -111,10 +111,6 @@ public class C3a {
         blocs.get(index).setDesti(nouArg2);
     }
     
-    public ArrayList<C3a_Instr> getCodi() {
-        return blocs;
-    }
-    
     public int getNumInstr() {
         return blocs.size();
     }

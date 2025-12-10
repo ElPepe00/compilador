@@ -277,4 +277,8 @@ public class TaulaSimbols {
         }
         return sb.toString();
     }
+
+    public ArrayList<Simbol> obtenirTotsElsSimbols() {
+        return this.taulaCompleta;
+    }
 }
