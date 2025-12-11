@@ -1,34 +1,17 @@
 // Programa funcional 5
-constant int MAX = 50;
 
-// Funció que rep un array com a paràmetre i en suma els elements
-funcio int sumarVector(taula int v[], int mida):
-    int i = 0;
-    int total = 0;
-    
-    while (i < mida):
-        total = total + v[i];
-        i = i + 1;
-    while_fi
-    
-    return total;
-funcio_fi
+constant int MAX = 10;
 
 programa:
 
-    taula int vec[3] = [5, 10, 15];
-    
-    // Cridam la funció passant el vector sencer
-    int res = sumarVector(vec, 3);
-    
-    // Resultat esperat: 5+10+15 = 30
-    imprimir(res);
-    
-    // Comprovació amb constant global
-    if (res < MAX):
-        imprimir(1); // 30 < 50 -> Èxit
-    else:
-        imprimir(0);
-    if_fi
+    int i = 0;
+	bool b = false;
+	
+	while(i < MAX):
+	
+		i = i + 1;
+		imprimir(i);
 
+	while_fi
+	
 programa_fi

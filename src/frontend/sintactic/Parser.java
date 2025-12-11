@@ -5,12 +5,13 @@
 
 package frontend.sintactic;
 
-import java_cup.runtime.*;
 import java.util.ArrayList;
+import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 import frontend.gestor_errors.*;
 import frontend.ast.*;
+import frontend.taula_simbols.TipusSimbol;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -880,7 +881,7 @@ class CUP$Parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
-		 RESULT = new Node_Param(new Node_Tipusv("INT"), (String)id, true); 
+		 RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.INT), (String)id, true); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Param",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -892,7 +893,7 @@ class CUP$Parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
-		 RESULT = new Node_Param(new Node_Tipusv("CARACTER"), (String)id, true); 
+		 RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.CHAR), (String)id, true); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Param",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -904,7 +905,7 @@ class CUP$Parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
 		String id = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
-		 RESULT = new Node_Param(new Node_Tipusv("BOOL"), (String)id, true); 
+		 RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.BOOL), (String)id, true); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Param",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-4)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1936,7 +1937,7 @@ class CUP$Parser$actions {
           case 105: // Tipusv ::= INT 
             {
               Object RESULT =null;
-		 RESULT = new Node_Tipusv("INT"); 
+		 RESULT = new Node_Tipusv(TipusSimbol.INT); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Tipusv",47, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1945,7 +1946,7 @@ class CUP$Parser$actions {
           case 106: // Tipusv ::= CHAR 
             {
               Object RESULT =null;
-		 RESULT = new Node_Tipusv("CARACTER"); 
+		 RESULT = new Node_Tipusv(TipusSimbol.CHAR); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Tipusv",47, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1954,7 +1955,7 @@ class CUP$Parser$actions {
           case 107: // Tipusv ::= BOOL 
             {
               Object RESULT =null;
-		 RESULT = new Node_Tipusv("BOOL"); 
+		 RESULT = new Node_Tipusv(TipusSimbol.BOOL); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Tipusv",47, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

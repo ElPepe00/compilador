@@ -98,7 +98,7 @@ public class C3a {
             throw new IllegalArgumentException("Index de bloc fora de rang: " + index);
         }
         
-        blocs.get(index).setDesti(nouArg1);
+        blocs.get(index).setArg1(nouArg1);
     }
     
     // Modificar un Arg2 (no es sol modificar)
@@ -108,7 +108,7 @@ public class C3a {
             throw new IllegalArgumentException("Index de bloc fora de rang: " + index);
         }
         
-        blocs.get(index).setDesti(nouArg2);
+        blocs.get(index).setArg2(nouArg2);
     }
     
     public int getNumInstr() {

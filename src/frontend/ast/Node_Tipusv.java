@@ -14,43 +14,44 @@ import frontend.taula_simbols.*;
  */
 public class Node_Tipusv extends Node {
 
-    private  String nomTipus;   // int, char, bool
+    // Variable que emmagatzema el tipus de simbol passat del Parser
+    private TipusSimbol tipus;   // int, char, bool
     
-    public Node_Tipusv(String nomTipus) {
+    /**
+     * Constructor de Tipusv
+     * @param tipus tipus passat del Parser
+     */
+    public Node_Tipusv(TipusSimbol tipus) {
         super("Tipusv");
-        this.nomTipus = nomTipus;
+        this.tipus = tipus;
     }
     
-    // Mètode que retorna el TipusSimbol corresponent al text
+    /**
+     * Mètode que retorna el TipusSimbol corresponent, sino existeix error
+     */
     public TipusSimbol getTipusSimbol() {
 
-        switch (nomTipus) {
-            case "INT": return TipusSimbol.INT;
-            case "CARACTER": return TipusSimbol.CHAR;
-            case "BOOL": return TipusSimbol.BOOL;
-            default:
-                errorSemantic("Tipus desconegut a Node_Tipusv: " + nomTipus);
-                return TipusSimbol.ERROR;
+        if (tipus != TipusSimbol.INT
+            && tipus != TipusSimbol.CHAR
+            && tipus != TipusSimbol.BOOL) {
+            
+            errorSemantic("Tipus desconegut a Node_Tipusv: " + tipus);
+            
+            return TipusSimbol.ERROR;
         }
+        return tipus;
     }
     
-    public int getMidaBytes() {
-        switch (nomTipus) {
-            case "INT": return 4;
-            case "CARACTER": return 4;
-            case "BOOL": return 4;
-            default:
-                errorSemantic("Tipus desconegut a Node_Tipusv: " + nomTipus);
-                return 0;
-        }
-    }
-
+    /**
+     * Mètode que retorna el nom del tipus de simbol
+     * @return retorna el name() del tipus de simbol
+     */
     public String getNomTipus() {
-        return nomTipus;
+        return tipus.name();
     }
 
     @Override
     public String toString() {
-        return "Node_Tipusv(" + nomTipus + ")";
+        return "Node_Tipusv(" + tipus.name() + ")";
     }
 }

@@ -31,12 +31,32 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 2;
+
+        // Programes Funcionals del 1 - 3
+        // Programes Erronis del 4 - 6
+        int numPrograma = 5;                                                    // ----- SELECCIONAR PROGRAMA
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
         String rutaPrograma = rutaProgramesProva + nomFitxer;
         String rutaSortida = "fitxersSortida/" + "programaFuncional_" + numPrograma + "/";
+
+        
+        /*
+        if (args.length == 0) {
+            System.err.println("Error: Falta el nom del fitxer d'entrada.");
+            System.err.println("   > Us: java -jar compilador.jar <ruta/nom_fitxer_entrada.txt>");
+            return;
+        }
+
+        String nomFitxerEntrada = args[0]; // Capturamos args[0]
+
+        String rutaProgramesProva = "programesProva/";
+        String nomFitxer = nomFitxerEntrada;
+        String rutaPrograma = rutaProgramesProva + nomFitxer;
+        String nomBase = nomFitxer.substring(0, nomFitxer.lastIndexOf('.'));
+        String rutaSortida = "fitxersSortida/" + nomBase + "/";
+        */
         
         File f = new File(rutaSortida);
         

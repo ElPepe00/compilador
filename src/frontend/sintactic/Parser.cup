@@ -11,13 +11,14 @@
   
 package frontend.sintactic;
 
-import java_cup.runtime.*;
 import java.util.ArrayList;
+import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.ComplexSymbol;
 import java_cup.runtime.ComplexSymbolFactory.Location;
+
 import frontend.gestor_errors.*;
 import frontend.ast.*;
-
+import frontend.taula_simbols.TipusSimbol;
 
 /* --- CODI DEL PARSER --- */
 parser code {:
@@ -234,9 +235,9 @@ ParamList          	::= Param:p																			{: RESULT = new Node_ParamList
 					;
 					
 Param              	::= Tipusv:t ID:id																	{: RESULT = new Node_Param((Node_Tipusv)t, (String)id, false); :}
-					| TAULA INT ID:id LBRACKET RBRACKET													{: RESULT = new Node_Param(new Node_Tipusv("INT"), (String)id, true); :}
-					| TAULA CHAR ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv("CARACTER"), (String)id, true); :}
-					| TAULA BOOL ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv("BOOL"), (String)id, true); :}
+					| TAULA INT ID:id LBRACKET RBRACKET													{: RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.INT), (String)id, true); :}
+					| TAULA CHAR ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.CHAR), (String)id, true); :}
+					| TAULA BOOL ID:id LBRACKET RBRACKET												{: RESULT = new Node_Param(new Node_Tipusv(TipusSimbol.BOOL), (String)id, true); :}
 					;
 					
 Returnfi           	::= RETURN ExpressOpt:e FILINEA 													{: RESULT = new Node_Returnfi((Node_Express)e); :}
@@ -409,9 +410,9 @@ BoolLit            	::= BTRUE																			{: RESULT = new Node_BoolLit("tr
 					| BFALSE																			{: RESULT = new Node_BoolLit("false"); :}
 					;
 
-Tipusv             	::= INT																				{: RESULT = new Node_Tipusv("INT"); :}
-					| CHAR																				{: RESULT = new Node_Tipusv("CARACTER"); :}
-					| BOOL																				{: RESULT = new Node_Tipusv("BOOL"); :}
+Tipusv             	::= INT																				{: RESULT = new Node_Tipusv(TipusSimbol.INT); :}
+					| CHAR																				{: RESULT = new Node_Tipusv(TipusSimbol.CHAR); :}
+					| BOOL																				{: RESULT = new Node_Tipusv(TipusSimbol.BOOL); :}
 					;
 
 

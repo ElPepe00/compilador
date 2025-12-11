@@ -23,18 +23,18 @@ import java.util.*;
 public class TaulaSimbols {
 
     // Pila de taules per a cada ambit local (ambits actius)
-    private static Stack<HashMap<String, Simbol>> pilaAmbits;
+    private Stack<HashMap<String, Simbol>> pilaAmbits;
 
     // Pila per controlar l'offset actual de cada ambit
     // (el top de la pila és l'offset disponible actual)
-    private static Stack<Integer> pilaOffsets;
+    private Stack<Integer> pilaOffsets;
 
     // Control del procediment actual per assignar la midaFrame al sortir
-    private static Stack<Simbol> pilaProcediments;
+    private Stack<Simbol> pilaProcediments;
 
     // Llista completa de tots els simbols introduits a la TS
     // (guarda tot l'historial dels Simbols)
-    private static ArrayList<Simbol> taulaCompleta;
+    private ArrayList<Simbol> taulaCompleta;
 
     // --- CONSTRUCTOR ---
     /**
@@ -58,12 +58,17 @@ public class TaulaSimbols {
      */
     public void entrarBloc(Simbol procAssociat) {
         pilaAmbits.push(new HashMap<>());
-        pilaOffsets.push(0); //quan entram a un bloc, reiniciam l'offset
-
+        
         if (procAssociat != null) {
+            // Bloc de tipus funció, offset a zero i nou marco de pila
+            pilaOffsets.push(0);
             pilaProcediments.push(procAssociat);
+            
         } else {
-            pilaProcediments.push(null); //bloc anonim
+            // Bloc de tipus (if, while), mantenim l'offset si en te
+            int offsetActual = pilaOffsets.isEmpty() ? 0 : pilaOffsets.peek();
+            pilaOffsets.push(offsetActual);
+            pilaProcediments.push(null);
         }
     }
 
@@ -287,7 +292,7 @@ public class TaulaSimbols {
         return procs;
     }
 
-    public static ArrayList<Simbol> getTaulaCompleta() {
+    public ArrayList<Simbol> getTaulaCompleta() {
         return taulaCompleta;
     }
     
@@ -416,7 +421,7 @@ public class TaulaSimbols {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("=== TAULA DE SÍMBOLS ===\n");
+        sb.append("=== TAULA DE SIMBOLS ===\n");
 
         // Usamos un Map para agrupar visualmente por ámbitos
         // LinkedHashMap mantiene el orden de inserción (Global primero, luego funciones...)
