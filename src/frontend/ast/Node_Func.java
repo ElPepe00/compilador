@@ -98,9 +98,10 @@ public class Node_Func extends Node {
         if (returnfi != null) {
             returnfi.generaCodi3a(codi3a);
             
+        } else {
+            codi3a.afegir(Codi.RET, null, null, null);
         }
         
-        codi3a.afegir(Codi.RET, null, null, null);
         return null;
     }
     

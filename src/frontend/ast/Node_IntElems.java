@@ -46,7 +46,9 @@ public class Node_IntElems extends Node {
         
         // 2. Generam el codi per a AQUEST element
         String valor = num.generaCodi3a(codi3a); // ex: "2"
-        String index = String.valueOf(indexActual);
+        
+        int offsetBytes = indexActual * TipusSimbol.INT.getMidaBytes();
+        String index = String.valueOf(offsetBytes);
         
         // Instrucció: array[index] = valor
         codi3a.afegir(Codi.IND_ASS, valor, index, nomArrayBase);

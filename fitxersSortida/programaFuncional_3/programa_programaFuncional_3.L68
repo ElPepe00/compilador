@@ -1,0 +1,196 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 12/12/2025 0:25:17
+
+00000000                             1  ; --- CAPÇALERA ---
+00001000                             2      ORG    $1000
+00001000                             3  START:
+00001000  4FF9 00001010              4      LEA    STACK_TOP, A7
+00001006  4EB9 00002F58              5      JSR    main
+0000100C  FFFF FFFF                  6      SIMHALT
+00001010                             7  
+00001010                             8  ; --- DADES GLOBALS ---
+00001010                             9  STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila
+00002F50                            10  vector     DS.L   1
+00002F54                            11  val        DS.L   1
+00002F58                            12  
+00002F58                            13  ; --- SECCIÓ DE CODI ---
+00002F58                            14      ; skip    -           -           main
+00002F58                            15  main:
+00002F58                            16  
+00002F58                            17      ; pmb     main        0           -
+00002F58  4E56 0000                 18      LINK   A6, #-0
+00002F5C                            19  
+00002F5C                            20      ; copy    10          -           t0
+00002F5C  700A                      21      MOVE.L #10, D0
+00002F5E  2D40 FFCC                 22      MOVE.L D0, -52(A6)
+00002F62                            23  
+00002F62                            24      ; ind_ass t0          0           vector
+00002F62  41F8 2F50                 25      LEA    vector, A0
+00002F66  7000                      26      MOVE.L #0, D0
+00002F68  222E FFCC                 27      MOVE.L -52(A6), D1
+00002F6C  2181 0800                 28      MOVE.L D1, 0(A0, D0.L)
+00002F70                            29  
+00002F70                            30      ; copy    20          -           t1
+00002F70  7014                      31      MOVE.L #20, D0
+00002F72  2D40 FFC8                 32      MOVE.L D0, -56(A6)
+00002F76                            33  
+00002F76                            34      ; ind_ass t1          4           vector
+00002F76  41F8 2F50                 35      LEA    vector, A0
+00002F7A  7004                      36      MOVE.L #4, D0
+00002F7C  222E FFC8                 37      MOVE.L -56(A6), D1
+00002F80  2181 0800                 38      MOVE.L D1, 0(A0, D0.L)
+00002F84                            39  
+00002F84                            40      ; copy    30          -           t2
+00002F84  701E                      41      MOVE.L #30, D0
+00002F86  2D40 FFC4                 42      MOVE.L D0, -60(A6)
+00002F8A                            43  
+00002F8A                            44      ; ind_ass t2          8           vector
+00002F8A  41F8 2F50                 45      LEA    vector, A0
+00002F8E  7008                      46      MOVE.L #8, D0
+00002F90  222E FFC4                 47      MOVE.L -60(A6), D1
+00002F94  2181 0800                 48      MOVE.L D1, 0(A0, D0.L)
+00002F98                            49  
+00002F98                            50      ; copy    0           -           t3
+00002F98  7000                      51      MOVE.L #0, D0
+00002F9A  2D40 FFC0                 52      MOVE.L D0, -64(A6)
+00002F9E                            53  
+00002F9E                            54      ; prod    t3          4           t4
+00002F9E  202E FFC0                 55      MOVE.L -64(A6), D0
+00002FA2  C1FC 0004                 56      MULS.W #4, D0
+00002FA6  2D40 FFFC                 57      MOVE.L D0, -4(A6)
+00002FAA                            58  
+00002FAA                            59      ; ind_val vector      t4          t5
+00002FAA  41F8 2F50                 60      LEA    vector, A0
+00002FAE  202E FFFC                 61      MOVE.L -4(A6), D0
+00002FB2  2230 0800                 62      MOVE.L 0(A0, D0.L), D1
+00002FB6  2D41 FFF8                 63      MOVE.L D1, -8(A6)
+00002FBA                            64  
+00002FBA                            65      ; copy    t5          -           val
+00002FBA  202E FFF8                 66      MOVE.L -8(A6), D0
+00002FBE  21C0 2F54                 67      MOVE.L D0, val
+00002FC2                            68  
+00002FC2                            69      ; copy    val         -           t6
+00002FC2  2038 2F54                 70      MOVE.L val, D0
+00002FC6  2D40 FFF4                 71      MOVE.L D0, -12(A6)
+00002FCA                            72  
+00002FCA                            73      ; param_s t6          -           -
+00002FCA  2F2E FFF4                 74      MOVE.L -12(A6), -(A7)
+00002FCE                            75  
+00002FCE                            76      ; call    imprimir    -           -
+00002FCE  4EB9 00003082             77      JSR    imprimir
+00002FD4  588F                      78      ADD.L  #4, A7
+00002FD6                            79  
+00002FD6                            80      ; copy    1           -           t7
+00002FD6  7001                      81      MOVE.L #1, D0
+00002FD8  2D40 FFF0                 82      MOVE.L D0, -16(A6)
+00002FDC                            83  
+00002FDC                            84      ; prod    t7          4           t8
+00002FDC  202E FFF0                 85      MOVE.L -16(A6), D0
+00002FE0  C1FC 0004                 86      MULS.W #4, D0
+00002FE4  2D40 FFEC                 87      MOVE.L D0, -20(A6)
+00002FE8                            88  
+00002FE8                            89      ; param_c t8          vector      -
+00002FE8  41F8 2F50                 90      LEA    vector, A0
+00002FEC  202E FFEC                 91      MOVE.L -20(A6), D0
+00002FF0  2230 0800                 92      MOVE.L 0(A0, D0.L), D1
+00002FF4  2F01                      93      MOVE.L D1, -(A7)
+00002FF6                            94  
+00002FF6                            95      ; call    imprimir    -           -
+00002FF6  4EB9 00003082             96      JSR    imprimir
+00002FFC  588F                      97      ADD.L  #4, A7
+00002FFE                            98  
+00002FFE                            99      ; copy    2           -           t9
+00002FFE  7002                     100      MOVE.L #2, D0
+00003000  2D40 FFE8                101      MOVE.L D0, -24(A6)
+00003004                           102  
+00003004                           103      ; prod    t9          4           t10
+00003004  202E FFE8                104      MOVE.L -24(A6), D0
+00003008  C1FC 0004                105      MULS.W #4, D0
+0000300C  2D40 FFE4                106      MOVE.L D0, -28(A6)
+00003010                           107  
+00003010                           108      ; param_c t10         vector      -
+00003010  41F8 2F50                109      LEA    vector, A0
+00003014  202E FFE4                110      MOVE.L -28(A6), D0
+00003018  2230 0800                111      MOVE.L 0(A0, D0.L), D1
+0000301C  2F01                     112      MOVE.L D1, -(A7)
+0000301E                           113  
+0000301E                           114      ; call    imprimir    -           -
+0000301E  4EB9 00003082            115      JSR    imprimir
+00003024  588F                     116      ADD.L  #4, A7
+00003026                           117  
+00003026                           118      ; copy    99          -           t11
+00003026  7063                     119      MOVE.L #99, D0
+00003028  2D40 FFDC                120      MOVE.L D0, -36(A6)
+0000302C                           121  
+0000302C                           122      ; copy    2           -           t12
+0000302C  7002                     123      MOVE.L #2, D0
+0000302E  2D40 FFE0                124      MOVE.L D0, -32(A6)
+00003032                           125  
+00003032                           126      ; prod    t12         4           t13
+00003032  202E FFE0                127      MOVE.L -32(A6), D0
+00003036  C1FC 0004                128      MULS.W #4, D0
+0000303A  2D40 FFD4                129      MOVE.L D0, -44(A6)
+0000303E                           130  
+0000303E                           131      ; ind_ass t11         t13         vector
+0000303E  41F8 2F50                132      LEA    vector, A0
+00003042  202E FFD4                133      MOVE.L -44(A6), D0
+00003046  222E FFDC                134      MOVE.L -36(A6), D1
+0000304A  2181 0800                135      MOVE.L D1, 0(A0, D0.L)
+0000304E                           136  
+0000304E                           137      ; copy    2           -           t14
+0000304E  7002                     138      MOVE.L #2, D0
+00003050  2D40 FFD8                139      MOVE.L D0, -40(A6)
+00003054                           140  
+00003054                           141      ; prod    t14         4           t15
+00003054  202E FFD8                142      MOVE.L -40(A6), D0
+00003058  C1FC 0004                143      MULS.W #4, D0
+0000305C  2D40 FFD0                144      MOVE.L D0, -48(A6)
+00003060                           145  
+00003060                           146      ; param_c t15         vector      -
+00003060  41F8 2F50                147      LEA    vector, A0
+00003064  202E FFD0                148      MOVE.L -48(A6), D0
+00003068  2230 0800                149      MOVE.L 0(A0, D0.L), D1
+0000306C  2F01                     150      MOVE.L D1, -(A7)
+0000306E                           151  
+0000306E                           152      ; call    imprimir    -           -
+0000306E  4EB9 00003082            153      JSR    imprimir
+00003074  588F                     154      ADD.L  #4, A7
+00003076                           155  
+00003076                           156      ; halt    -           -           -
+00003076  FFFF FFFF                157      SIMHALT
+0000307A                           158  
+0000307A                           159  ; --- FUNCIONS E/S ---
+0000307A                           160  llegir:
+0000307A  7004                     161      MOVE.L #4, D0
+0000307C  4E4F                     162      TRAP   #15
+0000307E  2001                     163      MOVE.L D1, D0
+00003080  4E75                     164      RTS
+00003082                           165  
+00003082                           166  imprimir:
+00003082  222F 0004                167      MOVE.L 4(A7), D1
+00003086  7003                     168      MOVE.L #3, D0
+00003088  4E4F                     169      TRAP   #15
+0000308A  720D                     170      MOVE.L #13, D1
+0000308C  7006                     171      MOVE.L #6, D0
+0000308E  4E4F                     172      TRAP   #15
+00003090  720A                     173      MOVE.L #10, D1
+00003092  4E4F                     174      TRAP   #15
+00003094  4E75                     175      RTS
+00003096                           176  
+00003096                           177      END    START
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+IMPRIMIR            3082
+LLEGIR              307A
+MAIN                2F58
+STACK_TOP           1010
+START               1000
+VAL                 2F54
+VECTOR              2F50

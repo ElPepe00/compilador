@@ -3,9 +3,9 @@
    2:         copy    10          -           t0          
    3:         ind_ass t0          0           vector      
    4:         copy    20          -           t1          
-   5:         ind_ass t1          1           vector      
+   5:         ind_ass t1          4           vector      
    6:         copy    30          -           t2          
-   7:         ind_ass t2          2           vector      
+   7:         ind_ass t2          8           vector      
    8:         copy    0           -           t3          
    9:         prod    t3          4           t4          
   10:         ind_val vector      t4          t5          

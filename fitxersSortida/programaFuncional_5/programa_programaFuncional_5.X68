@@ -5,29 +5,19 @@ START:
     JSR    main
     SIMHALT
 
-; --- DADES GLOBALS I TEMPORALS ---
-STACK_TOP: DS.L   1000   ; Reserva 4KB per la pila
-t0         DS.L   1
+; --- DADES GLOBALS ---
+STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila
 MAX        DS.L   1
-t1         DS.L   1
 i          DS.L   1
-t2         DS.L   1
 b          DS.L   1
-t3         DS.L   1
-t4         DS.L   1
-t5         DS.L   1
-t6         DS.L   1
-t7         DS.L   1
-t8         DS.L   1
-t9         DS.L   1
 
 ; --- SECCIÓ DE CODI ---
     ; copy    10          -           t0
     MOVE.L #10, D0
-    MOVE.L D0, t0
+    MOVE.L D0, -28(A6)
 
     ; copy    t0          -           MAX
-    MOVE.L t0, D0
+    MOVE.L -28(A6), D0
     MOVE.L D0, MAX
 
     ; skip    -           -           main
@@ -38,18 +28,18 @@ main:
 
     ; copy    0           -           t1
     MOVE.L #0, D0
-    MOVE.L D0, t1
+    MOVE.L D0, -32(A6)
 
     ; copy    t1          -           i
-    MOVE.L t1, D0
+    MOVE.L -32(A6), D0
     MOVE.L D0, i
 
     ; copy    0           -           t2
     MOVE.L #0, D0
-    MOVE.L D0, t2
+    MOVE.L D0, -36(A6)
 
     ; copy    t2          -           b
-    MOVE.L t2, D0
+    MOVE.L -36(A6), D0
     MOVE.L D0, b
 
     ; skip    -           -           e0
@@ -57,20 +47,20 @@ e0:
 
     ; copy    i           -           t3
     MOVE.L i, D0
-    MOVE.L D0, t3
+    MOVE.L D0, -40(A6)
 
     ; copy    MAX         -           t4
     MOVE.L MAX, D0
-    MOVE.L D0, t4
+    MOVE.L D0, -4(A6)
 
     ; if_lt   t3          t4          e2
-    MOVE.L t3, D0
-    CMP.L  t4, D0
+    MOVE.L -40(A6), D0
+    CMP.L  -4(A6), D0
     BLT    e2
 
     ; copy    0           -           t5
     MOVE.L #0, D0
-    MOVE.L D0, t5
+    MOVE.L D0, -8(A6)
 
     ; goto    -           -           e3
     BRA    e3
@@ -80,39 +70,39 @@ e2:
 
     ; copy    -1          -           t5
     MOVE.L #-1, D0
-    MOVE.L D0, t5
+    MOVE.L D0, -8(A6)
 
     ; skip    -           -           e3
 e3:
 
     ; if_eq   t5          0           e1
-    MOVE.L t5, D0
+    MOVE.L -8(A6), D0
     CMP.L  #0, D0
     BEQ    e1
 
     ; copy    i           -           t6
     MOVE.L i, D0
-    MOVE.L D0, t6
+    MOVE.L D0, -12(A6)
 
     ; copy    1           -           t7
     MOVE.L #1, D0
-    MOVE.L D0, t7
+    MOVE.L D0, -16(A6)
 
     ; add     t6          t7          t8
-    MOVE.L t6, D0
-    ADD.L  t7, D0
-    MOVE.L D0, t8
+    MOVE.L -12(A6), D0
+    ADD.L  -16(A6), D0
+    MOVE.L D0, -20(A6)
 
     ; copy    t8          -           i
-    MOVE.L t8, D0
+    MOVE.L -20(A6), D0
     MOVE.L D0, i
 
     ; copy    i           -           t9
     MOVE.L i, D0
-    MOVE.L D0, t9
+    MOVE.L D0, -24(A6)
 
     ; param_s t9          -           -
-    MOVE.L t9, -(A7)
+    MOVE.L -24(A6), -(A7)
 
     ; call    imprimir    -           -
     JSR    imprimir

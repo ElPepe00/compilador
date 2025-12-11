@@ -5,26 +5,10 @@ START:
     JSR    main
     SIMHALT
 
-; --- DADES GLOBALS I TEMPORALS ---
-STACK_TOP: DS.L   1000   ; Reserva 4KB per la pila
-t0         DS.L   1
+; --- DADES GLOBALS ---
+STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila
 vector     DS.L   1
-t1         DS.L   1
-t2         DS.L   1
-t3         DS.L   1
-t4         DS.L   1
-t5         DS.L   1
 val        DS.L   1
-t6         DS.L   1
-t7         DS.L   1
-t8         DS.L   1
-t9         DS.L   1
-t10        DS.L   1
-t11        DS.L   1
-t12        DS.L   1
-t13        DS.L   1
-t14        DS.L   1
-t15        DS.L   1
 
 ; --- SECCIÓ DE CODI ---
     ; skip    -           -           main
@@ -35,55 +19,59 @@ main:
 
     ; copy    10          -           t0
     MOVE.L #10, D0
-    MOVE.L D0, t0
+    MOVE.L D0, -52(A6)
 
     ; ind_ass t0          0           vector
-    LEA    vector, A0    MOVE.L #0, D0
-    MOVE.L t0, D1
+    LEA    vector, A0
+    MOVE.L #0, D0
+    MOVE.L -52(A6), D1
     MOVE.L D1, 0(A0, D0.L)
 
     ; copy    20          -           t1
     MOVE.L #20, D0
-    MOVE.L D0, t1
+    MOVE.L D0, -56(A6)
 
-    ; ind_ass t1          1           vector
-    LEA    vector, A0    MOVE.L #1, D0
-    MOVE.L t1, D1
+    ; ind_ass t1          4           vector
+    LEA    vector, A0
+    MOVE.L #4, D0
+    MOVE.L -56(A6), D1
     MOVE.L D1, 0(A0, D0.L)
 
     ; copy    30          -           t2
     MOVE.L #30, D0
-    MOVE.L D0, t2
+    MOVE.L D0, -60(A6)
 
-    ; ind_ass t2          2           vector
-    LEA    vector, A0    MOVE.L #2, D0
-    MOVE.L t2, D1
+    ; ind_ass t2          8           vector
+    LEA    vector, A0
+    MOVE.L #8, D0
+    MOVE.L -60(A6), D1
     MOVE.L D1, 0(A0, D0.L)
 
     ; copy    0           -           t3
     MOVE.L #0, D0
-    MOVE.L D0, t3
+    MOVE.L D0, -64(A6)
 
     ; prod    t3          4           t4
-    MOVE.L t3, D0
-    MULS.L #4, D0
-    MOVE.L D0, t4
+    MOVE.L -64(A6), D0
+    MULS.W #4, D0
+    MOVE.L D0, -4(A6)
 
     ; ind_val vector      t4          t5
-    LEA    vector, A0    MOVE.L t4, D0
+    LEA    vector, A0
+    MOVE.L -4(A6), D0
     MOVE.L 0(A0, D0.L), D1
-    MOVE.L D1, t5
+    MOVE.L D1, -8(A6)
 
     ; copy    t5          -           val
-    MOVE.L t5, D0
+    MOVE.L -8(A6), D0
     MOVE.L D0, val
 
     ; copy    val         -           t6
     MOVE.L val, D0
-    MOVE.L D0, t6
+    MOVE.L D0, -12(A6)
 
     ; param_s t6          -           -
-    MOVE.L t6, -(A7)
+    MOVE.L -12(A6), -(A7)
 
     ; call    imprimir    -           -
     JSR    imprimir
@@ -91,15 +79,16 @@ main:
 
     ; copy    1           -           t7
     MOVE.L #1, D0
-    MOVE.L D0, t7
+    MOVE.L D0, -16(A6)
 
     ; prod    t7          4           t8
-    MOVE.L t7, D0
-    MULS.L #4, D0
-    MOVE.L D0, t8
+    MOVE.L -16(A6), D0
+    MULS.W #4, D0
+    MOVE.L D0, -20(A6)
 
     ; param_c t8          vector      -
-    LEA    vector, A0    MOVE.L t8, D0
+    LEA    vector, A0
+    MOVE.L -20(A6), D0
     MOVE.L 0(A0, D0.L), D1
     MOVE.L D1, -(A7)
 
@@ -109,15 +98,16 @@ main:
 
     ; copy    2           -           t9
     MOVE.L #2, D0
-    MOVE.L D0, t9
+    MOVE.L D0, -24(A6)
 
     ; prod    t9          4           t10
-    MOVE.L t9, D0
-    MULS.L #4, D0
-    MOVE.L D0, t10
+    MOVE.L -24(A6), D0
+    MULS.W #4, D0
+    MOVE.L D0, -28(A6)
 
     ; param_c t10         vector      -
-    LEA    vector, A0    MOVE.L t10, D0
+    LEA    vector, A0
+    MOVE.L -28(A6), D0
     MOVE.L 0(A0, D0.L), D1
     MOVE.L D1, -(A7)
 
@@ -127,33 +117,35 @@ main:
 
     ; copy    99          -           t11
     MOVE.L #99, D0
-    MOVE.L D0, t11
+    MOVE.L D0, -36(A6)
 
     ; copy    2           -           t12
     MOVE.L #2, D0
-    MOVE.L D0, t12
+    MOVE.L D0, -32(A6)
 
     ; prod    t12         4           t13
-    MOVE.L t12, D0
-    MULS.L #4, D0
-    MOVE.L D0, t13
+    MOVE.L -32(A6), D0
+    MULS.W #4, D0
+    MOVE.L D0, -44(A6)
 
     ; ind_ass t11         t13         vector
-    LEA    vector, A0    MOVE.L t13, D0
-    MOVE.L t11, D1
+    LEA    vector, A0
+    MOVE.L -44(A6), D0
+    MOVE.L -36(A6), D1
     MOVE.L D1, 0(A0, D0.L)
 
     ; copy    2           -           t14
     MOVE.L #2, D0
-    MOVE.L D0, t14
+    MOVE.L D0, -40(A6)
 
     ; prod    t14         4           t15
-    MOVE.L t14, D0
-    MULS.L #4, D0
-    MOVE.L D0, t15
+    MOVE.L -40(A6), D0
+    MULS.W #4, D0
+    MOVE.L D0, -48(A6)
 
     ; param_c t15         vector      -
-    LEA    vector, A0    MOVE.L t15, D0
+    LEA    vector, A0
+    MOVE.L -48(A6), D0
     MOVE.L 0(A0, D0.L), D1
     MOVE.L D1, -(A7)
 

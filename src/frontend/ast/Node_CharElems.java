@@ -42,7 +42,9 @@ public class Node_CharElems extends Node {
         
         // charLit.generaCodi3a normalment retorna el valor numèric ASCII o el caràcter entre cometes
         String valor = lit.generaCodi3a(codi3a);
-        String index = String.valueOf(indexActual);
+        
+        int offsetBytes = indexActual * TipusSimbol.CHAR.getMidaBytes();
+        String index = String.valueOf(offsetBytes);
         
         codi3a.afegir(Codi.IND_ASS, valor, index, nomArrayBase);
         

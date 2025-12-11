@@ -17,12 +17,12 @@ Token: ASSIGN          | Valor:            | Linia: 8, Col: 8
 Token: BFALSE          | Valor: false      | Linia: 8, Col: 10
 Token: FILINEA         | Valor:            | Linia: 8, Col: 15
 Token: WHILE           | Valor:            | Linia: 10, Col: 1
-Token: LPAREN          | Valor:            | Linia: 10, Col: 6
-Token: ID              | Valor: i          | Linia: 10, Col: 7
-Token: MENOR           | Valor:            | Linia: 10, Col: 9
-Token: ID              | Valor: MAX        | Linia: 10, Col: 11
-Token: RPAREN          | Valor:            | Linia: 10, Col: 14
-Token: BEGIN           | Valor:            | Linia: 10, Col: 15
+Token: LPAREN          | Valor:            | Linia: 10, Col: 7
+Token: ID              | Valor: i          | Linia: 10, Col: 8
+Token: MENOR           | Valor:            | Linia: 10, Col: 10
+Token: ID              | Valor: MAX        | Linia: 10, Col: 12
+Token: RPAREN          | Valor:            | Linia: 10, Col: 15
+Token: BEGIN           | Valor:            | Linia: 10, Col: 16
 Token: ID              | Valor: i          | Linia: 12, Col: 2
 Token: ASSIGN          | Valor:            | Linia: 12, Col: 4
 Token: ID              | Valor: i          | Linia: 12, Col: 6

@@ -7,7 +7,7 @@ programa:
     int i = 0;
 	bool b = false;
 	
-	while(i < MAX):
+	while (i < MAX):
 	
 		i = i + 1;
 		imprimir(i);

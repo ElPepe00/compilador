@@ -1,155 +1,145 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 11/12/2025 22:00:27
+Created On: 12/12/2025 0:31:00
 
 00000000                             1  ; --- CAPÇALERA ---
 00001000                             2      ORG    $1000
 00001000                             3  START:
 00001000  4FF9 00001010              4      LEA    STACK_TOP, A7
-00001006  4EB9 00001FF2              5      JSR    main
+00001006  4EB9 00002F6A              5      JSR    main
 0000100C  FFFF FFFF                  6      SIMHALT
 00001010                             7  
-00001010                             8  ; --- DADES GLOBALS I TEMPORALS ---
-00001010                             9  STACK_TOP: DS.L   1000   ; Reserva 4KB per la pila
-00001FB0                            10  t0         DS.L   1
-00001FB4                            11  MAX        DS.L   1
-00001FB8                            12  t1         DS.L   1
-00001FBC                            13  i          DS.L   1
-00001FC0                            14  t2         DS.L   1
-00001FC4                            15  b          DS.L   1
-00001FC8                            16  t3         DS.L   1
-00001FCC                            17  t4         DS.L   1
-00001FD0                            18  t5         DS.L   1
-00001FD4                            19  t6         DS.L   1
-00001FD8                            20  t7         DS.L   1
-00001FDC                            21  t8         DS.L   1
-00001FE0                            22  t9         DS.L   1
-00001FE4                            23  
-00001FE4                            24  ; --- SECCIÓ DE CODI ---
-00001FE4                            25      ; copy    10          -           t0
-00001FE4  700A                      26      MOVE.L #10, D0
-00001FE6  21C0 1FB0                 27      MOVE.L D0, t0
-00001FEA                            28  
-00001FEA                            29      ; copy    t0          -           MAX
-00001FEA  2038 1FB0                 30      MOVE.L t0, D0
-00001FEE  21C0 1FB4                 31      MOVE.L D0, MAX
-00001FF2                            32  
-00001FF2                            33      ; skip    -           -           main
-00001FF2                            34  main:
-00001FF2                            35  
-00001FF2                            36      ; pmb     main        0           -
-00001FF2  4E56 0000                 37      LINK   A6, #-0
-00001FF6                            38  
-00001FF6                            39      ; copy    0           -           t1
-00001FF6  7000                      40      MOVE.L #0, D0
-00001FF8  21C0 1FB8                 41      MOVE.L D0, t1
-00001FFC                            42  
-00001FFC                            43      ; copy    t1          -           i
-00001FFC  2038 1FB8                 44      MOVE.L t1, D0
-00002000  21C0 1FBC                 45      MOVE.L D0, i
-00002004                            46  
-00002004                            47      ; copy    0           -           t2
-00002004  7000                      48      MOVE.L #0, D0
-00002006  21C0 1FC0                 49      MOVE.L D0, t2
-0000200A                            50  
-0000200A                            51      ; copy    t2          -           b
-0000200A  2038 1FC0                 52      MOVE.L t2, D0
-0000200E  21C0 1FC4                 53      MOVE.L D0, b
-00002012                            54  
-00002012                            55      ; skip    -           -           e0
-00002012                            56  e0:
-00002012                            57  
-00002012                            58      ; copy    i           -           t3
-00002012  2038 1FBC                 59      MOVE.L i, D0
-00002016  21C0 1FC8                 60      MOVE.L D0, t3
-0000201A                            61  
-0000201A                            62      ; copy    MAX         -           t4
-0000201A  2038 1FB4                 63      MOVE.L MAX, D0
-0000201E  21C0 1FCC                 64      MOVE.L D0, t4
-00002022                            65  
-00002022                            66      ; if_lt   t3          t4          e2
-00002022  2038 1FC8                 67      MOVE.L t3, D0
-00002026  B0B8 1FCC                 68      CMP.L  t4, D0
-0000202A  6D00 000C                 69      BLT    e2
-0000202E                            70  
-0000202E                            71      ; copy    0           -           t5
-0000202E  7000                      72      MOVE.L #0, D0
-00002030  21C0 1FD0                 73      MOVE.L D0, t5
-00002034                            74  
-00002034                            75      ; goto    -           -           e3
-00002034  6000 0008                 76      BRA    e3
-00002038                            77  
-00002038                            78      ; skip    -           -           e2
-00002038                            79  e2:
-00002038                            80  
-00002038                            81      ; copy    -1          -           t5
-00002038  70FF                      82      MOVE.L #-1, D0
-0000203A  21C0 1FD0                 83      MOVE.L D0, t5
-0000203E                            84  
-0000203E                            85      ; skip    -           -           e3
-0000203E                            86  e3:
-0000203E                            87  
-0000203E                            88      ; if_eq   t5          0           e1
-0000203E  2038 1FD0                 89      MOVE.L t5, D0
-00002042  B0BC 00000000             90      CMP.L  #0, D0
-00002048  6700 003A                 91      BEQ    e1
-0000204C                            92  
-0000204C                            93      ; copy    i           -           t6
-0000204C  2038 1FBC                 94      MOVE.L i, D0
-00002050  21C0 1FD4                 95      MOVE.L D0, t6
-00002054                            96  
-00002054                            97      ; copy    1           -           t7
-00002054  7001                      98      MOVE.L #1, D0
-00002056  21C0 1FD8                 99      MOVE.L D0, t7
-0000205A                           100  
-0000205A                           101      ; add     t6          t7          t8
-0000205A  2038 1FD4                102      MOVE.L t6, D0
-0000205E  D0B8 1FD8                103      ADD.L  t7, D0
-00002062  21C0 1FDC                104      MOVE.L D0, t8
-00002066                           105  
-00002066                           106      ; copy    t8          -           i
-00002066  2038 1FDC                107      MOVE.L t8, D0
-0000206A  21C0 1FBC                108      MOVE.L D0, i
-0000206E                           109  
-0000206E                           110      ; copy    i           -           t9
-0000206E  2038 1FBC                111      MOVE.L i, D0
-00002072  21C0 1FE0                112      MOVE.L D0, t9
-00002076                           113  
-00002076                           114      ; param_s t9          -           -
-00002076  2F38 1FE0                115      MOVE.L t9, -(A7)
-0000207A                           116  
-0000207A                           117      ; call    imprimir    -           -
-0000207A  4EB9 00002090            118      JSR    imprimir
-00002080  588F                     119      ADD.L  #4, A7
-00002082                           120  
-00002082                           121      ; goto    -           -           e0
-00002082  608E                     122      BRA    e0
-00002084                           123  
-00002084                           124      ; skip    -           -           e1
-00002084                           125  e1:
-00002084                           126  
-00002084                           127      ; halt    -           -           -
-00002084  FFFF FFFF                128      SIMHALT
-00002088                           129  
-00002088                           130  ; --- FUNCIONS E/S ---
-00002088                           131  llegir:
-00002088  7004                     132      MOVE.L #4, D0
-0000208A  4E4F                     133      TRAP   #15
-0000208C  2001                     134      MOVE.L D1, D0
-0000208E  4E75                     135      RTS
-00002090                           136  
-00002090                           137  imprimir:
-00002090  222F 0004                138      MOVE.L 4(A7), D1
-00002094  7003                     139      MOVE.L #3, D0
-00002096  4E4F                     140      TRAP   #15
-00002098  720D                     141      MOVE.L #13, D1
-0000209A  7006                     142      MOVE.L #6, D0
-0000209C  4E4F                     143      TRAP   #15
-0000209E  720A                     144      MOVE.L #10, D1
-000020A0  4E4F                     145      TRAP   #15
-000020A2  4E75                     146      RTS
-000020A4                           147  
-000020A4                           148      END    START
+00001010                             8  ; --- DADES GLOBALS ---
+00001010                             9  STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila
+00002F50                            10  MAX        DS.L   1
+00002F54                            11  i          DS.L   1
+00002F58                            12  b          DS.L   1
+00002F5C                            13  
+00002F5C                            14  ; --- SECCIÓ DE CODI ---
+00002F5C                            15      ; copy    10          -           t0
+00002F5C  700A                      16      MOVE.L #10, D0
+00002F5E  2D40 FFE4                 17      MOVE.L D0, -28(A6)
+00002F62                            18  
+00002F62                            19      ; copy    t0          -           MAX
+00002F62  202E FFE4                 20      MOVE.L -28(A6), D0
+00002F66  21C0 2F50                 21      MOVE.L D0, MAX
+00002F6A                            22  
+00002F6A                            23      ; skip    -           -           main
+00002F6A                            24  main:
+00002F6A                            25  
+00002F6A                            26      ; pmb     main        0           -
+00002F6A  4E56 0000                 27      LINK   A6, #-0
+00002F6E                            28  
+00002F6E                            29      ; copy    0           -           t1
+00002F6E  7000                      30      MOVE.L #0, D0
+00002F70  2D40 FFE0                 31      MOVE.L D0, -32(A6)
+00002F74                            32  
+00002F74                            33      ; copy    t1          -           i
+00002F74  202E FFE0                 34      MOVE.L -32(A6), D0
+00002F78  21C0 2F54                 35      MOVE.L D0, i
+00002F7C                            36  
+00002F7C                            37      ; copy    0           -           t2
+00002F7C  7000                      38      MOVE.L #0, D0
+00002F7E  2D40 FFDC                 39      MOVE.L D0, -36(A6)
+00002F82                            40  
+00002F82                            41      ; copy    t2          -           b
+00002F82  202E FFDC                 42      MOVE.L -36(A6), D0
+00002F86  21C0 2F58                 43      MOVE.L D0, b
+00002F8A                            44  
+00002F8A                            45      ; skip    -           -           e0
+00002F8A                            46  e0:
+00002F8A                            47  
+00002F8A                            48      ; copy    i           -           t3
+00002F8A  2038 2F54                 49      MOVE.L i, D0
+00002F8E  2D40 FFD8                 50      MOVE.L D0, -40(A6)
+00002F92                            51  
+00002F92                            52      ; copy    MAX         -           t4
+00002F92  2038 2F50                 53      MOVE.L MAX, D0
+00002F96  2D40 FFFC                 54      MOVE.L D0, -4(A6)
+00002F9A                            55  
+00002F9A                            56      ; if_lt   t3          t4          e2
+00002F9A  202E FFD8                 57      MOVE.L -40(A6), D0
+00002F9E  B0AE FFFC                 58      CMP.L  -4(A6), D0
+00002FA2  6D00 000C                 59      BLT    e2
+00002FA6                            60  
+00002FA6                            61      ; copy    0           -           t5
+00002FA6  7000                      62      MOVE.L #0, D0
+00002FA8  2D40 FFF8                 63      MOVE.L D0, -8(A6)
+00002FAC                            64  
+00002FAC                            65      ; goto    -           -           e3
+00002FAC  6000 0008                 66      BRA    e3
+00002FB0                            67  
+00002FB0                            68      ; skip    -           -           e2
+00002FB0                            69  e2:
+00002FB0                            70  
+00002FB0                            71      ; copy    -1          -           t5
+00002FB0  70FF                      72      MOVE.L #-1, D0
+00002FB2  2D40 FFF8                 73      MOVE.L D0, -8(A6)
+00002FB6                            74  
+00002FB6                            75      ; skip    -           -           e3
+00002FB6                            76  e3:
+00002FB6                            77  
+00002FB6                            78      ; if_eq   t5          0           e1
+00002FB6  202E FFF8                 79      MOVE.L -8(A6), D0
+00002FBA  B0BC 00000000             80      CMP.L  #0, D0
+00002FC0  6700 003A                 81      BEQ    e1
+00002FC4                            82  
+00002FC4                            83      ; copy    i           -           t6
+00002FC4  2038 2F54                 84      MOVE.L i, D0
+00002FC8  2D40 FFF4                 85      MOVE.L D0, -12(A6)
+00002FCC                            86  
+00002FCC                            87      ; copy    1           -           t7
+00002FCC  7001                      88      MOVE.L #1, D0
+00002FCE  2D40 FFF0                 89      MOVE.L D0, -16(A6)
+00002FD2                            90  
+00002FD2                            91      ; add     t6          t7          t8
+00002FD2  202E FFF4                 92      MOVE.L -12(A6), D0
+00002FD6  D0AE FFF0                 93      ADD.L  -16(A6), D0
+00002FDA  2D40 FFEC                 94      MOVE.L D0, -20(A6)
+00002FDE                            95  
+00002FDE                            96      ; copy    t8          -           i
+00002FDE  202E FFEC                 97      MOVE.L -20(A6), D0
+00002FE2  21C0 2F54                 98      MOVE.L D0, i
+00002FE6                            99  
+00002FE6                           100      ; copy    i           -           t9
+00002FE6  2038 2F54                101      MOVE.L i, D0
+00002FEA  2D40 FFE8                102      MOVE.L D0, -24(A6)
+00002FEE                           103  
+00002FEE                           104      ; param_s t9          -           -
+00002FEE  2F2E FFE8                105      MOVE.L -24(A6), -(A7)
+00002FF2                           106  
+00002FF2                           107      ; call    imprimir    -           -
+00002FF2  4EB9 00003008            108      JSR    imprimir
+00002FF8  588F                     109      ADD.L  #4, A7
+00002FFA                           110  
+00002FFA                           111      ; goto    -           -           e0
+00002FFA  608E                     112      BRA    e0
+00002FFC                           113  
+00002FFC                           114      ; skip    -           -           e1
+00002FFC                           115  e1:
+00002FFC                           116  
+00002FFC                           117      ; halt    -           -           -
+00002FFC  FFFF FFFF                118      SIMHALT
+00003000                           119  
+00003000                           120  ; --- FUNCIONS E/S ---
+00003000                           121  llegir:
+00003000  7004                     122      MOVE.L #4, D0
+00003002  4E4F                     123      TRAP   #15
+00003004  2001                     124      MOVE.L D1, D0
+00003006  4E75                     125      RTS
+00003008                           126  
+00003008                           127  imprimir:
+00003008  222F 0004                128      MOVE.L 4(A7), D1
+0000300C  7003                     129      MOVE.L #3, D0
+0000300E  4E4F                     130      TRAP   #15
+00003010  720D                     131      MOVE.L #13, D1
+00003012  7006                     132      MOVE.L #6, D0
+00003014  4E4F                     133      TRAP   #15
+00003016  720A                     134      MOVE.L #10, D1
+00003018  4E4F                     135      TRAP   #15
+0000301A  4E75                     136      RTS
+0000301C                           137  
+0000301C                           138      END    START
 
 No errors detected
 No warnings generated
@@ -158,25 +148,15 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
-B                   1FC4
-E0                  2012
-E1                  2084
-E2                  2038
-E3                  203E
-I                   1FBC
-IMPRIMIR            2090
-LLEGIR              2088
-MAIN                1FF2
-MAX                 1FB4
+B                   2F58
+E0                  2F8A
+E1                  2FFC
+E2                  2FB0
+E3                  2FB6
+I                   2F54
+IMPRIMIR            3008
+LLEGIR              3000
+MAIN                2F6A
+MAX                 2F50
 STACK_TOP           1010
 START               1000
-T0                  1FB0
-T1                  1FB8
-T2                  1FC0
-T3                  1FC8
-T4                  1FCC
-T5                  1FD0
-T6                  1FD4
-T7                  1FD8
-T8                  1FDC
-T9                  1FE0

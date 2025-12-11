@@ -44,8 +44,10 @@ public class Node_BoolElems extends Node {
         
         // 2. Generam codi per al literal actual
         // boolLit.generaCodi3a retorna un temporal o constant (ex: "-1" o "0")
-        String valor = lit.generaCodi3a(codi3a); 
-        String index = String.valueOf(indexActual);
+        String valor = lit.generaCodi3a(codi3a);
+        
+        int offsetBytes = indexActual * TipusSimbol.BOOL.getMidaBytes();
+        String index = String.valueOf(offsetBytes);
         
         // 3. Assignació: array[index] = valor
         codi3a.afegir(Codi.IND_ASS, valor, index, nomArrayBase);

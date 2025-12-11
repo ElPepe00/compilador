@@ -31,10 +31,11 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-
+        long tempsInici = System.currentTimeMillis();
+        
         // Programes Funcionals del 1 - 3
         // Programes Erronis del 4 - 6
-        int numPrograma = 4;                                                    // ----- SELECCIONAR PROGRAMA
+        int numPrograma = 5;                                                    // ----- SELECCIONAR PROGRAMA
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
@@ -161,10 +162,11 @@ public class CompiladorMain {
             String rutaAsm = rutaSortida + "programa_" + nomFitxer.replace(".txt", ".X68");
             genAsm.generaFitxer(rutaAsm);
             
+            long tempsFinal = System.currentTimeMillis() - tempsInici;
             
             // ** FI COMPILACIÓ (Exitosa)
-            System.out.println("\n\n --------------------------");
-            System.out.println("   > COMPILACIO EXITOSA!\n");
+            System.out.println("\n\n ---------------------------------------");
+            System.out.println("   > COMPILACIO EXITOSA! (Temps: " + tempsFinal + " ms)\n");
             
         } catch(Exception e) {
             System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");

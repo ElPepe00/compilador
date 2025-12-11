@@ -15,8 +15,14 @@ public class GeneradorAssemblador {
 
     private final C3a c3a;
     private final TaulaSimbols ts;
+    
+    // Control de l'àmbit actual durant la generació
     private String ambitActual = "global"; 
     private int bytesParametresAcumulats = 0;
+
+    // Estructures per gestionar els temporals com a locals (Correcció Recursivitat)
+    private Map<String, Integer> tempOffsets = new HashMap<>(); 
+    private Map<String, Integer> funcTotalSizes = new HashMap<>();
 
     public GeneradorAssemblador(C3a c3a, TaulaSimbols ts) {
         this.c3a = c3a;
@@ -24,6 +30,10 @@ public class GeneradorAssemblador {
     }
 
     public void generaFitxer(String nomFitxer) {
+        // 1. Pre-càlcul: Analitzar on viuen els temporals per posar-los a la pila
+        precalcularOffsetsTemporals();
+
+        // 2. Generació: Escriure el codi
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(nomFitxer))) {
             escriuCapcalera(bw);
             escriuSeccioDadesGlobals(bw);
@@ -36,6 +46,78 @@ public class GeneradorAssemblador {
         }
     }
 
+    /**
+     * Funció auxiliar per determinar si una etiqueta marca l'inici d'un nou àmbit (funció).
+     */
+    private String determinarNouAmbit(String et) {
+        if (et == null || et.isEmpty()) return null;
+        if (et.equals("main")) return "main";
+
+        String nomSensePrefix = et.startsWith("f_") ? et.substring(2) : et;
+        Simbol s = ts.cercarSimbol(nomSensePrefix);
+        if (s == null) s = ts.cercarSimbol(et);
+
+        if (s != null && (s.getCategoria() == CategoriaSimbol.FUNCIO || s.getCategoria() == CategoriaSimbol.PROCEDIMENT)) {
+            return s.getNom();
+        }
+        return null;
+    }
+
+    private void precalcularOffsetsTemporals() {
+        String ambitScan = "global"; 
+        int localsSize = 0;
+        Set<String> tempsInScope = new HashSet<>();
+
+        for (C3a_Instr instr : c3a.getBlocs()) {
+            
+            // 1. Detectar canvi d'àmbit
+            if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
+                String nouAmbit = determinarNouAmbit(instr.getEtiqueta());
+                if (nouAmbit != null) {
+                    registrarMidaScope(ambitScan, localsSize, tempsInScope);
+                    tempsInScope.clear();
+                    localsSize = 0;
+                    ambitScan = nouAmbit;
+                }
+            }
+
+            // 2. Capturar mida de locals (instrucció PMB)
+            if (instr.getCodi() == Codi.PMB) {
+                try {
+                    localsSize = (instr.getArg2() != null && !instr.getArg2().equals("-")) 
+                                 ? Integer.parseInt(instr.getArg2()) : 0;
+                } catch (NumberFormatException e) {
+                    localsSize = 0;
+                }
+            }
+
+            // 3. Recollir temporals usats
+            afegirSiEsTemporal(instr.getArg1(), tempsInScope);
+            afegirSiEsTemporal(instr.getArg2(), tempsInScope);
+            afegirSiEsTemporal(instr.getDesti(), tempsInScope);
+        }
+        registrarMidaScope(ambitScan, localsSize, tempsInScope);
+    }
+
+    private void afegirSiEsTemporal(String op, Set<String> set) {
+        if (op != null && op.matches("t\\d+")) {
+            set.add(op);
+        }
+    }
+
+    private void registrarMidaScope(String ambit, int locals, Set<String> temps) {
+        int i = 0;
+        for (String t : temps) {
+            int off = -(locals + 4 + (i * 4));
+            tempOffsets.put(t, off);
+            i++;
+        }
+        int total = locals + (temps.size() * 4);
+        funcTotalSizes.put(ambit, total);
+    }
+
+    // -------------------------------------------------------------------------
+
     private void escriuCapcalera(BufferedWriter bw) throws IOException {
         bw.write("; --- CAPÇALERA ---"); bw.newLine();
         bw.write("    ORG    $1000"); bw.newLine();
@@ -47,10 +129,8 @@ public class GeneradorAssemblador {
     }
 
     private void escriuSeccioDadesGlobals(BufferedWriter bw) throws IOException {
-        bw.write("; --- DADES GLOBALS I TEMPORALS ---"); bw.newLine();
-        
-        // Definim la pila aquí per assegurar que l'etiqueta existeix
-        bw.write("STACK_TOP: DS.L   1000   ; Reserva 4KB per la pila"); bw.newLine();
+        bw.write("; --- DADES GLOBALS ---"); bw.newLine();
+        bw.write("STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila"); bw.newLine();
         
         Set<String> declarats = new HashSet<>();
         for (C3a_Instr instr : c3a.getBlocs()) {
@@ -65,13 +145,12 @@ public class GeneradorAssemblador {
         if (op == null || op.equals("-") || op.matches("-?\\d+")) return;
         if (declarats.contains(op)) return;
 
-        if (op.matches("t\\d+")) { // Temporals
-            bw.write(String.format("%-10s DS.L   1", op)); bw.newLine();
-            declarats.add(op);
-            return;
-        }
+        // NO declarem temporals com a globals
+        if (op.matches("t\\d+")) return;
 
         Simbol s = ts.cercarSimbolAmbit("global", op);
+        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", op);
+
         if (s != null && (s.getCategoria() == CategoriaSimbol.VARIABLE || s.getCategoria() == CategoriaSimbol.CONSTANT)) {
              bw.write(String.format("%-10s DS.L   1", op)); bw.newLine();
              declarats.add(op);
@@ -81,7 +160,11 @@ public class GeneradorAssemblador {
     private void escriuSeccioCodi(BufferedWriter bw) throws IOException {
         bw.write("; --- SECCIÓ DE CODI ---"); bw.newLine();
 
+        ambitActual = "global";
+        bytesParametresAcumulats = 0;
+
         for (C3a_Instr instr : c3a.getBlocs()) {
+            
             if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
                 gestionarEtiqueta(instr.getEtiqueta(), bw);
             }
@@ -111,16 +194,23 @@ public class GeneradorAssemblador {
                     bw.write(String.format("    SUB.L  %s, D0", traduirOperand(a2))); bw.newLine();
                     bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
                     break;
+                
+                // *** CORRECCIÓ MULS i DIVS (Detall important M68K) ***
                 case PROD:
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    MULS.L %s, D0", traduirOperand(a2))); bw.newLine();
+                    // M68K: MULS opera 16x16 -> 32. L'operanda font ha de ser .W
+                    bw.write(String.format("    MULS.W %s, D0", traduirOperand(a2))); bw.newLine(); 
                     bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
                     break;
                 case DIV:
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    DIVS.L %s, D0", traduirOperand(a2))); bw.newLine();
+                    // M68K: DIVS opera 32/16 -> 32 (16 quoc, 16 residu). L'operanda font ha de ser .W
+                    bw.write(String.format("    DIVS.W %s, D0", traduirOperand(a2))); bw.newLine();
+                    // Opcional: Extendre signe per quedar-se només amb el quocient a 32 bits si és petit
+                    bw.write("    EXT.L  D0"); bw.newLine(); 
                     bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
                     break;
+                
                 case NEG:
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
                     bw.write("    NEG.L  D0"); bw.newLine();
@@ -165,8 +255,15 @@ public class GeneradorAssemblador {
                     bw.write("    BGT    " + dest); bw.newLine();
                     break;
                 case PMB:
-                    String midaFrame = (a2 != null) ? a2 : "0";
-                    bw.write("    LINK   A6, #-" + midaFrame); bw.newLine();
+                    int totalFrame = 0;
+                    if (funcTotalSizes.containsKey(ambitActual)) {
+                        totalFrame = funcTotalSizes.get(ambitActual);
+                    } else {
+                        try {
+                            totalFrame = (a2 != null) ? Integer.parseInt(a2) : 0;
+                        } catch (Exception e) {}
+                    }
+                    bw.write("    LINK   A6, #-" + totalFrame); bw.newLine();
                     break;
                 case RET:
                     if (a1 != null && !a1.equals("-")) {
@@ -220,17 +317,10 @@ public class GeneradorAssemblador {
 
     private void gestionarEtiqueta(String et, BufferedWriter bw) throws IOException {
         bw.write(et + ":"); bw.newLine();
-        if (et.equals("main")) {
-            ambitActual = "main";
+        String nouAmbit = determinarNouAmbit(et);
+        if (nouAmbit != null) {
+            ambitActual = nouAmbit;
             bytesParametresAcumulats = 0;
-        } else if (et.startsWith("f_")) {
-            String possibleNom = et.substring(2);
-            Simbol s = ts.cercarSimbol(possibleNom);
-            if (s == null) s = ts.cercarSimbol(et); 
-            if (s != null && (s.getCategoria() == CategoriaSimbol.FUNCIO || s.getCategoria() == CategoriaSimbol.PROCEDIMENT)) {
-                ambitActual = s.getNom();
-                bytesParametresAcumulats = 0;
-            }
         }
     }
 
@@ -263,8 +353,17 @@ public class GeneradorAssemblador {
         if (nom == null || nom.equals("-")) return "";
         if (nom.matches("-?\\d+")) return "#" + nom; 
 
+        if (nom.matches("t\\d+")) {
+            if (tempOffsets.containsKey(nom)) {
+                return tempOffsets.get(nom) + "(A6)";
+            } else {
+                return nom; 
+            }
+        }
+
         Simbol s = ts.cercarSimbolAmbit(ambitActual, nom);
         if (s == null) s = ts.cercarSimbolAmbit("global", nom);
+        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", nom);
 
         if (s != null) {
             if (s.isEsGlobal()) {
@@ -286,12 +385,27 @@ public class GeneradorAssemblador {
     private void carregarAdrecaBase(BufferedWriter bw, String nomArray, String regAdreca) throws IOException {
         Simbol s = ts.cercarSimbolAmbit(ambitActual, nomArray);
         if (s == null) s = ts.cercarSimbolAmbit("global", nomArray);
+        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", nomArray);
         
         if (s != null && !s.isEsGlobal()) {
-            int desp = -(s.getOffset() + s.getTipus().getMidaBytes() * s.getMidaArray());
-            bw.write(String.format("    LEA    %s(A6), %s", desp, regAdreca));
+            if (s.getCategoria() == CategoriaSimbol.PARAMETRE && s.isEsArray()) {
+                // Passat per referència (parametre taula)
+                int offsetTS = s.getOffset();
+                int desp = 8 + offsetTS;
+                bw.write(String.format("    MOVE.L %d(A6), %s", desp, regAdreca));
+            } else {
+                // Array Local
+                int midaTotal = s.getTipus().getMidaBytes() * s.getMidaArray();
+                // Utilitza la fórmula coherent amb com declares els locals
+                int desp = -(s.getOffset() + midaTotal);
+                bw.write(String.format("    LEA    %d(A6), %s", desp, regAdreca));
+            }
         } else {
+            // Global
             bw.write(String.format("    LEA    %s, %s", nomArray, regAdreca));
         }
+        
+        // *** CORRECCIÓ CRÍTICA: AFEGIR EL SALT DE LÍNIA ***
+        bw.newLine(); 
     }
 }
