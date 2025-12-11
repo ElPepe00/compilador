@@ -1,7 +1,7 @@
 === TAULA DE SÍMBOLS ===
 
-ÀMBIT: LOCAL
-----------------------------------------------------
-NOM             CATEGORIA       TIPUS           OFFSET    
-vector          VARIABLE        TAULA_INT       0         
-val             VARIABLE        INT             12        
+ÀMBIT: GLOBAL
+----------------------------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET   MIDA_FR 
+vector          VARIABLE        TAULA_INT       0        0       
+val             VARIABLE        INT             0        0       

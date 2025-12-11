@@ -1,6 +1,6 @@
 === TAULA DE SÍMBOLS ===
 
-ÀMBIT: LOCAL
-----------------------------------------------------
-NOM             CATEGORIA       TIPUS           OFFSET    
-matriu          VARIABLE        TAULA_INT       0         
+ÀMBIT: GLOBAL
+----------------------------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET   MIDA_FR 
+matriu          VARIABLE        TAULA_INT       0        0       

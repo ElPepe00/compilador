@@ -34,7 +34,7 @@ public class CompiladorMain {
 
         // Programes Funcionals del 1 - 3
         // Programes Erronis del 4 - 6
-        int numPrograma = 5;                                                    // ----- SELECCIONAR PROGRAMA
+        int numPrograma = 4;                                                    // ----- SELECCIONAR PROGRAMA
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";

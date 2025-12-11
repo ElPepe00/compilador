@@ -1,5 +1,5 @@
    0:         skip    -           -           main        
-   1:         pmb     main        16          -           
+   1:         pmb     main        0           -           
    2:         copy    10          -           t0          
    3:         ind_ass t0          0           vector      
    4:         copy    20          -           t1          
