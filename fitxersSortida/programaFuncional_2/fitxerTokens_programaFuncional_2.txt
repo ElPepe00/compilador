@@ -18,35 +18,47 @@ Token: CARACTER        | Valor: m          | Linia: 4, Col: 18
 Token: FILINEA         | Valor:            | Linia: 4, Col: 21
 Token: PROGRAMA        | Valor:            | Linia: 7, Col: 0
 Token: BEGIN           | Valor:            | Linia: 7, Col: 8
-Token: INT             | Valor:            | Linia: 9, Col: 1
-Token: ID              | Valor: x          | Linia: 9, Col: 5
-Token: ASSIGN          | Valor:            | Linia: 9, Col: 7
-Token: NUMERO          | Valor: 42         | Linia: 9, Col: 9
-Token: FILINEA         | Valor:            | Linia: 9, Col: 11
-Token: BOOL            | Valor:            | Linia: 10, Col: 1
-Token: ID              | Valor: y          | Linia: 10, Col: 6
-Token: ASSIGN          | Valor:            | Linia: 10, Col: 8
-Token: BFALSE          | Valor: false      | Linia: 10, Col: 10
-Token: FILINEA         | Valor:            | Linia: 10, Col: 15
-Token: CHAR            | Valor:            | Linia: 11, Col: 1
-Token: ID              | Valor: z          | Linia: 11, Col: 6
-Token: ASSIGN          | Valor:            | Linia: 11, Col: 8
+Token: IMPRIMIR        | Valor:            | Linia: 9, Col: 1
+Token: LPAREN          | Valor:            | Linia: 9, Col: 9
+Token: ID              | Valor: a          | Linia: 9, Col: 10
+Token: RPAREN          | Valor:            | Linia: 9, Col: 11
+Token: FILINEA         | Valor:            | Linia: 9, Col: 12
+Token: INT             | Valor:            | Linia: 11, Col: 1
+Token: ID              | Valor: lec        | Linia: 11, Col: 5
+Token: ASSIGN          | Valor:            | Linia: 11, Col: 9
+Token: LLEGIR          | Valor:            | Linia: 11, Col: 11
+Token: LPAREN          | Valor:            | Linia: 11, Col: 17
+Token: RPAREN          | Valor:            | Linia: 11, Col: 18
+Token: FILINEA         | Valor:            | Linia: 11, Col: 19
+Token: INT             | Valor:            | Linia: 13, Col: 1
+Token: ID              | Valor: x          | Linia: 13, Col: 5
+Token: ASSIGN          | Valor:            | Linia: 13, Col: 7
+Token: NUMERO          | Valor: 42         | Linia: 13, Col: 9
+Token: FILINEA         | Valor:            | Linia: 13, Col: 11
+Token: BOOL            | Valor:            | Linia: 14, Col: 1
+Token: ID              | Valor: y          | Linia: 14, Col: 6
+Token: ASSIGN          | Valor:            | Linia: 14, Col: 8
+Token: BFALSE          | Valor: false      | Linia: 14, Col: 10
+Token: FILINEA         | Valor:            | Linia: 14, Col: 15
+Token: CHAR            | Valor:            | Linia: 15, Col: 1
+Token: ID              | Valor: z          | Linia: 15, Col: 6
+Token: ASSIGN          | Valor:            | Linia: 15, Col: 8
 Token: CARACTER        | Valor: 
-          | Linia: 11, Col: 10
-Token: FILINEA         | Valor:            | Linia: 11, Col: 14
-Token: IMPRIMIR        | Valor:            | Linia: 13, Col: 1
-Token: LPAREN          | Valor:            | Linia: 13, Col: 9
-Token: ID              | Valor: x          | Linia: 13, Col: 10
-Token: RPAREN          | Valor:            | Linia: 13, Col: 11
-Token: FILINEA         | Valor:            | Linia: 13, Col: 12
-Token: IMPRIMIR        | Valor:            | Linia: 14, Col: 1
-Token: LPAREN          | Valor:            | Linia: 14, Col: 9
-Token: ID              | Valor: y          | Linia: 14, Col: 10
-Token: RPAREN          | Valor:            | Linia: 14, Col: 11
-Token: FILINEA         | Valor:            | Linia: 14, Col: 12
-Token: IMPRIMIR        | Valor:            | Linia: 15, Col: 1
-Token: LPAREN          | Valor:            | Linia: 15, Col: 9
-Token: ID              | Valor: z          | Linia: 15, Col: 10
-Token: RPAREN          | Valor:            | Linia: 15, Col: 11
-Token: FILINEA         | Valor:            | Linia: 15, Col: 12
-Token: PROGRAMA_FI     | Valor:            | Linia: 17, Col: 0
+          | Linia: 15, Col: 10
+Token: FILINEA         | Valor:            | Linia: 15, Col: 14
+Token: IMPRIMIR        | Valor:            | Linia: 17, Col: 1
+Token: LPAREN          | Valor:            | Linia: 17, Col: 9
+Token: ID              | Valor: x          | Linia: 17, Col: 10
+Token: RPAREN          | Valor:            | Linia: 17, Col: 11
+Token: FILINEA         | Valor:            | Linia: 17, Col: 12
+Token: IMPRIMIR        | Valor:            | Linia: 18, Col: 1
+Token: LPAREN          | Valor:            | Linia: 18, Col: 9
+Token: ID              | Valor: y          | Linia: 18, Col: 10
+Token: RPAREN          | Valor:            | Linia: 18, Col: 11
+Token: FILINEA         | Valor:            | Linia: 18, Col: 12
+Token: IMPRIMIR        | Valor:            | Linia: 19, Col: 1
+Token: LPAREN          | Valor:            | Linia: 19, Col: 9
+Token: ID              | Valor: z          | Linia: 19, Col: 10
+Token: RPAREN          | Valor:            | Linia: 19, Col: 11
+Token: FILINEA         | Valor:            | Linia: 19, Col: 12
+Token: PROGRAMA_FI     | Valor:            | Linia: 21, Col: 0

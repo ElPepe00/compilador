@@ -6,6 +6,10 @@ constant char c = 'm';
 // Programa principal
 programa:
 
+	imprimir(a);
+
+	int lec = llegir();
+
 	int x = 42;
 	bool y = false;
 	char z = '\n';

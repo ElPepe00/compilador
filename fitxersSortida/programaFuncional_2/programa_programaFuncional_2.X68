@@ -14,14 +14,17 @@ b          DS.L   1
 t2         DS.L   1
 c          DS.L   1
 t3         DS.L   1
-x          DS.L   1
 t4         DS.L   1
-y          DS.L   1
+lec        DS.L   1
 t5         DS.L   1
-z          DS.L   1
+x          DS.L   1
 t6         DS.L   1
+y          DS.L   1
 t7         DS.L   1
+z          DS.L   1
 t8         DS.L   1
+t9         DS.L   1
+t10        DS.L   1
 
 ; --- SECCIÓ DE CODI ---
     ; copy    3           -           t0
@@ -54,58 +57,77 @@ main:
     ; pmb     main        0           -
     LINK   A6, #-0
 
-    ; copy    42          -           t3
-    MOVE.L #42, D0
+    ; copy    a           -           t3
+    MOVE.L a, D0
     MOVE.L D0, t3
 
-    ; copy    t3          -           x
-    MOVE.L t3, D0
-    MOVE.L D0, x
+    ; param_s t3          -           -
+    MOVE.L t3, -(A7)
 
-    ; copy    0           -           t4
-    MOVE.L #0, D0
+    ; call    imprimir    -           -
+    JSR    imprimir
+    ADD.L  #4, A7
+
+    ; call    llegir      -           t4
+    JSR    llegir
     MOVE.L D0, t4
 
-    ; copy    t4          -           y
+    ; copy    t4          -           lec
     MOVE.L t4, D0
-    MOVE.L D0, y
+    MOVE.L D0, lec
 
-    ; copy    10          -           t5
-    MOVE.L #10, D0
+    ; copy    42          -           t5
+    MOVE.L #42, D0
     MOVE.L D0, t5
 
-    ; copy    t5          -           z
+    ; copy    t5          -           x
     MOVE.L t5, D0
-    MOVE.L D0, z
+    MOVE.L D0, x
 
-    ; copy    x           -           t6
-    MOVE.L x, D0
+    ; copy    0           -           t6
+    MOVE.L #0, D0
     MOVE.L D0, t6
 
-    ; param_s t6          -           -
-    MOVE.L t6, -(A7)
+    ; copy    t6          -           y
+    MOVE.L t6, D0
+    MOVE.L D0, y
 
-    ; call    imprimir    -           -
-    JSR    imprimir
-    ADD.L  #4, A7
-
-    ; copy    y           -           t7
-    MOVE.L y, D0
+    ; copy    10          -           t7
+    MOVE.L #10, D0
     MOVE.L D0, t7
 
-    ; param_s t7          -           -
-    MOVE.L t7, -(A7)
+    ; copy    t7          -           z
+    MOVE.L t7, D0
+    MOVE.L D0, z
 
-    ; call    imprimir    -           -
-    JSR    imprimir
-    ADD.L  #4, A7
-
-    ; copy    z           -           t8
-    MOVE.L z, D0
+    ; copy    x           -           t8
+    MOVE.L x, D0
     MOVE.L D0, t8
 
     ; param_s t8          -           -
     MOVE.L t8, -(A7)
+
+    ; call    imprimir    -           -
+    JSR    imprimir
+    ADD.L  #4, A7
+
+    ; copy    y           -           t9
+    MOVE.L y, D0
+    MOVE.L D0, t9
+
+    ; param_s t9          -           -
+    MOVE.L t9, -(A7)
+
+    ; call    imprimir    -           -
+    JSR    imprimir
+    ADD.L  #4, A7
+
+    ; copy    z           -           t10
+    MOVE.L z, D0
+    MOVE.L D0, t10
+
+    ; param_s t10         -           -
+    MOVE.L t10, -(A7)
 
     ; call    imprimir    -           -
     JSR    imprimir

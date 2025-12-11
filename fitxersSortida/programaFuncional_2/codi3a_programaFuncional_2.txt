@@ -6,19 +6,24 @@
    5:         copy    t2          -           c           
    6:         skip    -           -           main        
    7:         pmb     main        0           -           
-   8:         copy    42          -           t3          
-   9:         copy    t3          -           x           
-  10:         copy    0           -           t4          
-  11:         copy    t4          -           y           
-  12:         copy    10          -           t5          
-  13:         copy    t5          -           z           
-  14:         copy    x           -           t6          
-  15:         param_s t6          -           -           
-  16:         call    imprimir    -           -           
-  17:         copy    y           -           t7          
-  18:         param_s t7          -           -           
-  19:         call    imprimir    -           -           
-  20:         copy    z           -           t8          
-  21:         param_s t8          -           -           
-  22:         call    imprimir    -           -           
-  23:         halt    -           -           -           
+   8:         copy    a           -           t3          
+   9:         param_s t3          -           -           
+  10:         call    imprimir    -           -           
+  11:         call    llegir      -           t4          
+  12:         copy    t4          -           lec         
+  13:         copy    42          -           t5          
+  14:         copy    t5          -           x           
+  15:         copy    0           -           t6          
+  16:         copy    t6          -           y           
+  17:         copy    10          -           t7          
+  18:         copy    t7          -           z           
+  19:         copy    x           -           t8          
+  20:         param_s t8          -           -           
+  21:         call    imprimir    -           -           
+  22:         copy    y           -           t9          
+  23:         param_s t9          -           -           
+  24:         call    imprimir    -           -           
+  25:         copy    z           -           t10         
+  26:         param_s t10         -           -           
+  27:         call    imprimir    -           -           
+  28:         halt    -           -           -           
