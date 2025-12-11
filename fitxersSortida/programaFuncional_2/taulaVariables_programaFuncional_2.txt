@@ -1,6 +1,6 @@
 TAULA DE VARIABLES (Generada des de TS)
 ---------------------------------------
 NOM             AMBIT           OFFSET     MIDA       TIPUS     
-x               LOCAL           0          4          INT       
-y               LOCAL           4          4          BOOL      
-z               LOCAL           8          4          CARACTER  
+x               GLOBAL          0          4          INT       
+y               GLOBAL          4          4          BOOL      
+z               GLOBAL          8          1          CHAR      

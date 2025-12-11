@@ -50,14 +50,38 @@ public class Node_ArgList extends Node {
     }
 
     
-    public void generaCodiParams(C3a codi3a) {  
+    public void generaCodiParams(C3a codi3a) {
+        
+        // Recursivitat per generar els parametres anteriors
         if (anteriors != null) {
             anteriors.generaCodiParams(codi3a);
         }
         
-        String t = expr.generaCodi3a(codi3a);
-        codi3a.afegir(Codi.PARAM_S, t, null, null);
+        // Comprovam si es un element taula
+        boolean esElementTaula = false;
         
+        if (expr.getRef() != null) {
+            Node_Ref ref = expr.getRef();
+            
+            if (ref.teIndex()) {
+                
+                esElementTaula = true;
+                
+                // 1. Generam l'offset en bytes
+                String tOffset = ref.generaCodiIndexAplanat(codi3a);
+                
+                // 2. Obtenim el nom de la base (la variable array)
+                String nomBase = ref.getSimbolAssoc().getNom();
+                
+                // 3. Generem la instrucció PARAM_C
+                codi3a.afegir(Codi.PARAM_C, tOffset, nomBase, null);
+            }
+        }
+        
+        if (!esElementTaula) {
+            String t = expr.generaCodi3a(codi3a);
+            codi3a.afegir(Codi.PARAM_S, t, null, null);
+        }
     }
 
     @Override
@@ -65,17 +89,6 @@ public class Node_ArgList extends Node {
         generaCodiParams(codi3a);
         return null;
     }
-    
-    
-    /*
-    public void generaCodiWrite(C3a codi3a) {
-        if (anteriors != null) {
-            anteriors.generaCodi3a(codi3a);
-            String t = expr.generaCodi3a(codi3a);
-            codi3a.afegir(Codi.WRITE, t, null, null);
-        }
-    }
-    */
     
     @Override
     public String toString() {

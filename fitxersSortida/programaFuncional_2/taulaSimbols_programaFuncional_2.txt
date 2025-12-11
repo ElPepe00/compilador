@@ -1,15 +1,11 @@
 === TAULA DE SÍMBOLS ===
 
 ÀMBIT: GLOBAL
-----------------------------------------------------
-NOM             CATEGORIA       TIPUS           OFFSET    
-a               CONSTANT        INT             0         
-b               CONSTANT        BOOL            0         
-c               CONSTANT        CARACTER        0         
-
-ÀMBIT: LOCAL
-----------------------------------------------------
-NOM             CATEGORIA       TIPUS           OFFSET    
-x               VARIABLE        INT             0         
-y               VARIABLE        BOOL            4         
-z               VARIABLE        CARACTER        8         
+----------------------------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET   MIDA_FR 
+a               CONSTANT        INT             0        0       
+b               CONSTANT        BOOL            0        0       
+c               CONSTANT        CHAR            0        0       
+x               VARIABLE        INT             0        0       
+y               VARIABLE        BOOL            4        0       
+z               VARIABLE        CHAR            8        0       

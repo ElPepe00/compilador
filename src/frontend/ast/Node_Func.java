@@ -43,17 +43,19 @@ public class Node_Func extends Node {
 
         // 3. Crear simbol de la funcio global
         this.simbolFuncio = new Simbol(id, tRetorn, cat);
-        this.simbolFuncio.setEtiqueta("f_" + id);
+        this.simbolFuncio.setEtiqueta(id);
 
         // afegim el simbol de funcio a la TS
-        ts.afegirSimbol(this.simbolFuncio);
-
+        if (!ts.afegirSimbol(this.simbolFuncio)) {
+            errorSemantic("Funcio ja declarada: " + id);
+        }
+        
         // 4. Entrar àmbit nou per al cos de la funció
-        ts.entrarFuncio();
+        ts.entrarBloc(simbolFuncio);
 
         // 5. Registrar parametres
         if (paramsOpt != null) {
-            paramsOpt.registrarParametres(ts, this.simbolFuncio);
+            paramsOpt.gestioSemantica(ts, this.simbolFuncio);
         }
 
         // 5. Comprovam si hiha elements

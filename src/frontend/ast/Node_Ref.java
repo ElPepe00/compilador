@@ -175,7 +175,33 @@ public class Node_Ref extends Node {
             tAcumulat = tSuma;
         }
         
-        return tAcumulat;
+        // Obtenim el tipus base de l'array (Ex: TAULA_INT -> INT)
+        TipusSimbol tBase = TipusUtils.getTipusBaseDeTipusArray(s.getTipus());
+        
+        int nbytes = tBase.getMidaBytes();
+        
+        switch (tBase) {
+            case INT:
+            case BOOL:
+                nbytes = 4;
+                break;
+            case CHAR:
+                nbytes = 1;
+                break;
+            default:
+                nbytes = 1; // Per defecte
+        }
+        
+        // Si el tipus ocupa més d'1 byte, multipliquem
+        if (nbytes > 1) {
+            String tOffsetBytes = codi3a.novaTemp();
+            // offset = index_pla * nbytes
+            codi3a.afegir(Codi.PROD, tAcumulat, String.valueOf(nbytes), tOffsetBytes);
+            return tOffsetBytes;
+        } else {
+            // Si és 1 byte, l'offset és igual a l'índex
+            return tAcumulat;
+        }
     }
 
     @Override

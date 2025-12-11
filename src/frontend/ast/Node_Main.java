@@ -33,14 +33,11 @@ public class Node_Main extends Node {
         this.simbolMain.setEtiqueta("main");
         
         // Àmbit propi per al main
-        ts.entrarFuncio();
+        ts.entrarBloc();
 
         if (elements != null) {
             elements.gestioSemantica(ts);
         }
-
-        // Actualitzam la mida del frame
-        this.simbolMain.setMidaFrame(ts.getOffsetActual());
         
         ts.sortirBloc();
     }

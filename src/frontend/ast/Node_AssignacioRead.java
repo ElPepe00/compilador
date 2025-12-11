@@ -35,7 +35,7 @@ public class Node_AssignacioRead extends Node {
         // 2. Només té sentit llegir en un tipus bàsic
         if (tDest != TipusSimbol.INT &&
             tDest != TipusSimbol.BOOL &&
-            tDest != TipusSimbol.CARACTER) {
+            tDest != TipusSimbol.CHAR) {
 
             errorSemantic("No es pot fer llegir() sobre tipus " + tDest);
             return;

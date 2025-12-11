@@ -20,7 +20,7 @@ public class Node_Assignacio extends Node {
     private Node_Express expr;
     
     public Node_Assignacio(Node_LValue lvalue, Node_Express expr) {
-        super("Assignacio2");
+        super("Assignacio");
         this.lvalue = lvalue;
         this.expr = expr;
     }

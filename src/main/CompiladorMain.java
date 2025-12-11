@@ -6,7 +6,6 @@
  */
 package main;
 
-import backend.assemblador.GeneradorAssemblador;
 import java.io.*;
 import java_cup.runtime.Symbol;
 import java_cup.runtime.SymbolFactory;
@@ -20,6 +19,7 @@ import frontend.ast.*;
 import frontend.gestor_errors.*;
 
 import backend.codi_intermedi.*;
+import backend.assemblador.*;
 
 
 
@@ -31,7 +31,7 @@ public class CompiladorMain {
 
     public static void main(String[] args) {
         
-        int numPrograma = 4;
+        int numPrograma = 2;
         
         String rutaProgramesProva = "programesProva/";
         String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
@@ -134,13 +134,21 @@ public class CompiladorMain {
             //  CODI ASSEMBLADOR
             // ******************
             System.out.println("\n [5] --- GENERACIO ASSEMBLADOR (Easy68k):");
+            // Cream el generador i amb la TS i el C3@ generam el codi per 68k
             GeneradorAssemblador genAsm = new GeneradorAssemblador(c3a, ts);
+            
+            // Guardam el fitxer a la ruta especificada
             String rutaAsm = rutaSortida + "programa_" + nomFitxer.replace(".txt", ".X68");
-            genAsm.generarCodiAssemblador(rutaAsm);
+            genAsm.generaFitxer(rutaAsm);
+            
+            
+            // ** FI COMPILACIÓ (Exitosa)
+            System.out.println("\n\n --------------------------");
+            System.out.println("   > COMPILACIO EXITOSA!\n");
             
         } catch(Exception e) {
             System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");
-            e.printStackTrace();
+            e.getMessage();
         }
     }
     
@@ -167,7 +175,7 @@ public class CompiladorMain {
                 contTokens++;
             }
             
-            System.out.println("   > Fitxer de tokens generat correctament.");
+            System.out.println("   > Fitxer de Tokens guardat a: " + rutaFitxer);
             System.out.println("   > Numero de tokens generats: " + contTokens);
             bw.close();
             

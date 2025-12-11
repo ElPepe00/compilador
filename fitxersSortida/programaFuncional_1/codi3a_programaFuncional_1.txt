@@ -1,7 +1,7 @@
    0:         copy    10          -           t0          
    1:         copy    t0          -           max         
-   2:         skip    -           -           f_sumar     
-   3:         pmb     f_sumar     12          -           
+   2:         skip    -           -           sumar       
+   3:         pmb     sumar       12          -           
    4:         copy    a           -           t1          
    5:         copy    b           -           t2          
    6:         add     t1          t2          t3          
@@ -10,7 +10,7 @@
    9:         ret     t4          -           -           
   10:         ret     -           -           -           
   11:         skip    -           -           main        
-  12:         pmb     main        12          -           
+  12:         pmb     main        0           -           
   13:         call    llegir      -           t5          
   14:         copy    t5          -           j           
   15:         copy    max         -           t6          
@@ -19,7 +19,7 @@
   18:         param_s t7          -           -           
   19:         copy    t           -           t8          
   20:         param_s t8          -           -           
-  21:         call    f_sumar     -           t9          
+  21:         call    sumar       -           t9          
   22:         copy    t9          -           c           
   23:         copy    c           -           t10         
   24:         copy    50          -           t11         

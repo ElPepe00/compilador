@@ -184,7 +184,7 @@ public class Node_Express extends Node {
                     }
                     
                     // només admet INT i CARACTER
-                    if (t1 != TipusSimbol.INT && t1 != TipusSimbol.CARACTER) {
+                    if (t1 != TipusSimbol.INT && t1 != TipusSimbol.CHAR) {
                         errorSemantic("Comparacio " + op 
                         + " només admet INT o CARACTER: " + t1 + " i " + t2);
                         return TipusSimbol.ERROR;

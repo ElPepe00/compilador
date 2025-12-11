@@ -26,7 +26,7 @@ public class Node_Tipusv extends Node {
 
         switch (nomTipus) {
             case "INT": return TipusSimbol.INT;
-            case "CARACTER": return TipusSimbol.CARACTER;
+            case "CARACTER": return TipusSimbol.CHAR;
             case "BOOL": return TipusSimbol.BOOL;
             default:
                 errorSemantic("Tipus desconegut a Node_Tipusv: " + nomTipus);

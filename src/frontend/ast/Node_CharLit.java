@@ -28,7 +28,7 @@ public class Node_CharLit extends Node {
     }
 
     public TipusSimbol getTipusSimbol() {
-        return TipusSimbol.CARACTER;
+        return TipusSimbol.CHAR;
     }
 
     @Override

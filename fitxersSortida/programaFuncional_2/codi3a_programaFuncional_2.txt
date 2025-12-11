@@ -5,7 +5,7 @@
    4:         copy    109         -           t2          
    5:         copy    t2          -           c           
    6:         skip    -           -           main        
-   7:         pmb     main        12          -           
+   7:         pmb     main        0           -           
    8:         copy    42          -           t3          
    9:         copy    t3          -           x           
   10:         copy    0           -           t4          

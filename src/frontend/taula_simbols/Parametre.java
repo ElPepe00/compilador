@@ -70,11 +70,6 @@ public class Parametre {
 
     @Override
     public String toString() {
-        return "Parametre{" +
-                "nom='" + nom + '\'' +
-                ", tipus=" + tipus +
-                ", posicio=" + posicio +
-                ", offset=" + offset +
-                '}';
+        return "Parametre(nom:'" + nom + "', tsb:" + tipus + ", pos:" + posicio + ")";
     }
 }

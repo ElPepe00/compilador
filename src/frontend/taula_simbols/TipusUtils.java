@@ -14,7 +14,7 @@ public class TipusUtils {
         
         switch (base) {
             case "INT":  return TipusSimbol.INT;
-            case "CARACTER": return TipusSimbol.CARACTER;
+            case "CARACTER": return TipusSimbol.CHAR;
             case "BOOL": return TipusSimbol.BOOL;
             default:
                 throw new IllegalArgumentException("Tipus base desconegut: " + base);
@@ -35,7 +35,7 @@ public class TipusUtils {
     public static TipusSimbol getTipusBaseDeTipusArray(TipusSimbol tArray) {
         if (tArray == TipusSimbol.TAULA_INT) return TipusSimbol.INT;
         if (tArray == TipusSimbol.TAULA_BOOL) return TipusSimbol.BOOL;
-        if (tArray == TipusSimbol.TAULA_CARACTER) return TipusSimbol.CARACTER;
+        if (tArray == TipusSimbol.TAULA_CARACTER) return TipusSimbol.CHAR;
         
         return tArray; 
     }

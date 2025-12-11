@@ -21,7 +21,7 @@ public class Node_ParamsOpt extends Node {
         this.paramList = paramList;
     }
 
-    public void registrarParametres(TaulaSimbols ts, Simbol funcSym) {
+    public void gestioSemantica(TaulaSimbols ts, Simbol funcSym) {
         if (paramList != null) {
             paramList.registrarParametres(ts, funcSym);
         }

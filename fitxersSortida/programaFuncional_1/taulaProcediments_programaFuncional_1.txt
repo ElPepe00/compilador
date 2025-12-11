@@ -1,4 +1,4 @@
 TAULA DE PROCEDIMENTS (Generada des de TS)
 ------------------------------------------
 ETIQUETA        NOM             FRAME(B)   PARAMS         
-f_sumar         sumar           12         [Parametre{nom='a', tipus=INT, posicio=0, offset=0}, Parametre{nom='b', tipus=INT, posicio=1, offset=0}]
+sumar           sumar           12         [Parametre(nom:'a', tsb:INT, pos:0), Parametre(nom:'b', tsb:INT, pos:1)]

@@ -50,7 +50,7 @@ public class Node_DeclTailEscalar extends Node {
             
         } else if (mode.equals("llegir")) {
             if (tipusEsperat != TipusSimbol.INT &&
-                tipusEsperat != TipusSimbol.CARACTER &&
+                tipusEsperat != TipusSimbol.CHAR &&
                 tipusEsperat != TipusSimbol.BOOL) {
                 
                 errorSemantic("No es pot llegir() a tipus " + tipusEsperat);

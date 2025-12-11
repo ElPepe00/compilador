@@ -12,7 +12,7 @@ package frontend.taula_simbols;
  */
 public enum TipusSimbol {
 
-    INT, BOOL, CARACTER, 
+    INT, BOOL, CHAR, 
     TAULA_INT, TAULA_BOOL, TAULA_CARACTER,
     VOID, //per funcions sense return
     NULL,
@@ -22,9 +22,11 @@ public enum TipusSimbol {
     public int getMidaBytes() {
         switch (this) {
             case INT:
-            case CARACTER:
             case BOOL:
                 return 4;
+                
+            case CHAR:
+                return 1;
             
             case TAULA_INT, TAULA_CARACTER, TAULA_BOOL:
             case VOID:

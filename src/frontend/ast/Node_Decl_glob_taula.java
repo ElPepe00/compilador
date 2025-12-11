@@ -87,7 +87,7 @@ public class Node_Decl_glob_taula extends Node_Decl_glob {
             tailInt.gestioSemantica(ts, nElems);
             
         } else if (tailChar != null) {
-            if (tBase != TipusSimbol.CARACTER) {
+            if (tBase != TipusSimbol.CHAR) {
                 errorSemantic("Inicialitzador CHAR en taula " + tipusBaseStr);
                 return;
             }
