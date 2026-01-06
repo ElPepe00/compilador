@@ -1,0 +1,4 @@
+NO HI HA ERRORS LEXICS
+NO HI HA ERRORS SINTACTICS
+ERROR DE TIPUS: SEMANTIC, LINIA: 0, COLUMNA: 0, ERROR: Operador aritmetic SUMAnomes admet INT, s'ha tronat INT i BOOL
+ERROR DE TIPUS: SEMANTIC, LINIA: 0, COLUMNA: 0, ERROR: Error de tipus a inicialitzacio local. Esperat: INT, s'ha trobat: ERROR

@@ -1,0 +1,7 @@
+=== TAULA DE SÍMBOLS ===
+
+ÀMBIT: GLOBAL
+----------------------------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET   MIDA_FR 
+lletres         VARIABLE        TAULA_CARACTER  0        0       
+i               VARIABLE        INT             0        0       

@@ -1,0 +1,24 @@
+Token: PROGRAMA        | Valor:            | Linia: 1, Col: 0
+Token: BEGIN           | Valor:            | Linia: 1, Col: 8
+Token: IF              | Valor:            | Linia: 2, Col: 4
+Token: LPAREN          | Valor:            | Linia: 2, Col: 7
+Token: BTRUE           | Valor: true       | Linia: 2, Col: 8
+Token: RPAREN          | Valor:            | Linia: 2, Col: 12
+Token: BEGIN           | Valor:            | Linia: 2, Col: 13
+Token: INT             | Valor:            | Linia: 3, Col: 8
+Token: ID              | Valor: x          | Linia: 3, Col: 12
+Token: ASSIGN          | Valor:            | Linia: 3, Col: 14
+Token: NUMERO          | Valor: 100        | Linia: 3, Col: 16
+Token: FILINEA         | Valor:            | Linia: 3, Col: 19
+Token: IMPRIMIR        | Valor:            | Linia: 4, Col: 8
+Token: LPAREN          | Valor:            | Linia: 4, Col: 16
+Token: ID              | Valor: x          | Linia: 4, Col: 17
+Token: RPAREN          | Valor:            | Linia: 4, Col: 18
+Token: FILINEA         | Valor:            | Linia: 4, Col: 19
+Token: IF_FI           | Valor:            | Linia: 5, Col: 4
+Token: IMPRIMIR        | Valor:            | Linia: 8, Col: 4
+Token: LPAREN          | Valor:            | Linia: 8, Col: 12
+Token: ID              | Valor: x          | Linia: 8, Col: 13
+Token: RPAREN          | Valor:            | Linia: 8, Col: 14
+Token: FILINEA         | Valor:            | Linia: 8, Col: 15
+Token: PROGRAMA_FI     | Valor:            | Linia: 9, Col: 0

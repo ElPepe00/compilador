@@ -1,21 +1,24 @@
-// Programa Funcional 2
-constant int a = 3;
-constant bool b = true;
-constant char c = 'm';
+// 1. Declaració de la funció 'sumar'
+funcio int sumar(int a, int b):
+    int res;
+    res = a + b;
+    return res;
+funcio_fi
 
-// Programa principal
 programa:
-
-	imprimir(a);
-
-	int lec = llegir();
-
-	int x = 42;
-	bool y = false;
-	char z = '\n';
-	
-	imprimir(x);
-	imprimir(y);
-	imprimir(z);
-
+    // 2. Ús de la funció
+    int x = 15;
+    int y = 10;
+    
+    // El resultat es guarda en una variable local
+    int total = sumar(x, y);
+    
+    // 3. Estructura condicional emprant el resultat
+    if (total > 20):
+        // Si és major que 20, imprimim true
+        imprimir(true);
+    else:
+        // Si no, imprimim false
+        imprimir(false);
+    else_fi
 programa_fi

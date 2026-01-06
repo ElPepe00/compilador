@@ -1,0 +1,9 @@
+programa:
+    int enter = 5;
+    bool logic = true;
+    
+    // Error: No es pot sumar un INT amb un BOOL
+    int resultat = enter + logic;
+    
+    imprimir(resultat);
+programa_fi

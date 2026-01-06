@@ -1,0 +1,25 @@
+Token: PROGRAMA        | Valor:            | Linia: 1, Col: 0
+Token: BEGIN           | Valor:            | Linia: 1, Col: 8
+Token: INT             | Valor:            | Linia: 2, Col: 4
+Token: ID              | Valor: enter      | Linia: 2, Col: 8
+Token: ASSIGN          | Valor:            | Linia: 2, Col: 14
+Token: NUMERO          | Valor: 5          | Linia: 2, Col: 16
+Token: FILINEA         | Valor:            | Linia: 2, Col: 17
+Token: BOOL            | Valor:            | Linia: 3, Col: 4
+Token: ID              | Valor: logic      | Linia: 3, Col: 9
+Token: ASSIGN          | Valor:            | Linia: 3, Col: 15
+Token: BTRUE           | Valor: true       | Linia: 3, Col: 17
+Token: FILINEA         | Valor:            | Linia: 3, Col: 21
+Token: INT             | Valor:            | Linia: 6, Col: 4
+Token: ID              | Valor: resultat   | Linia: 6, Col: 8
+Token: ASSIGN          | Valor:            | Linia: 6, Col: 17
+Token: ID              | Valor: enter      | Linia: 6, Col: 19
+Token: SUMA            | Valor:            | Linia: 6, Col: 25
+Token: ID              | Valor: logic      | Linia: 6, Col: 27
+Token: FILINEA         | Valor:            | Linia: 6, Col: 32
+Token: IMPRIMIR        | Valor:            | Linia: 8, Col: 4
+Token: LPAREN          | Valor:            | Linia: 8, Col: 12
+Token: ID              | Valor: resultat   | Linia: 8, Col: 13
+Token: RPAREN          | Valor:            | Linia: 8, Col: 21
+Token: FILINEA         | Valor:            | Linia: 8, Col: 22
+Token: PROGRAMA_FI     | Valor:            | Linia: 9, Col: 0

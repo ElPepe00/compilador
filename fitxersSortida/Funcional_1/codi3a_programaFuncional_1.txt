@@ -1,0 +1,16 @@
+   0:         copy    10          -           t0          
+   1:         copy    t0          -           SUMAND      
+   2:         skip    -           -           main        
+   3:         pmb     main        0           -           
+   4:         call    llegir      -           t1          
+   5:         copy    t1          -           x           
+   6:         copy    0           -           t2          
+   7:         copy    t2          -           resultat    
+   8:         copy    x           -           t3          
+   9:         copy    SUMAND      -           t4          
+  10:         add     t3          t4          t5          
+  11:         copy    t5          -           resultat    
+  12:         copy    resultat    -           t6          
+  13:         param_s t6          -           -           
+  14:         call    imprimir    -           -           
+  15:         halt    -           -           -           

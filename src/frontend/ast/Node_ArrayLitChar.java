@@ -18,7 +18,7 @@ public class Node_ArrayLitChar extends Node {
 
     public Node_ArrayLitChar(Node_CharElems elems) {
         super("ArrayLitChar");
-        this.elems = this.elems;
+        this.elems = elems;
     }
 
     public int comptarElements() {

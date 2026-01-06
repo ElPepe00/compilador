@@ -33,31 +33,21 @@ public class CompiladorMain {
         
         long tempsInici = System.currentTimeMillis();
         
-        // Programes Funcionals del 1 - 3
-        // Programes Erronis del 4 - 6
-        int numPrograma = 5;                                                    // ----- SELECCIONAR PROGRAMA
+        // ---------------------------------------------------------------------
+        // CONFIGURACIÓ DEL TEST
+        // ---------------------------------------------------------------------
+        boolean testErroni = true;      // false = Funcionals, true = Erronis
+        int numPrograma = 1;            // Seleccionar del 1 al 3
+        // ---------------------------------------------------------------------
+        
+        String prefix = testErroni ? "programaNoFuncional_" : "programaFuncional_";
+        String nomFitxer = prefix + numPrograma + ".txt";
         
         String rutaProgramesProva = "programesProva/";
-        String nomFitxer = "programaFuncional_" + numPrograma + ".txt";
         String rutaPrograma = rutaProgramesProva + nomFitxer;
-        String rutaSortida = "fitxersSortida/" + "programaFuncional_" + numPrograma + "/";
-
         
-        /*
-        if (args.length == 0) {
-            System.err.println("Error: Falta el nom del fitxer d'entrada.");
-            System.err.println("   > Us: java -jar compilador.jar <ruta/nom_fitxer_entrada.txt>");
-            return;
-        }
-
-        String nomFitxerEntrada = args[0]; // Capturamos args[0]
-
-        String rutaProgramesProva = "programesProva/";
-        String nomFitxer = nomFitxerEntrada;
-        String rutaPrograma = rutaProgramesProva + nomFitxer;
-        String nomBase = nomFitxer.substring(0, nomFitxer.lastIndexOf('.'));
-        String rutaSortida = "fitxersSortida/" + nomBase + "/";
-        */
+        String carpetaTipus = testErroni ? "NoFuncional" : "Funcional";
+        String rutaSortida = "fitxersSortida/" + carpetaTipus + "_" + numPrograma + "/";
         
         File f = new File(rutaSortida);
         
@@ -65,6 +55,9 @@ public class CompiladorMain {
             f.mkdirs();
         }
  
+        // Inicialitzam el gestor d'errors
+        GestorError gestorError = new GestorError();
+        
         try {
             
             System.out.println(" --------------------------");
@@ -72,8 +65,7 @@ public class CompiladorMain {
             System.out.println(" --------------------------");
             System.out.println("   Programa seleccionat: " + nomFitxer);   
             
-            // Inicialitzam el gestor d'errors
-            GestorError gestorError = new GestorError();
+            
             
             // ***************
             //  ANALISI LEXIC
@@ -170,6 +162,7 @@ public class CompiladorMain {
             
         } catch(Exception e) {
             System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");
+            gestorError.exportarErrors(rutaSortida + "errors_" + nomFitxer);
             e.getMessage();
         }
     }

@@ -1,0 +1,6 @@
+programa:
+    // Error: falta el ';' al final de la línia
+    int a = 10
+    
+    imprimir(a);
+programa_fi

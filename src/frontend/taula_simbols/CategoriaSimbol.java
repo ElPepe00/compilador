@@ -18,6 +18,5 @@ public enum CategoriaSimbol {
     PROCEDIMENT,
     
     TEMPORAL,
-    DIVISIO_0,
     NULL, 
 }

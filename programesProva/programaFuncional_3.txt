@@ -1,16 +1,11 @@
-// Programa Funcional 3
-
-// Programa principal
 programa:
+    // Declaració d'una taula de chars (simulant "ABC")
+    taula char lletres[3] = ['A', 'B', 'C'];
+    
+    int i = 0;
 
-	taula int vector[3] = [10, 20, 30];
-	int val = vector[0];
-	
-	imprimir(val);
-	imprimir(vector[1]);
-	imprimir(vector[2]);
-	
-	vector[2] = 99;
-	imprimir(vector[2]);
-	
+    while (i < 3):
+        imprimir(lletres[i]);
+        i = i + 1;
+    while_fi
 programa_fi

@@ -1,0 +1,12 @@
+Token: PROGRAMA        | Valor:            | Linia: 1, Col: 0
+Token: BEGIN           | Valor:            | Linia: 1, Col: 8
+Token: INT             | Valor:            | Linia: 3, Col: 4
+Token: ID              | Valor: a          | Linia: 3, Col: 8
+Token: ASSIGN          | Valor:            | Linia: 3, Col: 10
+Token: NUMERO          | Valor: 10         | Linia: 3, Col: 12
+Token: IMPRIMIR        | Valor:            | Linia: 5, Col: 4
+Token: LPAREN          | Valor:            | Linia: 5, Col: 12
+Token: ID              | Valor: a          | Linia: 5, Col: 13
+Token: RPAREN          | Valor:            | Linia: 5, Col: 14
+Token: FILINEA         | Valor:            | Linia: 5, Col: 15
+Token: PROGRAMA_FI     | Valor:            | Linia: 6, Col: 0

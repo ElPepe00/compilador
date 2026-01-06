@@ -1,0 +1,6 @@
+=== TAULA DE SÍMBOLS ===
+
+ÀMBIT: GLOBAL
+----------------------------------------------------------------------
+NOM             CATEGORIA       TIPUS           OFFSET   MIDA_FR 
+x               VARIABLE        INT             0        0       

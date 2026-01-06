@@ -1,0 +1,4 @@
+NO HI HA ERRORS LEXICS
+ERROR DE TIPUS: SINTACTIC, LINIA: 5, COLUMNA: -1, ERROR: Error de sintaxi: El token actual es null, falta algun token.
+ERROR DE TIPUS: SINTACTIC, LINIA: 5, COLUMNA: -1, ERROR: Error greu de sintaxi a la linia: 5.
+NO HI HA ERRORS SEMANTICS

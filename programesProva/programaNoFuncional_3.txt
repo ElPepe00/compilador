@@ -1,0 +1,9 @@
+programa:
+    if (true):
+        int x = 100;
+        imprimir(x); // Aquí 'x' és vàlida
+    if_fi
+    
+    // Error: 'x' ha deixat d'existir en tancar-se el bloc if
+    imprimir(x);
+programa_fi

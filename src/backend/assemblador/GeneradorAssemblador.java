@@ -15,13 +15,13 @@ public class GeneradorAssemblador {
 
     private final C3a c3a;
     private final TaulaSimbols ts;
-    
+
     // Control de l'àmbit actual durant la generació
-    private String ambitActual = "global"; 
+    private String ambitActual = "global";
     private int bytesParametresAcumulats = 0;
 
     // Estructures per gestionar els temporals com a locals (Correcció Recursivitat)
-    private Map<String, Integer> tempOffsets = new HashMap<>(); 
+    private Map<String, Integer> tempOffsets = new HashMap<>();
     private Map<String, Integer> funcTotalSizes = new HashMap<>();
 
     public GeneradorAssemblador(C3a c3a, TaulaSimbols ts) {
@@ -47,15 +47,22 @@ public class GeneradorAssemblador {
     }
 
     /**
-     * Funció auxiliar per determinar si una etiqueta marca l'inici d'un nou àmbit (funció).
+     * Funció auxiliar per determinar si una etiqueta marca l'inici d'un nou
+     * àmbit (funció).
      */
     private String determinarNouAmbit(String et) {
-        if (et == null || et.isEmpty()) return null;
-        if (et.equals("main")) return "main";
+        if (et == null || et.isEmpty()) {
+            return null;
+        }
+        if (et.equals("main")) {
+            return "main";
+        }
 
         String nomSensePrefix = et.startsWith("f_") ? et.substring(2) : et;
         Simbol s = ts.cercarSimbol(nomSensePrefix);
-        if (s == null) s = ts.cercarSimbol(et);
+        if (s == null) {
+            s = ts.cercarSimbol(et);
+        }
 
         if (s != null && (s.getCategoria() == CategoriaSimbol.FUNCIO || s.getCategoria() == CategoriaSimbol.PROCEDIMENT)) {
             return s.getNom();
@@ -64,12 +71,12 @@ public class GeneradorAssemblador {
     }
 
     private void precalcularOffsetsTemporals() {
-        String ambitScan = "global"; 
+        String ambitScan = "global";
         int localsSize = 0;
         Set<String> tempsInScope = new HashSet<>();
 
         for (C3a_Instr instr : c3a.getBlocs()) {
-            
+
             // 1. Detectar canvi d'àmbit
             if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
                 String nouAmbit = determinarNouAmbit(instr.getEtiqueta());
@@ -84,8 +91,8 @@ public class GeneradorAssemblador {
             // 2. Capturar mida de locals (instrucció PMB)
             if (instr.getCodi() == Codi.PMB) {
                 try {
-                    localsSize = (instr.getArg2() != null && !instr.getArg2().equals("-")) 
-                                 ? Integer.parseInt(instr.getArg2()) : 0;
+                    localsSize = (instr.getArg2() != null && !instr.getArg2().equals("-"))
+                            ? Integer.parseInt(instr.getArg2()) : 0;
                 } catch (NumberFormatException e) {
                     localsSize = 0;
                 }
@@ -117,21 +124,30 @@ public class GeneradorAssemblador {
     }
 
     // -------------------------------------------------------------------------
-
+    // Mètode que escriu la capçalera del programa
     private void escriuCapcalera(BufferedWriter bw) throws IOException {
-        bw.write("; --- CAPÇALERA ---"); bw.newLine();
-        bw.write("    ORG    $1000"); bw.newLine();
-        bw.write("START:"); bw.newLine();
-        bw.write("    LEA    STACK_TOP, A7"); bw.newLine();
-        bw.write("    JSR    main"); bw.newLine();
-        bw.write("    SIMHALT"); bw.newLine();
+        bw.write("; --- CABECERA ---");
+        bw.newLine();
+        bw.write("    ORG    $1000");
+        bw.newLine();
+        bw.write("START:");
+        bw.newLine();
+        bw.write("    LEA    STACK_TOP, A7");
+        bw.newLine();
+        bw.write("    JSR    main");
+        bw.newLine();
+        bw.write("    SIMHALT");
+        bw.newLine();
         bw.newLine();
     }
 
+    // Mètode que escriu la seccio de dades globals del programa
     private void escriuSeccioDadesGlobals(BufferedWriter bw) throws IOException {
-        bw.write("; --- DADES GLOBALS ---"); bw.newLine();
-        bw.write("STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila"); bw.newLine();
-        
+        bw.write("; --- DADES GLOBALS ---");
+        bw.newLine();
+        bw.write("STACK_TOP: DS.L   2000   ; Reserva 8KB per la pila");
+        bw.newLine();
+
         Set<String> declarats = new HashSet<>();
         for (C3a_Instr instr : c3a.getBlocs()) {
             analitzaOperandPerGlobal(instr.getArg1(), declarats, bw);
@@ -141,30 +157,40 @@ public class GeneradorAssemblador {
         bw.newLine();
     }
 
+    // Mètode per comprovar si son elements globals o no
     private void analitzaOperandPerGlobal(String op, Set<String> declarats, BufferedWriter bw) throws IOException {
-        if (op == null || op.equals("-") || op.matches("-?\\d+")) return;
-        if (declarats.contains(op)) return;
+        if (op == null || op.equals("-") || op.matches("-?\\d+")) {
+            return;
+        }
+        if (declarats.contains(op)) {
+            return;
+        }
 
-        // NO declarem temporals com a globals
-        if (op.matches("t\\d+")) return;
+        if (op.matches("t\\d+")) {
+            return;
+        }
 
         Simbol s = ts.cercarSimbolAmbit("global", op);
-        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", op);
+        if (s == null) {
+            s = ts.cercarSimbolAmbit("GLOBAL", op);
+        }
 
         if (s != null && (s.getCategoria() == CategoriaSimbol.VARIABLE || s.getCategoria() == CategoriaSimbol.CONSTANT)) {
-             bw.write(String.format("%-10s DS.L   1", op)); bw.newLine();
-             declarats.add(op);
+            bw.write(String.format("%-10s DS.L   1", op));
+            bw.newLine();
+            declarats.add(op);
         }
     }
 
     private void escriuSeccioCodi(BufferedWriter bw) throws IOException {
-        bw.write("; --- SECCIÓ DE CODI ---"); bw.newLine();
+        bw.write("; --- SECCIÓ DE CODI ---");
+        bw.newLine();
 
         ambitActual = "global";
         bytesParametresAcumulats = 0;
 
         for (C3a_Instr instr : c3a.getBlocs()) {
-            
+
             if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
                 gestionarEtiqueta(instr.getEtiqueta(), bw);
             }
@@ -174,85 +200,125 @@ public class GeneradorAssemblador {
             String a2 = instr.getArg2();
             String dest = instr.getDesti();
 
-            bw.write("    ; " + instr.toString().trim()); bw.newLine();
+            bw.write("    ; " + instr.toString().trim());
+            bw.newLine();
 
             switch (op) {
                 case SKIP:
-                    if (dest != null && !dest.equals("-")) gestionarEtiqueta(dest, bw);
+                    if (dest != null && !dest.equals("-")) {
+                        gestionarEtiqueta(dest, bw);
+                    }
                     break;
                 case COPY:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case ADD:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    ADD.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    ADD.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case SUB:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    SUB.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    SUB.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
-                
-                // *** CORRECCIÓ MULS i DIVS (Detall important M68K) ***
+
+                // MULS i DIVS
                 case PROD:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    // M68K: MULS opera 16x16 -> 32. L'operanda font ha de ser .W
-                    bw.write(String.format("    MULS.W %s, D0", traduirOperand(a2))); bw.newLine(); 
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    MULS.W %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case DIV:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    // M68K: DIVS opera 32/16 -> 32 (16 quoc, 16 residu). L'operanda font ha de ser .W
-                    bw.write(String.format("    DIVS.W %s, D0", traduirOperand(a2))); bw.newLine();
-                    // Opcional: Extendre signe per quedar-se només amb el quocient a 32 bits si és petit
-                    bw.write("    EXT.L  D0"); bw.newLine(); 
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    DIVS.W %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write("    EXT.L  D0"); // Neteja residu
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
-                
+
                 case NEG:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write("    NEG.L  D0"); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write("    NEG.L  D0");
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case AND:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    AND.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    AND.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case OR:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    OR.L   %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    OR.L   %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case NOT:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write("    NOT.L  D0"); bw.newLine();
-                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write("    NOT.L  D0");
+                    bw.newLine();
+                    bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
                 case GOTO:
-                    bw.write("    BRA    " + dest); bw.newLine();
+                    bw.write("    BRA    " + dest);
+                    bw.newLine();
                     break;
                 case IF_EQ:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write("    BEQ    " + dest); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write("    BEQ    " + dest);
+                    bw.newLine();
                     break;
                 case IF_NE:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write("    BNE    " + dest); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write("    BNE    " + dest);
+                    bw.newLine();
                     break;
                 case IF_LT:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write("    BLT    " + dest); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write("    BLT    " + dest);
+                    bw.newLine();
                     break;
                 case IF_GT:
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write("    BGT    " + dest); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write(String.format("    CMP.L  %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+                    bw.write("    BGT    " + dest);
+                    bw.newLine();
                     break;
                 case PMB:
                     int totalFrame = 0;
@@ -261,62 +327,130 @@ public class GeneradorAssemblador {
                     } else {
                         try {
                             totalFrame = (a2 != null) ? Integer.parseInt(a2) : 0;
-                        } catch (Exception e) {}
+                        } catch (Exception e) {
+                        }
                     }
-                    bw.write("    LINK   A6, #-" + totalFrame); bw.newLine();
+                    bw.write("    LINK   A6, #-" + totalFrame);
+                    bw.newLine();
                     break;
                 case RET:
                     if (a1 != null && !a1.equals("-")) {
-                        bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
+                        bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                        bw.newLine();
                     }
-                    bw.write("    UNLK   A6"); bw.newLine();
-                    bw.write("    RTS"); bw.newLine();
+                    bw.write("    UNLK   A6");
+                    bw.newLine();
+                    bw.write("    RTS");
+                    bw.newLine();
                     break;
                 case PARAM_S:
-                    bw.write(String.format("    MOVE.L %s, -(A7)", traduirOperand(a1))); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, -(A7)", traduirOperand(a1)));
+                    bw.newLine();
                     bytesParametresAcumulats += 4;
                     break;
                 case PARAM_C:
                     carregarAdrecaBase(bw, a2, "A0");
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1))); bw.newLine();
-                    bw.write("    MOVE.L 0(A0, D0.L), D1"); bw.newLine();
-                    bw.write("    MOVE.L D1, -(A7)"); bw.newLine();
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+                    bw.write("    MOVE.L 0(A0, D0.L), D1");
+                    bw.newLine();
+                    bw.write("    MOVE.L D1, -(A7)");
+                    bw.newLine();
                     bytesParametresAcumulats += 4;
                     break;
                 case CALL:
-                    bw.write("    JSR    " + a1); bw.newLine();
+                    bw.write("    JSR    " + a1);
+                    bw.newLine();
                     if (bytesParametresAcumulats > 0) {
-                        bw.write("    ADD.L  #" + bytesParametresAcumulats + ", A7"); bw.newLine();
+                        bw.write("    ADD.L  #" + bytesParametresAcumulats + ", A7");
+                        bw.newLine();
                         bytesParametresAcumulats = 0;
                     }
                     if (dest != null && !dest.equals("-")) {
-                        bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest))); bw.newLine();
+                        bw.write(String.format("    MOVE.L D0, %s", traduirOperand(dest)));
+                        bw.newLine();
                     }
                     break;
+
                 case IND_VAL:
-                    carregarAdrecaBase(bw, a1, "A0");
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write("    MOVE.L 0(A0, D0.L), D1"); bw.newLine();
-                    bw.write(String.format("    MOVE.L D1, %s", traduirOperand(dest))); bw.newLine();
+                    bw.write(String.format("    ; ind_val %s[%s] -> %s", a2, a1, dest));
+                    bw.newLine();
+
+                    // 1. Carreguem l'adreça base de l'array a A0
+                    carregarAdrecaBase(bw, a2, "A0");
+
+                    // 2. Carreguem l'índex a D0
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
+                    bw.newLine();
+
+                    // 3. Comprovem si és un array de CHARs per usar MOVE.B
+                    Simbol sVal = cercarSimbolSegur(a2);
+                    
+                    boolean esCharVal = (sVal != null && sVal.getTipus() == TipusSimbol.TAULA_CARACTER);
+
+                    if (esCharVal) {
+                        // CAS CHAR: Netejem tot el registre D1 i movem només 1 byte (.B)
+                        bw.write("    CLR.L  D1");
+                        bw.newLine();
+                        bw.write("    MOVE.B 0(A0, D0.L), D1");
+                        bw.newLine();
+                    } else {
+                        // CAS INT/BOOL: Movem 4 bytes (.L)
+                        bw.write("    MOVE.L 0(A0, D0.L), D1");
+                        bw.newLine();
+                    }
+
+                    // 4. Guardem el resultat al destí
+                    bw.write(String.format("    MOVE.L D1, %s", traduirOperand(dest)));
+                    bw.newLine();
                     break;
+
                 case IND_ASS:
+                    bw.write(String.format("    ; ind_ass %s[%s] = %s", dest, a2, a1));
+                    bw.newLine();
+
+                    // 1. Carreguem l'adreça base de l'array a A0
                     carregarAdrecaBase(bw, dest, "A0");
-                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a2))); bw.newLine();
-                    bw.write(String.format("    MOVE.L %s, D1", traduirOperand(a1))); bw.newLine();
-                    bw.write("    MOVE.L D1, 0(A0, D0.L)"); bw.newLine();
+
+                    // 2. Carreguem l'índex a D0
+                    bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a2)));
+                    bw.newLine();
+
+                    // 3. Carreguem el valor a guardar a D1
+                    bw.write(String.format("    MOVE.L %s, D1", traduirOperand(a1)));
+                    bw.newLine();
+
+                    // 4. Comprovem si l'array destí és CHAR
+                    Simbol sAss = cercarSimbolSegur(dest);
+                    boolean esCharAss = (sAss != null && sAss.getTipus() == TipusSimbol.TAULA_CARACTER);
+
+                    if (esCharAss) {
+                        // CAS CHAR: Movem només 1 byte (.B)
+                        bw.write("    MOVE.B D1, 0(A0, D0.L)");
+                        bw.newLine();
+                    } else {
+                        // CAS INT/BOOL: Movem 4 bytes (.L)
+                        bw.write("    MOVE.L D1, 0(A0, D0.L)");
+                        bw.newLine();
+                    }
                     break;
+
                 case HALT:
-                    bw.write("    SIMHALT"); bw.newLine();
+                    bw.write("    SIMHALT");
+                    bw.newLine();
                     break;
                 default:
-                    bw.write("    ; TODO: " + op); bw.newLine();
+                    bw.write("    ; TODO: " + op);
+                    bw.newLine();
             }
             bw.newLine();
         }
     }
 
+    // Mètode que escriu el nom de les etiquetes
     private void gestionarEtiqueta(String et, BufferedWriter bw) throws IOException {
-        bw.write(et + ":"); bw.newLine();
+        bw.write(et + ":");
+        bw.newLine();
         String nouAmbit = determinarNouAmbit(et);
         if (nouAmbit != null) {
             ambitActual = nouAmbit;
@@ -324,50 +458,85 @@ public class GeneradorAssemblador {
         }
     }
 
+    // Mètode que escriu les funcions d'entrada i sortida al final del fitxer
     private void escriuFuncionsIO(BufferedWriter bw) throws IOException {
-        bw.write("; --- FUNCIONS E/S ---"); bw.newLine();
-        bw.write("llegir:"); bw.newLine();
-        bw.write("    MOVE.L #4, D0"); bw.newLine();
-        bw.write("    TRAP   #15"); bw.newLine();
-        bw.write("    MOVE.L D1, D0"); bw.newLine();
-        bw.write("    RTS"); bw.newLine();
+        bw.write("; --- FUNCIONS E/S ---");
         bw.newLine();
-        bw.write("imprimir:"); bw.newLine();
-        bw.write("    MOVE.L 4(A7), D1"); bw.newLine();
-        bw.write("    MOVE.L #3, D0"); bw.newLine();
-        bw.write("    TRAP   #15"); bw.newLine();
-        bw.write("    MOVE.L #13, D1"); bw.newLine();
-        bw.write("    MOVE.L #6, D0"); bw.newLine();
-        bw.write("    TRAP   #15"); bw.newLine();
-        bw.write("    MOVE.L #10, D1"); bw.newLine();
-        bw.write("    TRAP   #15"); bw.newLine();
-        bw.write("    RTS"); bw.newLine();
+        bw.write("llegir:");
+        bw.newLine();
+        bw.write("    MOVE.L #4, D0");
+        bw.newLine();
+        bw.write("    TRAP   #15");
+        bw.newLine();
+        bw.write("    MOVE.L D1, D0");
+        bw.newLine();
+        bw.write("    RTS");
+        bw.newLine();
+        bw.newLine();
+        bw.write("imprimir:");
+        bw.newLine();
+        bw.write("    MOVE.L 4(A7), D1");
+        bw.newLine();
+        bw.write("    MOVE.L #3, D0");
+        bw.newLine();
+        bw.write("    TRAP   #15");
+        bw.newLine();
+        bw.write("    MOVE.L #13, D1");
+        bw.newLine();
+        bw.write("    MOVE.L #6, D0");
+        bw.newLine();
+        bw.write("    TRAP   #15");
+        bw.newLine();
+        bw.write("    MOVE.L #10, D1");
+        bw.newLine();
+        bw.write("    TRAP   #15");
+        bw.newLine();
+        bw.write("    RTS");
+        bw.newLine();
         bw.newLine();
     }
 
+    // Mètode que escriu el final del programa
     private void escriuPeu(BufferedWriter bw) throws IOException {
-        bw.write("    END    START"); bw.newLine();
+        bw.write("    END    START");
+        bw.newLine();
     }
 
+    // Mètode auxiliar per trobar símbols de manera segura en qualsevol àmbit
+    private Simbol cercarSimbolSegur(String nom) {
+        if (nom == null) return null;
+        Simbol s = ts.cercarSimbolAmbit(ambitActual, nom);
+        if (s == null) {
+            s = ts.cercarSimbolAmbit("global", nom);
+        }
+        if (s == null) {
+            s = ts.cercarSimbolAmbit("GLOBAL", nom);
+        }
+        return s;
+    }
+
+    // Mètode que tradueix un operand
     private String traduirOperand(String nom) {
-        if (nom == null || nom.equals("-")) return "";
-        if (nom.matches("-?\\d+")) return "#" + nom; 
+        if (nom == null || nom.equals("-")) {
+            return "";
+        }
+        if (nom.matches("-?\\d+")) {
+            return "#" + nom;
+        }
 
         if (nom.matches("t\\d+")) {
             if (tempOffsets.containsKey(nom)) {
                 return tempOffsets.get(nom) + "(A6)";
             } else {
-                return nom; 
+                return nom;
             }
         }
 
-        Simbol s = ts.cercarSimbolAmbit(ambitActual, nom);
-        if (s == null) s = ts.cercarSimbolAmbit("global", nom);
-        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", nom);
+        Simbol s = cercarSimbolSegur(nom);
 
         if (s != null) {
             if (s.isEsGlobal()) {
-                return nom; 
+                return nom;
             } else {
                 int offsetTS = s.getOffset();
                 int desp;
@@ -381,12 +550,11 @@ public class GeneradorAssemblador {
         }
         return nom;
     }
-    
+
+    // Mètode que carrega l'adreça base passant l'id de l'array i la adreça
     private void carregarAdrecaBase(BufferedWriter bw, String nomArray, String regAdreca) throws IOException {
-        Simbol s = ts.cercarSimbolAmbit(ambitActual, nomArray);
-        if (s == null) s = ts.cercarSimbolAmbit("global", nomArray);
-        if (s == null) s = ts.cercarSimbolAmbit("GLOBAL", nomArray);
-        
+        Simbol s = cercarSimbolSegur(nomArray);
+
         if (s != null && !s.isEsGlobal()) {
             if (s.getCategoria() == CategoriaSimbol.PARAMETRE && s.isEsArray()) {
                 // Passat per referència (parametre taula)
@@ -396,7 +564,6 @@ public class GeneradorAssemblador {
             } else {
                 // Array Local
                 int midaTotal = s.getTipus().getMidaBytes() * s.getMidaArray();
-                // Utilitza la fórmula coherent amb com declares els locals
                 int desp = -(s.getOffset() + midaTotal);
                 bw.write(String.format("    LEA    %d(A6), %s", desp, regAdreca));
             }
@@ -404,8 +571,7 @@ public class GeneradorAssemblador {
             // Global
             bw.write(String.format("    LEA    %s, %s", nomArray, regAdreca));
         }
-        
-        // *** CORRECCIÓ CRÍTICA: AFEGIR EL SALT DE LÍNIA ***
-        bw.newLine(); 
+
+        bw.newLine();
     }
 }

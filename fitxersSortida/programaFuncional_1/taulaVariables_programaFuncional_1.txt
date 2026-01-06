@@ -1,9 +1,0 @@
-TAULA DE VARIABLES (Generada des de TS)
----------------------------------------
-NOM             AMBIT           OFFSET     MIDA       TIPUS     
-a               sumar           0          4          INT       
-b               sumar           4          4          INT       
-res             sumar           8          4          INT       
-j               GLOBAL          0          4          INT       
-t               GLOBAL          4          4          INT       
-c               GLOBAL          8          4          INT       

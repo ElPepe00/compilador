@@ -1,0 +1,45 @@
+Token: PROGRAMA        | Valor:            | Linia: 1, Col: 0
+Token: BEGIN           | Valor:            | Linia: 1, Col: 8
+Token: TAULA           | Valor:            | Linia: 3, Col: 4
+Token: CHAR            | Valor:            | Linia: 3, Col: 10
+Token: ID              | Valor: lletres    | Linia: 3, Col: 15
+Token: LBRACKET        | Valor:            | Linia: 3, Col: 22
+Token: NUMERO          | Valor: 3          | Linia: 3, Col: 23
+Token: RBRACKET        | Valor:            | Linia: 3, Col: 24
+Token: ASSIGN          | Valor:            | Linia: 3, Col: 26
+Token: LBRACKET        | Valor:            | Linia: 3, Col: 28
+Token: CARACTER        | Valor: A          | Linia: 3, Col: 29
+Token: COMA            | Valor:            | Linia: 3, Col: 32
+Token: CARACTER        | Valor: B          | Linia: 3, Col: 34
+Token: COMA            | Valor:            | Linia: 3, Col: 37
+Token: CARACTER        | Valor: C          | Linia: 3, Col: 39
+Token: RBRACKET        | Valor:            | Linia: 3, Col: 42
+Token: FILINEA         | Valor:            | Linia: 3, Col: 43
+Token: INT             | Valor:            | Linia: 5, Col: 4
+Token: ID              | Valor: i          | Linia: 5, Col: 8
+Token: ASSIGN          | Valor:            | Linia: 5, Col: 10
+Token: NUMERO          | Valor: 0          | Linia: 5, Col: 12
+Token: FILINEA         | Valor:            | Linia: 5, Col: 13
+Token: WHILE           | Valor:            | Linia: 7, Col: 4
+Token: LPAREN          | Valor:            | Linia: 7, Col: 10
+Token: ID              | Valor: i          | Linia: 7, Col: 11
+Token: MENOR           | Valor:            | Linia: 7, Col: 13
+Token: NUMERO          | Valor: 3          | Linia: 7, Col: 15
+Token: RPAREN          | Valor:            | Linia: 7, Col: 16
+Token: BEGIN           | Valor:            | Linia: 7, Col: 17
+Token: IMPRIMIR        | Valor:            | Linia: 8, Col: 8
+Token: LPAREN          | Valor:            | Linia: 8, Col: 16
+Token: ID              | Valor: lletres    | Linia: 8, Col: 17
+Token: LBRACKET        | Valor:            | Linia: 8, Col: 24
+Token: ID              | Valor: i          | Linia: 8, Col: 25
+Token: RBRACKET        | Valor:            | Linia: 8, Col: 26
+Token: RPAREN          | Valor:            | Linia: 8, Col: 27
+Token: FILINEA         | Valor:            | Linia: 8, Col: 28
+Token: ID              | Valor: i          | Linia: 9, Col: 8
+Token: ASSIGN          | Valor:            | Linia: 9, Col: 10
+Token: ID              | Valor: i          | Linia: 9, Col: 12
+Token: SUMA            | Valor:            | Linia: 9, Col: 14
+Token: NUMERO          | Valor: 1          | Linia: 9, Col: 16
+Token: FILINEA         | Valor:            | Linia: 9, Col: 17
+Token: WHILE_FI        | Valor:            | Linia: 10, Col: 4
+Token: PROGRAMA_FI     | Valor:            | Linia: 11, Col: 0
