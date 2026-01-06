@@ -178,7 +178,7 @@ public class TaulaSimbols {
     /**
      * Cerca un simbol dins tots els ambits actius De l'actual al global
      *
-     * @param nomSimbol nom del simbol a cercar
+     * @param nom nom del simbol a cercar
      * @return retorna el simbol si s'ha trobat sino null
      */
     public Simbol cercarSimbol(String nom) {
@@ -451,6 +451,10 @@ public class TaulaSimbols {
         return sb.toString();
     }
 
+    /**
+     * Mètode que retorna tots els simbols de la taula completa
+     * @return 
+     */
     public ArrayList<Simbol> obtenirTotsElsSimbols() {
         return this.taulaCompleta;
     }

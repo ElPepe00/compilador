@@ -27,6 +27,9 @@ public class Variable {
     private final int midaBytes;
     private int offset;
 
+    /**
+     * Crea una Variable a partir dels camps passats per paràmetre
+     */
     public Variable(String nom, String nomProc, TipusSimbol tipus, boolean esParametre, int posicioParam, boolean esTaula, int numElements, int midaBytes, int offset) {
         this.nom = nom;
         this.nomProc = nomProc;
@@ -39,6 +42,7 @@ public class Variable {
         this.offset = offset;
     }
 
+    // Getters i setters
     public String getNom() {
         return nom;
     }

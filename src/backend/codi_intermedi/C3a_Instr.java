@@ -12,13 +12,15 @@ package backend.codi_intermedi;
  */
 public class C3a_Instr {
     
-    private Codi codi;      // Nom de l'operacio (ADD, SUB, ASSIGN...)
-    private String arg1;    // Primer Operand
-    private String arg2;    // Segon Operand
-    private String desti;   // Destí o etiqueta
+    private Codi codi;       // Operació del C3A (ADD, SUB, COPY, GOTO, ...)
+    private String arg1;     // Primer operand
+    private String arg2;     // Segon operand
+    private String desti;    // Destí o etiqueta associada a la instrucció
+    private String etiqueta; // Etiqueta que precedeix la instrucció (si n'hi ha)
     
-    private String etiqueta;
-    
+    /**
+     * Crea una nova instrucció de C3A amb els camps indicats.
+     */
     public C3a_Instr(String et, Codi codi, String arg1, String arg2, String desti) {
         this.codi = codi;
         this.arg1 = arg1;
@@ -28,6 +30,7 @@ public class C3a_Instr {
         this.etiqueta = et;
     }
 
+    // Getters i setters
     public Codi getCodi() {
         return codi;
     }
@@ -69,22 +72,24 @@ public class C3a_Instr {
     }
     
 
+    /**
+     * Construeix una representació en text alineada de la instrucció,
+     * adequada per a depuració o exportació del C3A.
+     */
     @Override
     public String toString() {
-        
+
         String labelStr;
         if (etiqueta != null && !etiqueta.isEmpty()) {
             labelStr = String.format("%-8s", etiqueta + ":");
         } else {
-            labelStr = String.format("%-8s", "");  // 8 espais
+            labelStr = String.format("%-8s", "");
         }
 
-        // Operació en minúscules (8 caràcters)
         String opStr = (codi != null)
                 ? String.format("%-8s", codi.name().toLowerCase())
                 : String.format("%-8s", "");
 
-        // Operandes (12 caràcters cadascun, per tenir aire)
         String a1 = (arg1 != null) ? arg1 : "-";
         String a2 = (arg2 != null) ? arg2 : "-";
         String d  = (desti  != null) ? desti  : "-";
@@ -93,7 +98,6 @@ public class C3a_Instr {
         String a2Str = String.format("%-12s", a2);
         String rStr  = String.format("%-12s", d);
 
-        // Format final: etiqueta, op, arg1, arg2, res
         return labelStr + opStr + a1Str + a2Str + rStr;
     }
 }

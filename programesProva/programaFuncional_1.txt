@@ -1,6 +1,7 @@
 constant int SUMAND = 10;
 
 programa:
+    imprimir(SUMAND);
     int x = llegir();
     int resultat = 0;
     

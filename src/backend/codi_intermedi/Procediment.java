@@ -32,12 +32,16 @@ public class Procediment {
     
     private int midaFrame = 0;
     
+    /**
+     * Crea un Procediment amb els camps passats per paràmetre
+     */
     public Procediment(String nom, TipusSimbol tipusRetorn, int nivell) {
         this.nom = nom;
         this.tipusRetorn = tipusRetorn;
         this.nivell = nivell;
     }
 
+    // Getters i setters
     public String getNom() {
         return nom;
     }

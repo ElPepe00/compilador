@@ -30,6 +30,9 @@ public class Parametre {
         this(nom, tipus, posicio, 0);
     }
 
+    /**
+     * Crea un Paràmetre a partir dels valors passats per paràmetre
+     */
     public Parametre(String nom,
                      TipusSimbol tipus,
                      int posicio,
@@ -40,8 +43,7 @@ public class Parametre {
         this.offset = offset;
     }
 
-    // --- GETTERS ---
-
+    // Getters i setters
     public String getNom() {
         return nom;
     }
@@ -57,8 +59,6 @@ public class Parametre {
     public int getOffset() {
         return offset;
     }
-
-    // --- SETTERS (sobretot per quan facis el 3@) ---
 
     public void setTipus(TipusSimbol tipus) {
         this.tipus = tipus;

@@ -20,9 +20,13 @@ public class GeneradorAssemblador {
     private String ambitActual = "global";
     private int bytesParametresAcumulats = 0;
 
-    // Estructures per gestionar els temporals com a locals (Correcció Recursivitat)
-    private Map<String, Integer> tempOffsets = new HashMap<>();
-    private Map<String, Integer> funcTotalSizes = new HashMap<>();
+    // Mapes per gestionar offsets de pila (Locals)
+    private final Map<String, Integer> tempOffsets = new HashMap<>();
+    private final Map<String, Integer> funcTotalSizes = new HashMap<>();
+
+    // Set per gestionar temporals globals (Static Data)
+    // CORRECCIÓ 1: Els temporals fora de funcions no van a la pila
+    private final Set<String> temporalsGlobals = new HashSet<>();
 
     public GeneradorAssemblador(C3a c3a, TaulaSimbols ts) {
         this.c3a = c3a;
@@ -30,7 +34,7 @@ public class GeneradorAssemblador {
     }
 
     public void generaFitxer(String nomFitxer) {
-        // 1. Pre-càlcul: Analitzar on viuen els temporals per posar-los a la pila
+        // 1. Pre-càlcul: Analitzar on viuen els temporals i calcular mides de frame
         precalcularOffsetsTemporals();
 
         // 2. Generació: Escriure el codi
@@ -58,6 +62,7 @@ public class GeneradorAssemblador {
             return "main";
         }
 
+        // Netegem prefixos si n'hi ha (ex: f_suma -> suma)
         String nomSensePrefix = et.startsWith("f_") ? et.substring(2) : et;
         Simbol s = ts.cercarSimbol(nomSensePrefix);
         if (s == null) {
@@ -70,6 +75,9 @@ public class GeneradorAssemblador {
         return null;
     }
 
+    /**
+     * Recorre tot el C3A per saber quants temporals usa cada funció
+     */
     private void precalcularOffsetsTemporals() {
         String ambitScan = "global";
         int localsSize = 0;
@@ -77,18 +85,24 @@ public class GeneradorAssemblador {
 
         for (C3a_Instr instr : c3a.getBlocs()) {
 
-            // 1. Detectar canvi d'àmbit
+            // Si detectem etiqueta de funció, tanquem l'àmbit anterior i obrim el nou
             if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
                 String nouAmbit = determinarNouAmbit(instr.getEtiqueta());
+                
                 if (nouAmbit != null) {
-                    registrarMidaScope(ambitScan, localsSize, tempsInScope);
+                    // Guardem info de l'àmbit que acabem de tancar (si no era global)
+                    if (!ambitScan.equals("global")) {
+                        registrarMidaScope(ambitScan, localsSize, tempsInScope);
+                    }
+                    
+                    // Resetegem per al nou àmbit
                     tempsInScope.clear();
                     localsSize = 0;
                     ambitScan = nouAmbit;
                 }
             }
 
-            // 2. Capturar mida de locals (instrucció PMB)
+            // Capturar mida de variables locals declarades (instrucció PMB)
             if (instr.getCodi() == Codi.PMB) {
                 try {
                     localsSize = (instr.getArg2() != null && !instr.getArg2().equals("-"))
@@ -98,12 +112,23 @@ public class GeneradorAssemblador {
                 }
             }
 
-            // 3. Recollir temporals usats
-            afegirSiEsTemporal(instr.getArg1(), tempsInScope);
-            afegirSiEsTemporal(instr.getArg2(), tempsInScope);
-            afegirSiEsTemporal(instr.getDesti(), tempsInScope);
+            // Recollir temporals usats
+            // Si som al global, van al Set de globals. Si no, al Set local.
+            if (ambitScan.equals("global")) {
+                afegirSiEsTemporal(instr.getArg1(), temporalsGlobals);
+                afegirSiEsTemporal(instr.getArg2(), temporalsGlobals);
+                afegirSiEsTemporal(instr.getDesti(), temporalsGlobals);
+            } else {
+                afegirSiEsTemporal(instr.getArg1(), tempsInScope);
+                afegirSiEsTemporal(instr.getArg2(), tempsInScope);
+                afegirSiEsTemporal(instr.getDesti(), tempsInScope);
+            }
         }
-        registrarMidaScope(ambitScan, localsSize, tempsInScope);
+        
+        // Registrar l'últim àmbit processat (si no és global)
+        if (!ambitScan.equals("global")) {
+            registrarMidaScope(ambitScan, localsSize, tempsInScope);
+        }
     }
 
     private void afegirSiEsTemporal(String op, Set<String> set) {
@@ -112,21 +137,31 @@ public class GeneradorAssemblador {
         }
     }
 
+    /**
+     * Assigna offsets negatius a la pila per als temporals locals.
+     * MidaTotal = Variables Locals + (NumTemporals * 4 bytes).
+     */
     private void registrarMidaScope(String ambit, int locals, Set<String> temps) {
         int i = 0;
         for (String t : temps) {
+            // Offset comença després de les variables locals declarades
+            // Ex: si locals=4 bytes, t0 serà a -8(A6) -> -(4 + 4 + 0)
             int off = -(locals + 4 + (i * 4));
             tempOffsets.put(t, off);
             i++;
         }
+        // Guardem la mida total per usar-la al LINK
         int total = locals + (temps.size() * 4);
+        
+        // Assegurem que sigui parell (encara que x4 ja ho és) per al stack alignment
+        if (total % 2 != 0) total++; 
+        
         funcTotalSizes.put(ambit, total);
     }
 
     // -------------------------------------------------------------------------
-    // Mètode que escriu la capçalera del programa
     private void escriuCapcalera(BufferedWriter bw) throws IOException {
-        bw.write("; --- CABECERA ---");
+        bw.write("; --- CAPÇALERA ---");
         bw.newLine();
         bw.write("    ORG    $1000");
         bw.newLine();
@@ -134,14 +169,17 @@ public class GeneradorAssemblador {
         bw.newLine();
         bw.write("    LEA    STACK_TOP, A7");
         bw.newLine();
-        bw.write("    JSR    main");
+        
+        // No saltar a main, sinó a l'inici del codi global
+        bw.write("    JMP    __inici"); 
+        
         bw.newLine();
-        bw.write("    SIMHALT");
+        
+        bw.write("    SIMHALT"); 
         bw.newLine();
         bw.newLine();
     }
 
-    // Mètode que escriu la seccio de dades globals del programa
     private void escriuSeccioDadesGlobals(BufferedWriter bw) throws IOException {
         bw.write("; --- DADES GLOBALS ---");
         bw.newLine();
@@ -149,15 +187,26 @@ public class GeneradorAssemblador {
         bw.newLine();
 
         Set<String> declarats = new HashSet<>();
+        
+        // Declarar variables globals del programa (x, resultat, etc.)
         for (C3a_Instr instr : c3a.getBlocs()) {
             analitzaOperandPerGlobal(instr.getArg1(), declarats, bw);
             analitzaOperandPerGlobal(instr.getArg2(), declarats, bw);
             analitzaOperandPerGlobal(instr.getDesti(), declarats, bw);
         }
+
+        // Declarar temporals globals (t0, t1...) com a variables estàtiques
+        for (String tGlob : temporalsGlobals) {
+            if (!declarats.contains(tGlob)) {
+                bw.write(String.format("%-10s DS.L   1", tGlob));
+                bw.newLine();
+                declarats.add(tGlob);
+            }
+        }
+        
         bw.newLine();
     }
 
-    // Mètode per comprovar si son elements globals o no
     private void analitzaOperandPerGlobal(String op, Set<String> declarats, BufferedWriter bw) throws IOException {
         if (op == null || op.equals("-") || op.matches("-?\\d+")) {
             return;
@@ -165,17 +214,14 @@ public class GeneradorAssemblador {
         if (declarats.contains(op)) {
             return;
         }
-
+        // Temporals ja es gestionen a part
         if (op.matches("t\\d+")) {
             return;
         }
 
-        Simbol s = ts.cercarSimbolAmbit("global", op);
-        if (s == null) {
-            s = ts.cercarSimbolAmbit("GLOBAL", op);
-        }
+        Simbol s = cercarSimbolSegur(op);
 
-        if (s != null && (s.getCategoria() == CategoriaSimbol.VARIABLE || s.getCategoria() == CategoriaSimbol.CONSTANT)) {
+        if (s != null && s.isEsGlobal() && (s.getCategoria() == CategoriaSimbol.VARIABLE || s.getCategoria() == CategoriaSimbol.CONSTANT)) {
             bw.write(String.format("%-10s DS.L   1", op));
             bw.newLine();
             declarats.add(op);
@@ -185,13 +231,41 @@ public class GeneradorAssemblador {
     private void escriuSeccioCodi(BufferedWriter bw) throws IOException {
         bw.write("; --- SECCIÓ DE CODI ---");
         bw.newLine();
+        
+        // Punt d'entrada per a les inicialitzacions globals
+        bw.write("__inici:");
+        bw.newLine();
 
         ambitActual = "global";
         bytesParametresAcumulats = 0;
+        
+        // CONTROL DE FLUX: Per evitar entrar a funcions abans del main
+        boolean hemSaltatAlMain = false;
 
         for (C3a_Instr instr : c3a.getBlocs()) {
 
+            // Detectar inici d'una etiqueta (funció o main)
             if (instr.getEtiqueta() != null && !instr.getEtiqueta().isEmpty()) {
+                
+                String nouAmbit = determinarNouAmbit(instr.getEtiqueta());
+                
+                // Si estem a l'àmbit global i trobem una nova funció/procediment
+                if (ambitActual.equals("global") && nouAmbit != null) {
+                    
+                    // CAS A: És el main.
+                    // No cal fer res especial, l'execució caurà dins del main naturalment.
+                    if (nouAmbit.equals("main")) {
+                        hemSaltatAlMain = true; // Ja hem arribat on volíem
+                    } 
+                    // CAS B: És una funció (ex: "sumar") i encara no hem saltat al main.
+                    // Hem de generar un salt per esquivar aquesta funció.
+                    else if (!hemSaltatAlMain) {
+                        bw.write("    BRA    main   ; Saltem funcions inicials per anar al main");
+                        bw.newLine();
+                        hemSaltatAlMain = true;
+                    }
+                }
+
                 gestionarEtiqueta(instr.getEtiqueta(), bw);
             }
 
@@ -206,6 +280,18 @@ public class GeneradorAssemblador {
             switch (op) {
                 case SKIP:
                     if (dest != null && !dest.equals("-")) {
+                        // REPETIM LA COMPROVACIÓ PER A ETIQUETES DEFINIDES VIA SKIP
+                        // (Per si el C3A usa SKIP per definir l'etiqueta de la funció)
+                        String nouAmbit = determinarNouAmbit(dest);
+                        if (ambitActual.equals("global") && nouAmbit != null) {
+                            if (nouAmbit.equals("main")) {
+                                hemSaltatAlMain = true;
+                            } else if (!hemSaltatAlMain) {
+                                bw.write("    BRA    main   ; Saltem funcions inicials per anar al main");
+                                bw.newLine();
+                                hemSaltatAlMain = true;
+                            }
+                        }
                         gestionarEtiqueta(dest, bw);
                     }
                     break;
@@ -232,7 +318,7 @@ public class GeneradorAssemblador {
                     bw.newLine();
                     break;
 
-                // MULS i DIVS
+                // *** MULS i DIVS ***
                 case PROD:
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
                     bw.newLine();
@@ -320,19 +406,21 @@ public class GeneradorAssemblador {
                     bw.write("    BGT    " + dest);
                     bw.newLine();
                     break;
+                    
                 case PMB:
+                    // CORRECCIÓ 2: Utilitzar la mida pre-calculada (locals + temporals)
                     int totalFrame = 0;
                     if (funcTotalSizes.containsKey(ambitActual)) {
                         totalFrame = funcTotalSizes.get(ambitActual);
                     } else {
                         try {
                             totalFrame = (a2 != null) ? Integer.parseInt(a2) : 0;
-                        } catch (Exception e) {
-                        }
+                        } catch (Exception e) {}
                     }
                     bw.write("    LINK   A6, #-" + totalFrame);
                     bw.newLine();
                     break;
+                    
                 case RET:
                     if (a1 != null && !a1.equals("-")) {
                         bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
@@ -352,8 +440,19 @@ public class GeneradorAssemblador {
                     carregarAdrecaBase(bw, a2, "A0");
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
                     bw.newLine();
-                    bw.write("    MOVE.L 0(A0, D0.L), D1");
-                    bw.newLine();
+                    Simbol sParamC = cercarSimbolSegur(a2);
+                    boolean esCharParamC = (sParamC != null && sParamC.getTipus() == TipusSimbol.TAULA_CARACTER);
+
+                    if (esCharParamC) {
+                        bw.write("    CLR.L  D1");
+                        bw.newLine();
+                        bw.write("    MOVE.B 0(A0, D0.L), D1");
+                        bw.newLine();
+                    } else {
+                        bw.write("    MOVE.L 0(A0, D0.L), D1");
+                        bw.newLine();
+                    }
+
                     bw.write("    MOVE.L D1, -(A7)");
                     bw.newLine();
                     bytesParametresAcumulats += 4;
@@ -372,35 +471,28 @@ public class GeneradorAssemblador {
                     }
                     break;
 
+                // -----------------------------------------------------------------
+                // GESTIÓ D'ARRAYS (ADDRESS ERROR)
+                // -----------------------------------------------------------------
                 case IND_VAL:
                     bw.write(String.format("    ; ind_val %s[%s] -> %s", a2, a1, dest));
                     bw.newLine();
-
-                    // 1. Carreguem l'adreça base de l'array a A0
                     carregarAdrecaBase(bw, a2, "A0");
-
-                    // 2. Carreguem l'índex a D0
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a1)));
                     bw.newLine();
 
-                    // 3. Comprovem si és un array de CHARs per usar MOVE.B
                     Simbol sVal = cercarSimbolSegur(a2);
-                    
                     boolean esCharVal = (sVal != null && sVal.getTipus() == TipusSimbol.TAULA_CARACTER);
 
                     if (esCharVal) {
-                        // CAS CHAR: Netejem tot el registre D1 i movem només 1 byte (.B)
                         bw.write("    CLR.L  D1");
                         bw.newLine();
                         bw.write("    MOVE.B 0(A0, D0.L), D1");
                         bw.newLine();
                     } else {
-                        // CAS INT/BOOL: Movem 4 bytes (.L)
                         bw.write("    MOVE.L 0(A0, D0.L), D1");
                         bw.newLine();
                     }
-
-                    // 4. Guardem el resultat al destí
                     bw.write(String.format("    MOVE.L D1, %s", traduirOperand(dest)));
                     bw.newLine();
                     break;
@@ -408,28 +500,19 @@ public class GeneradorAssemblador {
                 case IND_ASS:
                     bw.write(String.format("    ; ind_ass %s[%s] = %s", dest, a2, a1));
                     bw.newLine();
-
-                    // 1. Carreguem l'adreça base de l'array a A0
                     carregarAdrecaBase(bw, dest, "A0");
-
-                    // 2. Carreguem l'índex a D0
                     bw.write(String.format("    MOVE.L %s, D0", traduirOperand(a2)));
                     bw.newLine();
-
-                    // 3. Carreguem el valor a guardar a D1
                     bw.write(String.format("    MOVE.L %s, D1", traduirOperand(a1)));
                     bw.newLine();
 
-                    // 4. Comprovem si l'array destí és CHAR
                     Simbol sAss = cercarSimbolSegur(dest);
                     boolean esCharAss = (sAss != null && sAss.getTipus() == TipusSimbol.TAULA_CARACTER);
 
                     if (esCharAss) {
-                        // CAS CHAR: Movem només 1 byte (.B)
                         bw.write("    MOVE.B D1, 0(A0, D0.L)");
                         bw.newLine();
                     } else {
-                        // CAS INT/BOOL: Movem 4 bytes (.L)
                         bw.write("    MOVE.L D1, 0(A0, D0.L)");
                         bw.newLine();
                     }
@@ -446,8 +529,7 @@ public class GeneradorAssemblador {
             bw.newLine();
         }
     }
-
-    // Mètode que escriu el nom de les etiquetes
+    
     private void gestionarEtiqueta(String et, BufferedWriter bw) throws IOException {
         bw.write(et + ":");
         bw.newLine();
@@ -458,21 +540,22 @@ public class GeneradorAssemblador {
         }
     }
 
-    // Mètode que escriu les funcions d'entrada i sortida al final del fitxer
     private void escriuFuncionsIO(BufferedWriter bw) throws IOException {
         bw.write("; --- FUNCIONS E/S ---");
         bw.newLine();
+        
         bw.write("llegir:");
         bw.newLine();
-        bw.write("    MOVE.L #4, D0");
+        bw.write("    MOVE.L #4, D0   ; Tasca 4: Llegir Enter (espera Intro)");
         bw.newLine();
         bw.write("    TRAP   #15");
         bw.newLine();
-        bw.write("    MOVE.L D1, D0");
+        bw.write("    MOVE.L D1, D0   ; El resultat es guarda a D1, el movem a D0");
         bw.newLine();
         bw.write("    RTS");
         bw.newLine();
         bw.newLine();
+        
         bw.write("imprimir:");
         bw.newLine();
         bw.write("    MOVE.L 4(A7), D1");
@@ -496,7 +579,6 @@ public class GeneradorAssemblador {
         bw.newLine();
     }
 
-    // Mètode que escriu el final del programa
     private void escriuPeu(BufferedWriter bw) throws IOException {
         bw.write("    END    START");
         bw.newLine();
@@ -515,7 +597,6 @@ public class GeneradorAssemblador {
         return s;
     }
 
-    // Mètode que tradueix un operand
     private String traduirOperand(String nom) {
         if (nom == null || nom.equals("-")) {
             return "";
@@ -525,10 +606,15 @@ public class GeneradorAssemblador {
         }
 
         if (nom.matches("t\\d+")) {
+            // Si és temporal global, torna el seu nom (etiqueta)
+            if (temporalsGlobals.contains(nom)) {
+                return nom;
+            }
+            // Si és local, torna l'offset de pila
             if (tempOffsets.containsKey(nom)) {
                 return tempOffsets.get(nom) + "(A6)";
             } else {
-                return nom;
+                return nom; // Cas estrany, fallback
             }
         }
 
@@ -551,27 +637,22 @@ public class GeneradorAssemblador {
         return nom;
     }
 
-    // Mètode que carrega l'adreça base passant l'id de l'array i la adreça
     private void carregarAdrecaBase(BufferedWriter bw, String nomArray, String regAdreca) throws IOException {
         Simbol s = cercarSimbolSegur(nomArray);
 
         if (s != null && !s.isEsGlobal()) {
             if (s.getCategoria() == CategoriaSimbol.PARAMETRE && s.isEsArray()) {
-                // Passat per referència (parametre taula)
                 int offsetTS = s.getOffset();
                 int desp = 8 + offsetTS;
                 bw.write(String.format("    MOVE.L %d(A6), %s", desp, regAdreca));
             } else {
-                // Array Local
                 int midaTotal = s.getTipus().getMidaBytes() * s.getMidaArray();
                 int desp = -(s.getOffset() + midaTotal);
                 bw.write(String.format("    LEA    %d(A6), %s", desp, regAdreca));
             }
         } else {
-            // Global
             bw.write(String.format("    LEA    %s, %s", nomArray, regAdreca));
         }
-
         bw.newLine();
     }
 }

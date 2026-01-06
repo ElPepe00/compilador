@@ -1,4 +1,4 @@
-// 1. Declaració de la funció 'sumar'
+// Declaració de la funció 'sumar'
 funcio int sumar(int a, int b):
     int res;
     res = a + b;
@@ -6,14 +6,16 @@ funcio int sumar(int a, int b):
 funcio_fi
 
 programa:
-    // 2. Ús de la funció
+
     int x = 15;
-    int y = 10;
+    imprimir(x);
+
+    int y = llegir();
     
     // El resultat es guarda en una variable local
     int total = sumar(x, y);
     
-    // 3. Estructura condicional emprant el resultat
+    // Estructura condicional emprant el resultat
     if (total > 20):
         // Si és major que 20, imprimim true
         imprimir(true);

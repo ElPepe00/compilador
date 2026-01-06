@@ -36,8 +36,8 @@ public class CompiladorMain {
         // ---------------------------------------------------------------------
         // CONFIGURACIÓ DEL TEST
         // ---------------------------------------------------------------------
-        boolean testErroni = true;      // false = Funcionals, true = Erronis
-        int numPrograma = 1;            // Seleccionar del 1 al 3
+        boolean testErroni = false;      // false = Funcionals, true = Erronis
+        int numPrograma = 3;            // Seleccionar del 1 al 3
         // ---------------------------------------------------------------------
         
         String prefix = testErroni ? "programaNoFuncional_" : "programaFuncional_";
