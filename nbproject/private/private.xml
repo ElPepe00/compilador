@@ -4,6 +4,22 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/main/CompiladorMain.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/ast/Node_Peplang.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/taula_simbols/TaulaSimbols.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/taula_simbols/TipusSimbol.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/taula_simbols/TipusUtils.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/taula_simbols/Simbol.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/taula_simbols/Parametre.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/gestor_errors/GestorError.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/gestor_errors/MissatgeError.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/gestor_errors/TipusError.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/backend/codi_intermedi/C3a.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/backend/codi_intermedi/C3a_Instr.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/backend/codi_intermedi/Codi.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/backend/assemblador/GeneradorAssemblador.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/ast/Node_If_fin.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/ast/Node_Tipusv.java</file>
+            <file>file:/C:/Users/Usuario/Documents/UIB/compilador/src/frontend/ast/Node_Ref.java</file>
         </group>
     </open-files>
 </project-private>

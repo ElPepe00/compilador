@@ -25,7 +25,7 @@ public class GeneradorAssemblador {
     private final Map<String, Integer> funcTotalSizes = new HashMap<>();
 
     // Set per gestionar temporals globals (Static Data)
-    // CORRECCIÓ 1: Els temporals fora de funcions no van a la pila
+    // Els temporals fora de funcions no van a la pila
     private final Set<String> temporalsGlobals = new HashSet<>();
 
     public GeneradorAssemblador(C3a c3a, TaulaSimbols ts) {
@@ -408,7 +408,7 @@ public class GeneradorAssemblador {
                     break;
                     
                 case PMB:
-                    // CORRECCIÓ 2: Utilitzar la mida pre-calculada (locals + temporals)
+                    // Utilitzar la mida pre-calculada (locals + temporals)
                     int totalFrame = 0;
                     if (funcTotalSizes.containsKey(ambitActual)) {
                         totalFrame = funcTotalSizes.get(ambitActual);
