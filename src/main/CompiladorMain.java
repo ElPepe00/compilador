@@ -20,6 +20,7 @@ import frontend.gestor_errors.*;
 
 import backend.codi_intermedi.*;
 import backend.assemblador.*;
+import backend.optimitzacio.*;
 
 
 
@@ -37,7 +38,7 @@ public class CompiladorMain {
         // CONFIGURACIÓ DEL TEST
         // ---------------------------------------------------------------------
         boolean testErroni = false;      // false = Funcionals, true = Erronis
-        int numPrograma = 3;            // Seleccionar del 1 al 3
+        int numPrograma = 1;            // Seleccionar del 1 al 3
         // ---------------------------------------------------------------------
         
         String prefix = testErroni ? "programaNoFuncional_" : "programaFuncional_";
@@ -156,9 +157,30 @@ public class CompiladorMain {
             
             long tempsFinal = System.currentTimeMillis() - tempsInici;
             
-            // ** FI COMPILACIÓ (Exitosa)
+            // FI COMPILACIÓ
             System.out.println("\n\n ---------------------------------------");
             System.out.println("   > COMPILACIO EXITOSA! (Temps: " + tempsFinal + " ms)\n");
+            
+            
+            // *************
+            // OPTIMITZACIÓ 
+            // *************
+            System.out.println("\n [6] --- OPTIMITZACIO:");
+            Optimitzador opt = new Optimitzador(c3a);
+            opt.optimitzar();
+
+            // Guardar el C3A optimitzat per veure la diferència
+            c3a.guadarCodi3a(rutaSortida + "codi3a_OPTIMITZAT_" + nomFitxer);
+
+            // Generació del codi assemblador optimitzat
+            GeneradorAssemblador genAss = new GeneradorAssemblador(c3a, ts);
+            genAss.generaFitxer(rutaSortida + "programa_OPTIMITZAT_" + nomFitxer.replace(".txt", ".X68"));
+            
+            long tempsFinalOpt = System.currentTimeMillis() - tempsInici;
+            
+            // FI COMPILACIÓ
+            System.out.println("\n\n ---------------------------------------");
+            System.out.println("   > COMPILACIO AMB OPTIMITZACIO EXITOSA! (Temps: " + tempsFinalOpt + " ms)\n");
             
         } catch(Exception e) {
             System.err.println("\n [EXCEPTION] Error fatal durant la compilacio:");
